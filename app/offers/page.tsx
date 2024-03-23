@@ -59,7 +59,7 @@ export default function OffersPage() {
                     </div>
                 </div>
                 {offers.map(offer => (
-                    <Link href={"/offers/" + offer.url}>
+                    <Link key={offer.title} href={"/offers/" + offer.url}>
                         <Card className="hover:bg-gray-100 hover:border-black hover:cursor-pointer">
                             <CardHeader>
                                 <div className="flex gap-4">
@@ -68,7 +68,7 @@ export default function OffersPage() {
                                         <CardTitle>{offer.title}</CardTitle>
                                         <div className="flex gap-2">
                                             {offer.badges.map(badge => (
-                                                <Badge>{badge}</Badge>
+                                                <Badge key={badge}>{badge}</Badge>
                                             ))}
                                         </div>
                                     </div>
