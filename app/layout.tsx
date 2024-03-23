@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="dark:bg-black max-w-7xl mx-auto h-screen max-h-screen flex flex-col px-6">
+        <div className="dark:bg-black  mx-auto h-screen max-h-screen flex flex-col px-6">
           <div className="flex  justify-between py-6">
             <div className="flex items-center gap-6">
               <Link href="/">
