@@ -1,11 +1,25 @@
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Work in progress&nbsp;
-        </p>
+    <div className=" flex flex-col justify-center h-full relative overflow-hidden">
+      <Image src="/waves.png" alt="waves background" width={1578.76} height={1021.86} className="-rotate-45 absolute -z-10 -right-72 top-48"></Image>
+      <h1 className="text-5xl">
+        Next <strong>auditing</strong> <br />
+        platform <br />
+        for your <strong>code !</strong>
+      </h1>
+      <p className="mt-6">
+        Your go-to marketplace for open-source audits and code certification. <br />
+        Bringing developers together for <strong>secure</strong>, <strong>certified</strong> solutions!
+      </p>
+      <div className="flex gap-6 mt-2">
+        <Link href="login">
+          <Button >Enroll as an auditor</Button>
+        </Link>
+        <Button variant="link">Need to certify your code?</Button>
       </div>
-    </main>
+    </div>
   );
 }
