@@ -28,6 +28,7 @@ export default function OffersPage() {
             title: "SteinPrograms",
             badges: ["C++", "Python", "API", "Trading"],
             description: "Evolving in the trading sector, we are developing robust software in C++. Our software needs to be reliable and verified by different entities to ensure extreme reliability.",
+            budget: '1 000$',
 
         },
         {
@@ -35,6 +36,7 @@ export default function OffersPage() {
             title: "CodeShield",
             badges: ["Javascript", "SQL Database"],
             description: "Working in the auditing sector, we built a web platform helping developers get their code certified and audited with ease.",
+            budget: '500$',
         },
     ]
     return (
@@ -62,6 +64,7 @@ export default function OffersPage() {
                     <Link key={offer.title} href={"/offers/" + offer.url}>
                         <Card className="hover:bg-gray-100 hover:border-black hover:cursor-pointer">
                             <CardHeader>
+                                <div className="flex justify-between w-full">
                                 <div className="flex gap-4">
                                     <Image width={64} height={64} src={"/logo-" + offer.title.toLowerCase() +".png"} alt={"logo-" + offer.title}></Image>
                                     <div className="flex gap-2 flex-col">
@@ -73,9 +76,11 @@ export default function OffersPage() {
                                         </div>
                                     </div>
                                 </div>
+                                <p>{offer.budget}</p>
+                                </div>
                             </CardHeader>
-                            <CardContent className="flex items-center justify-between">
-                                <CardDescription>
+                            <CardContent className="flex items-center gap-24 justify-between">
+                                <CardDescription className="text-pretty">
                                     {offer.description}
                                 </CardDescription>
                                 <div className="text-nowrap flex gap-2 items-center">
