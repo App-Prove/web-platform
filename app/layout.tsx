@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "CodeShield",
-  description: "Make your people trust your code.",
+  description: "Make people trust your code.",
 };
 
 export default async function RootLayout({
