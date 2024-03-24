@@ -3,6 +3,10 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import AuthButton from "@/components/authButton";
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,11 +15,14 @@ export const metadata: Metadata = {
   description: "Make your people trust your code.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.refreshSession();
+  const {session, user} = data;
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -39,20 +46,18 @@ export default function RootLayout({
               <Link href="/publish">
                 <Button variant="link">Publish</Button>
               </Link>
-              <Link href="/login">
-                <Button>Login</Button>
-              </Link>
+              <AuthButton user={user}/>
             </div>
           </div>
-            <div className="h-full">
+          <div className="h-full">
             {children}
-            </div>
-            <footer className="flex gap-6 w-full justify-center py-4">
-              <p>©CodeShield</p>
-              <Link href='/contact'>Contact</Link>
-              <Link href='/legal-notice'>Legal notice</Link>
-              <Link href='/cookies'>Cookies</Link>
-            </footer>
+          </div>
+          <footer className="flex gap-6 w-full justify-center py-4">
+            <p>©CodeShield</p>
+            <Link href='/contact'>Contact</Link>
+            <Link href='/legal-notice'>Legal notice</Link>
+            <Link href='/cookies'>Cookies</Link>
+          </footer>
         </div>
       </body>
 

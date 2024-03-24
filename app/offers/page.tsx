@@ -86,7 +86,7 @@ export default function OffersPage() {
                                 <div className="text-nowrap flex gap-2 items-center">
                                     <p>Show more</p>
                                     <svg width="14" height="13" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M13 1.6004L2 1.59998M13 1.6004L1.5 12.0004M13 1.6004V12.4004" stroke="black" stroke-width="2" />
+                                        <path d="M13 1.6004L2 1.59998M13 1.6004L1.5 12.0004M13 1.6004V12.4004" stroke="black" strokeWidth="2" />
                                     </svg>
                                 </div>
                             </CardContent>

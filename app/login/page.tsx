@@ -1,9 +1,26 @@
-export default function LoginPage(){
-    return (
-            <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-                <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-                    Work in progress&nbsp;
-                </p>
-            </div>
-    )
+"use client"
+import { Button } from "@/components/ui/button";
+import { githubLogin, login, signup } from './actions'
+import { Github } from 'lucide-react';
+
+export default function LoginPage() {
+  return (
+    <form className="w-full h-full items-center  justify-center flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
+        {/* <div className="flex gap-2">
+          <label htmlFor="email">Email:</label>
+          <input id="email" name="email" type="email" required />
+        </div>
+        <div className="flex gap-2">
+          <label htmlFor="password">Password:</label>
+          <input id="password" name="password" type="password" required />
+        </div> */}
+        <div className="flex gap-4">
+          {/* <Button formAction={login}>Log in</Button>
+          <Button formAction={signup}>Sign up</Button> */}
+          <Button formAction={githubLogin}><Github/>Sign in with Github</Button>
+        </div>
+      </div>
+    </form>
+  )
 }
