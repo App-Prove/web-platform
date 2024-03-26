@@ -40,10 +40,8 @@ export default function OffersPage() {
         },
     ]
     return (
-        <div className="flex gap-6 flex-col sm:flex-row">
-            <div className="">
-                <Input placeholder="Search keywords"></Input>
-            </div>
+        <div className="flex gap-6 flex-col md:flex-row">
+            <Input placeholder="Search keywords"></Input>
             <div className="flex-1 flex flex-col gap-6">
                 <div className="flex justify-between items-center w-full">
                     <p>{offers.length} Results</p>
@@ -66,11 +64,13 @@ export default function OffersPage() {
                             <CardHeader>
                                 <div className="flex justify-between w-full">
                                     <div className="flex gap-4">
-                                        <Image className="" width={64} height={64} src={"/logo-" + offer.title.toLowerCase() + ".png"} alt={"logo-" + offer.title}></Image>
+                                        <div className="self-center">
+                                            <Image width={64} height={64} src={"/logo-" + offer.title.toLowerCase() + ".png"} alt={"logo-" + offer.title}></Image>
+                                        </div>
                                         <div className="flex gap-2 flex-col">
                                             <div className="flex flex-col sm:flex-row">
-                                            <CardTitle>{offer.title}</CardTitle>
-                                            <p className="self-start sm:flex-end">{offer.budget}</p>
+                                                <CardTitle>{offer.title}</CardTitle>
+                                                <p className="self-start sm:flex-end">{offer.budget}</p>
                                             </div>
                                             <div className="flex gap-2 flex-wrap">
                                                 {offer.badges.map(badge => (
