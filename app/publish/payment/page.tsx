@@ -26,6 +26,8 @@ export default async function PrivatePage() {
     return (
         <div className='h-full max-w-2xl mx-auto flex flex-col gap-4'>
             <div className='flex-1'>
+            <h1>Payment</h1>
+            
             </div>
             <Breadcrumb className='self-center'>
                 <BreadcrumbList>

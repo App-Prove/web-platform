@@ -40,13 +40,13 @@ export default function OffersPage() {
         },
     ]
     return (
-        <div className="flex gap-6">
+        <div className="flex gap-6 flex-col sm:flex-row">
             <div className="">
                 <Input placeholder="Search keywords"></Input>
             </div>
             <div className="flex-1 flex flex-col gap-6">
                 <div className="flex justify-between items-center w-full">
-                    <p>{resultNumber} Results</p>
+                    <p>{offers.length} Results</p>
                     <div className="flex gap-4 items-center">
                         <p>Sort by:</p>
                         <Select>
@@ -65,25 +65,27 @@ export default function OffersPage() {
                         <Card className="hover:bg-gray-100 hover:border-black hover:cursor-pointer">
                             <CardHeader>
                                 <div className="flex justify-between w-full">
-                                <div className="flex gap-4">
-                                    <Image width={64} height={64} src={"/logo-" + offer.title.toLowerCase() +".png"} alt={"logo-" + offer.title}></Image>
-                                    <div className="flex gap-2 flex-col">
-                                        <CardTitle>{offer.title}</CardTitle>
-                                        <div className="flex gap-2">
-                                            {offer.badges.map(badge => (
-                                                <Badge key={badge}>{badge}</Badge>
-                                            ))}
+                                    <div className="flex gap-4">
+                                        <Image className="" width={64} height={64} src={"/logo-" + offer.title.toLowerCase() + ".png"} alt={"logo-" + offer.title}></Image>
+                                        <div className="flex gap-2 flex-col">
+                                            <div className="flex flex-col sm:flex-row">
+                                            <CardTitle>{offer.title}</CardTitle>
+                                            <p className="self-start sm:flex-end">{offer.budget}</p>
+                                            </div>
+                                            <div className="flex gap-2 flex-wrap">
+                                                {offer.badges.map(badge => (
+                                                    <Badge key={badge}>{badge}</Badge>
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <p>{offer.budget}</p>
-                                </div>
                             </CardHeader>
-                            <CardContent className="flex items-center gap-24 justify-between">
+                            <CardContent className="flex items-center gap-2 sm:gap-24 justify-between flex-col sm:flex-row">
                                 <CardDescription className="text-pretty">
                                     {offer.description}
                                 </CardDescription>
-                                <div className="text-nowrap flex gap-2 items-center">
+                                <div className="text-nowrap flex gap-2 items-center self-end sm:self-auto">
                                     <p>Show more</p>
                                     <svg width="14" height="13" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M13 1.6004L2 1.59998M13 1.6004L1.5 12.0004M13 1.6004V12.4004" stroke="black" strokeWidth="2" />
