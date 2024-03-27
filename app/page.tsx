@@ -4,7 +4,6 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="flex flex-col  min-h-full relative overflow-hidden justify-center">
-        <Image priority={true} src="/waves.png" alt="waves background" width={1578.76} height={1021.86} className="hidden sm:block -rotate-45 absolute -z-10 -right-72 top-48"></Image>
         <h1 className="text-5xl">
           Have you ever wonder<br />
            if software was<br />
