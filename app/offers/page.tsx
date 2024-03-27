@@ -38,10 +38,19 @@ export default function OffersPage() {
             description: "Working in the auditing sector, we built a web platform helping developers get their code certified and audited with ease.",
             budget: '500$',
         },
+        {
+            url: "euratechnologies",
+            title: "Euratechnologies",
+            badges: ["Website", "NextJS"],
+            description: "Euratechnologies is the leading hub in startup field. We help founders build their product, raise funds and create jobs in France.",
+            budget: '350$',
+        },
     ]
     return (
         <div className="flex gap-6 flex-col md:flex-row">
+            <div>
             <Input placeholder="Search keywords"></Input>
+            </div>
             <div className="flex-1 flex flex-col gap-6">
                 <div className="flex justify-between items-center w-full">
                     <p>{offers.length} Results</p>
@@ -74,7 +83,7 @@ export default function OffersPage() {
                                             </div>
                                             <div className="flex gap-2 flex-wrap">
                                                 {offer.badges.map(badge => (
-                                                    <Badge key={badge}>{badge}</Badge>
+                                                    <Badge className="rounded-sm" variant='secondary' key={badge}>{badge}</Badge>
                                                 ))}
                                             </div>
                                         </div>

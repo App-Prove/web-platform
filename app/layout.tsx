@@ -27,7 +27,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="dark:bg-black  mx-auto h-screen max-h-screen flex flex-col px-6">
+        <div className="dark:bg-black mx-auto  min-h-screen flex flex-col px-6">
           <div className="flex  justify-between py-6">
             <div className="flex items-center gap-6">
               <Link href="/">
@@ -40,8 +40,8 @@ export default async function RootLayout({
                   <path d="M34.021 19.6394C34.6091 18.2212 34.3853 15.7836 34.3853 15.7836V0.846191L31.9869 2.51602V6.79686L31.8863 15.4496C31.9603 16.3935 31.7743 18.553 30.4385 19.6394L20.0362 28.8082V31.9354L31.9869 21.9468C31.9869 21.9468 33.5049 20.8841 34.021 19.6394Z" />
                 </svg>
               </Link>
-              <Link className="hidden sm:block" href="/offers">Offers</Link>
-              <Link className="hidden sm:block" href="/auditors">Auditors</Link>
+              <Link href="/offers">Offers</Link>
+              <Link href="/auditors">Auditors</Link>
             </div>
             <div className="flex gap-6 items-center">
               <Link className="hidden sm:block" href="/publish">
@@ -50,14 +50,14 @@ export default async function RootLayout({
               <AuthButton user={user}/>
             </div>
           </div>
-          <div className="h-full">
+          <div className="flex flex-1 box-content">
             {children}
           </div>
           <Toaster />
-          <footer className="flex gap-6 w-full justify-center py-4">
+          <footer className="flex gap-6 w-full justify-center py-4 text-sm">
             <p>©CodeShield</p>
             <Link href='/contact'>Contact</Link>
-            <Link href='/legal-notice'>Legal notice</Link>
+            <Link href='/legal-notice'>Legal</Link>
             <Link href='/cookies'>Cookies</Link>
           </footer>
         </div>
