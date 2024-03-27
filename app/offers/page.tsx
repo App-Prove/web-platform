@@ -27,7 +27,7 @@ export default function OffersPage() {
             url: "steinprograms",
             title: "SteinPrograms",
             badges: ["C++", "Python", "API", "Trading"],
-            description: "Evolving in the trading sector, we are developing robust software in C++. Our software needs to be reliable and verified by different entities to ensure extreme reliability.",
+            description: "Evolving in the trading sector, we are developing robust algorithms in C++. Our software needs to be reliable and verified by different entities to ensure extreme reliability.",
             budget: '1 000$',
 
         },
@@ -91,10 +91,10 @@ export default function OffersPage() {
                                 </div>
                             </CardHeader>
                             <CardContent className="flex items-center gap-2 sm:gap-24 justify-between flex-col sm:flex-row">
-                                <CardDescription className="text-pretty">
+                                <CardDescription className="text-pretty text-lg">
                                     {offer.description}
                                 </CardDescription>
-                                <div className="text-nowrap flex gap-2 items-center self-end sm:self-auto">
+                                <div className="text-nowrap flex gap-2 items-center self-end sm:self-auto text-sm">
                                     <p>Show more</p>
                                     <svg width="14" height="13" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M13 1.6004L2 1.59998M13 1.6004L1.5 12.0004M13 1.6004V12.4004" stroke="black" strokeWidth="2" />
