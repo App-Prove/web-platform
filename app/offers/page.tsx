@@ -77,8 +77,8 @@ export default function OffersPage() {
                                             <Image width={64} height={64} src={"/logo-" + offer.title.toLowerCase() + ".png"} alt={"logo-" + offer.title}></Image>
                                         </div>
                                         <div className="flex gap-2 flex-col w-full">
-                                            <div className="flex flex-row justify-between items-center">
-                                                <CardTitle>{offer.title}</CardTitle>
+                                            <div className="flex flex-col sm:flex-row justify-between items-center">
+                                                <CardTitle className="self-start">{offer.title}</CardTitle>
                                                 <p className="self-start sm:flex-end">{offer.budget}</p>
                                             </div>
                                             <div className="flex gap-2 flex-wrap">
