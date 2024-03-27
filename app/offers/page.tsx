@@ -54,7 +54,7 @@ export default function OffersPage() {
             <div className="flex-1 flex flex-col gap-6">
                 <div className="flex justify-between items-center w-full">
                     <p>{offers.length} Results</p>
-                    <div className="flex gap-4 items-center">
+                    <div className="flex gap-4 items-center z-10">
                         <p>Sort by:</p>
                         <Select>
                             <SelectTrigger className="w-[180px]">
@@ -68,7 +68,7 @@ export default function OffersPage() {
                     </div>
                 </div>
                 {offers.map(offer => (
-                    <Link key={offer.title} href={"/offers/" + offer.url}>
+                    <Link className='-z-10' key={offer.title} href={"/offers/" + offer.url}>
                         <Card className="hover:bg-gray-100 hover:border-black hover:cursor-pointer">
                             <CardHeader>
                                 <div className="flex justify-between w-full">
