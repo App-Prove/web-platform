@@ -72,12 +72,12 @@ export default function OffersPage() {
                         <Card className="hover:bg-gray-100 hover:border-black hover:cursor-pointer">
                             <CardHeader>
                                 <div className="flex justify-between w-full">
-                                    <div className="flex gap-4">
+                                    <div className="flex gap-4 w-full">
                                         <div className="self-center">
                                             <Image width={64} height={64} src={"/logo-" + offer.title.toLowerCase() + ".png"} alt={"logo-" + offer.title}></Image>
                                         </div>
-                                        <div className="flex gap-2 flex-col">
-                                            <div className="flex flex-col sm:flex-row">
+                                        <div className="flex gap-2 flex-col w-full">
+                                            <div className="flex flex-row justify-between items-center">
                                                 <CardTitle>{offer.title}</CardTitle>
                                                 <p className="self-start sm:flex-end">{offer.budget}</p>
                                             </div>
