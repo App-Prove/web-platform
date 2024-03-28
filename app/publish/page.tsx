@@ -143,7 +143,7 @@ export default function PrivatePage() {
                                                 id="date"
                                                 variant={"outline"}
                                                 className={cn(
-                                                    "w-[300px] justify-start text-left font-normal",
+                                                    "text-base w-[300px] justify-start text-left font-normal",
                                                     !field.value && "text-muted-foreground"
                                                 )}
                                             >
