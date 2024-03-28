@@ -8,6 +8,7 @@ import AuthButton from "@/components/authButton";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { Toaster } from "@/components/ui/toaster";
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,6 +28,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <Analytics></Analytics>
         <div className="dark:bg-black mx-auto  min-h-screen flex flex-col px-6">
           <div className="flex  justify-between py-6">
             <div className="flex items-center gap-6">
