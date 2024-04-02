@@ -198,7 +198,7 @@ export default function PublishForm() {
                             <FormControl>
                                 <Textarea placeholder="Explain what the auditor has to look at." id="message" {...field} />
                             </FormControl>
-                            <FormDescription>This is a short description of the work you're looking for</FormDescription>
+                            <FormDescription>This is a short description of the work you are looking for</FormDescription>
                             <FormMessage />
                         </div>
                     )}
@@ -248,7 +248,7 @@ export default function PublishForm() {
                                     </PopoverContent>
                                 </Popover>
                             </FormControl>
-                            <FormDescription>This is the period you'd like the audit to take place</FormDescription>
+                            <FormDescription>This is the period you would like the audit to take place</FormDescription>
                             <FormMessage />
                         </div>
 
@@ -345,7 +345,7 @@ export default function PublishForm() {
                             <FormControl>
                                 <Input className="self-start " type='number' id="budget" placeholder="how much are you willing to spend?" {...field} />
                             </FormControl>
-                            <FormDescription>This is the budget you're willing to spend for the audit</FormDescription>
+                            <FormDescription>This is the budget you are willing to spend for the audit</FormDescription>
                             <FormMessage />
                         </div>
                     )}
