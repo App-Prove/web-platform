@@ -64,7 +64,7 @@ export default async function OffersPage() {
 
     return (
         <div className="flex gap-6 flex-col md:flex-row">
-            <div className="flex justify-center items-center text-nowrap gap-2">
+            <div className="flex w-full md:w-fit self-start items-center text-nowrap gap-2">
                 <p>{offers.length} Results</p>
                 <Input placeholder="Search keywords"></Input>
             </div>
