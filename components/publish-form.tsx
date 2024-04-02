@@ -47,6 +47,7 @@ import { X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Command as CommandPrimitive } from "cmdk";
+import { postFormToDB } from "./server/action"
 
 
 type Framework = Record<"value" | "label", string>;
@@ -91,9 +92,6 @@ const FormSchema = z.object({
     description: z.string({
         required_error: "Please add a description.",
     }),
-    framework: z.string({
-        required_error: "Please select a framework.",
-    }),
     budget: z.string({
         required_error: "Please fill in the budget field.",
     }),
@@ -105,6 +103,14 @@ const FormSchema = z.object({
         if ((value.from as Date) < subDays(new Date(), 1)) return false
         return true
     }, { message: 'Please select a valid date.' }),
+    frameworks: z.custom<Framework[]>((value) => {
+        console.log(value)
+        if (!value) return false
+        if (typeof value !== "object" || !Array.isArray(value)) return false;
+        // check if there is at least one element
+        if (value.length === 0) return false
+        return true
+    }, { message: 'Please select at least one framework.' }),
 })
 
 
@@ -117,8 +123,8 @@ export default function PublishForm() {
             url: "https://test.io",
             description: "https://test.io",
             date: { from: new Date(), to: addDays(new Date(), 20) },
-            framework: "next.js",
             budget: '123',
+            frameworks: [],
         },
     })
 
@@ -132,40 +138,17 @@ export default function PublishForm() {
                 </pre>
             ),
         })
+        postFormToDB(data)
     }
 
     function onError(errors: any) {
         console.log(errors)
     }
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const [selected, setSelected] = React.useState<Framework[]>([FRAMEWORKS[4]]);
+    const [selected, setSelected] = React.useState<Framework[]>([]);
     const [inputValue, setInputValue] = React.useState("");
 
-    const handleUnselect = React.useCallback((framework: Framework) => {
-        setSelected(prev => prev.filter(s => s.value !== framework.value));
-    }, []);
-
-    const handleKeyDown = React.useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
-        const input = inputRef.current
-        if (input) {
-            if (e.key === "Delete" || e.key === "Backspace") {
-                if (input.value === "") {
-                    setSelected(prev => {
-                        const newSelected = [...prev];
-                        newSelected.pop();
-                        return newSelected;
-                    })
-                }
-            }
-            // This is not a default behaviour of the <input /> field
-            if (e.key === "Escape") {
-                input.blur();
-            }
-        }
-    }, []);
-
     const selectables = FRAMEWORKS.filter(framework => !selected.includes(framework));
-
 
     return (
         <Form {...form}>
@@ -254,20 +237,37 @@ export default function PublishForm() {
 
                     )}
                 />
-
                 <Separator />
                 <FormField
                     control={form.control}
-                    name="framework"
+                    name="frameworks"
                     render={({ field }) => (
                         <div className="grid w-full gap-1.5">
                             <FormLabel>Framework</FormLabel>
-                            <Command onKeyDown={handleKeyDown} className="overflow-visible bg-transparent">
+                            <Command onKeyDown={(e) => {
+                                const input = inputRef.current
+                                if (input) {
+                                    if (e.key === "Delete" || e.key === "Backspace") {
+                                        if (input.value === "") {
+                                            setSelected(prev => {
+                                                const newSelected = [...prev];
+                                                newSelected.pop();
+                                                return newSelected;
+                                            })
+                                            form.setValue("frameworks", field.value.slice(0, -1));
+                                        }
+                                    }
+                                    // This is not a default behaviour of the <input /> field
+                                    if (e.key === "Escape") {
+                                        input.blur();
+                                    }
+                                }
+                            }} className="overflow-visible bg-transparent">
                                 <div
                                     className="group border border-input px-3 py-2 text-sm ring-offset-background rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
                                 >
                                     <div className="flex gap-1 flex-wrap">
-                                        {selected.map((framework) => {
+                                        {field.value.map((framework) => {
                                             return (
                                                 <Badge key={framework.value} variant="secondary">
                                                     {framework.label}
@@ -275,14 +275,19 @@ export default function PublishForm() {
                                                         className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                                                         onKeyDown={(e) => {
                                                             if (e.key === "Enter") {
-                                                                handleUnselect(framework);
+                                                                setSelected(prev => prev.filter(s => s.value !== framework.value));
+                                                                form.setValue("frameworks", field.value.filter(f => f.value !== framework.value));
                                                             }
                                                         }}
                                                         onMouseDown={(e) => {
                                                             e.preventDefault();
                                                             e.stopPropagation();
                                                         }}
-                                                        onClick={() => handleUnselect(framework)}
+                                                        onClick={() => {
+                                                            setSelected(prev => prev.filter(s => s.value !== framework.value));
+                                                            form.setValue("frameworks", field.value.filter(f => f.value !== framework.value));
+                                                        }
+                                                        }
                                                     >
                                                         <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
                                                     </button>
@@ -317,6 +322,7 @@ export default function PublishForm() {
                                                                 onSelect={(value) => {
                                                                     setInputValue("")
                                                                     setSelected(prev => [...prev, framework])
+                                                                    form.setValue("frameworks", [...field.value, framework])
                                                                 }}
                                                                 className={"cursor-pointer"}
                                                             >

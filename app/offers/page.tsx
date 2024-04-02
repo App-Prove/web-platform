@@ -19,8 +19,10 @@ import {
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link";
 import Image from "next/image";
+import { createClient } from "@/utils/supabase/server";
+import { off } from "process";
 
-export default function OffersPage() {
+export default async function OffersPage() {
     const resultNumber = 10;
     const offers = [
         {
@@ -46,29 +48,29 @@ export default function OffersPage() {
             budget: '350$',
         },
     ]
+    // get offers from db here
+    const supabase = createClient();
+    const { data, error } = await supabase.from('offers').select('*');
+    console.log(data)
+    // combine offers from db and offers from the array
+    offers.push(...(data as any[])?.map(offer => ({
+        url: offer.url,
+        title: offer.id.toString(),
+        badges: offer.frameworks.split(','),
+        description: offer.description,
+        budget: offer.budget,
+    })))
+    //     console.log(offers)
+
     return (
         <div className="flex gap-6 flex-col md:flex-row">
-            <div>
-            <Input placeholder="Search keywords"></Input>
+            <div className="flex justify-center items-center text-nowrap gap-2">
+                <p>{offers.length} Results</p>
+                <Input placeholder="Search keywords"></Input>
             </div>
             <div className="flex-1 flex flex-col gap-6">
-                <div className="flex justify-between items-center w-full">
-                    <p>{offers.length} Results</p>
-                    <div className="flex gap-4 items-center z-10">
-                        <p>Sort by:</p>
-                        <Select>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Most recent" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="recent">Most recent</SelectItem>
-                                <SelectItem value="views">Most viewed</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
                 {offers.map(offer => (
-                    <Link className='-z-10' key={offer.title} href={"/offers/" + offer.url}>
+                    <Link key={offer.title} href={"/offers/" + offer.url}>
                         <Card className="hover:bg-gray-100 hover:border-black hover:cursor-pointer">
                             <CardHeader>
                                 <div className="flex justify-between w-full">
