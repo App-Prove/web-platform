@@ -88,7 +88,8 @@ const FRAMEWORKS = [
 ] satisfies Framework[];
 const FormSchema = z.object({
     url: z.string({
-    }).url({ message: "Add a valid url" }),
+        required_error: "Please put a valid github repo",
+    }),
     description: z.string({
         required_error: "Please add a description.",
     }),
@@ -120,10 +121,10 @@ export default function PublishForm() {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            url: "https://test.io",
-            description: "https://test.io",
+            url: "steinprograms",
+            description: "Default description for the project.",
             date: { from: new Date(), to: addDays(new Date(), 20) },
-            budget: '123',
+            budget: '100',
             frameworks: [],
         },
     })

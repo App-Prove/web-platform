@@ -55,7 +55,7 @@ export default async function OffersPage() {
     // combine offers from db and offers from the array
     offers.push(...(data as any[])?.map(offer => ({
         url: offer.url,
-        title: offer.id.toString(),
+        title: offer.url,
         badges: offer.frameworks.split(','),
         description: offer.description,
         budget: offer.budget,
@@ -76,7 +76,7 @@ export default async function OffersPage() {
                                 <div className="flex justify-between w-full">
                                     <div className="flex gap-4 w-full">
                                         <div className="self-center">
-                                            <Image width={64} height={64} src={"/logo-" + offer.title.toLowerCase() + ".png"} alt={"logo-" + offer.title}></Image>
+                                            <Image className='rounded-sm' width={64} height={64} src={"https://github.com/" + offer.title.toLowerCase() + ".png"} alt={"logo-" + offer.title}></Image>
                                         </div>
                                         <div className="flex gap-2 flex-col w-full">
                                             <div className="flex flex-col sm:flex-row justify-between items-center">

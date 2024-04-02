@@ -9,6 +9,7 @@ export async function logout() {
 
 export async function postFormToDB(data: any) {
     console.log('publishing to db')
+    console.log(data)
     const supabase = createClient();
     const error = await supabase.from('offers').insert([
         // convert all entries to string
@@ -18,7 +19,7 @@ export async function postFormToDB(data: any) {
             from: data.date.from,
             to: data.date.to,
             budget: data.budget,
-            frameworks: data.frameworks.toString(),
+            frameworks: data.frameworks.map((framework: { label: string; })=>(framework.label)).join(','), // convert array to string
         }
     ])
     console.log(error)
