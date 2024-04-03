@@ -18,7 +18,7 @@ export default async function PrivatePage() {
     return (
         <div className='h-full w-full mx-auto flex flex-col gap-4 mb-16'>
             <h1>
-                Offer
+                Offer details
             </h1>
             <PublishForm></PublishForm>
         </div>

@@ -30,22 +30,8 @@ export default async function OffersPage() {
             title: "SteinPrograms",
             badges: ["C++", "Python", "API", "Trading"],
             description: "Evolving in the trading sector, we are developing robust algorithms in C++. Our software needs to be reliable and verified by different entities to ensure extreme reliability.",
-            budget: '1 000$',
+            budget: '1 000',
 
-        },
-        {
-            url: "codeshield",
-            title: "CodeShield",
-            badges: ["Javascript", "SQL Database"],
-            description: "Working in the auditing sector, we built a web platform helping developers get their code certified and audited with ease.",
-            budget: '500$',
-        },
-        {
-            url: "euratechnologies",
-            title: "Euratechnologies",
-            badges: ["Website", "NextJS"],
-            description: "Euratechnologies is the leading hub in startup field. We help founders build their product, raise funds and create jobs in France.",
-            budget: '350$',
         },
     ]
     // get offers from db here
@@ -54,13 +40,12 @@ export default async function OffersPage() {
     console.log(data)
     // combine offers from db and offers from the array
     offers.push(...(data as any[])?.map(offer => ({
-        url: offer.url,
+        url: offer.id,
         title: offer.url,
         badges: offer.frameworks.split(','),
         description: offer.description,
         budget: offer.budget,
     })))
-    //     console.log(offers)
 
     return (
         <div className="flex gap-6 flex-col md:flex-row">
@@ -81,7 +66,7 @@ export default async function OffersPage() {
                                         <div className="flex gap-2 flex-col w-full">
                                             <div className="flex flex-col sm:flex-row justify-between items-center">
                                                 <CardTitle className="self-start">{offer.title}</CardTitle>
-                                                <p className="self-start sm:flex-end">{offer.budget}</p>
+                                                <p className="self-start sm:flex-end">{offer.budget + ' $'}</p>
                                             </div>
                                             <div className="flex gap-2 flex-wrap">
                                                 {offer.badges.map(badge => (
