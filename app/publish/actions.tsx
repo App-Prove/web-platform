@@ -7,7 +7,6 @@ export async function goToPayment(){
     // but it's not implemented yet
     console.log('Redirecting to payment page')
     redirect('/publish/payment')
-
 }
 
 export async function postFormToDB(data: any) {
@@ -27,5 +26,4 @@ export async function postFormToDB(data: any) {
     ])
     console.log(error)
     redirect('/offers')
-
 }
