@@ -8,7 +8,7 @@ export default async function OfferPage({ params }: { params: { slug: string } }
     return (
         <div>
             <h1>Offer</h1>
-            <p>{data[0]?.description}</p>
+            <p>{data && data[0]?.description}</p>
         </div>
     );
 }
