@@ -24,7 +24,7 @@ export default  function AuthButton({user}:{user:any}) {
                     <DropdownMenuTrigger>
                         <Avatar>
                             <AvatarImage src={user.user_metadata.avatar_url} />
-                            <AvatarFallback>{user.user_metadata.full_name.split(' ').map((name: any[]) => name[0]).join('')}</AvatarFallback>
+                            <AvatarFallback>{user.user_metadata.full_name?.split(' ').map((name: any[]) => name[0]).join('')}</AvatarFallback>
                         </Avatar>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
