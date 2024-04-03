@@ -78,7 +78,7 @@ export default async function OffersPage() {
                                 </div>
                             </CardHeader>
                             <CardContent className="flex items-center gap-2 sm:gap-24 justify-between flex-col sm:flex-row">
-                                <CardDescription className="text-pretty text-lg">
+                                <CardDescription className="w-full text-pretty text-lg">
                                     {offer.description}
                                 </CardDescription>
                                 <div className="text-nowrap flex gap-2 items-center self-end sm:self-auto text-sm">

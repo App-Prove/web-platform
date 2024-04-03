@@ -16,7 +16,7 @@ export default async function PrivatePage() {
     }
 
     return (
-        <div className='h-full w-full mx-auto flex flex-col gap-4 mb-16 overflow-hidden'>
+        <div className='h-full w-full mx-auto flex flex-col gap-4 mb-16 overflow-visible'>
             <h1>
                 Offer details
             </h1>
