@@ -121,7 +121,7 @@ export default function PublishForm() {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            url: "steinprograms",
+            url: "",
             description: "Default description for the project.",
             date: { from: new Date(), to: addDays(new Date(), 20) },
             budget: '100',
@@ -161,9 +161,9 @@ export default function PublishForm() {
                         <FormItem className="grid w-full gap-1.5">
                             <FormLabel>Project url</FormLabel>
                             <div className='flex'>
-                                <Input className='rounded-e-none w-fit text-gray-500' disabled type='text' id="domain" value="github.com/" />
-                                <FormControl>
-                                    <Input className='rounded-l-none' placeholder="" {...field} />
+                                <Input className='rounded-r-none border-r-0 placeholder:text-muted-foreground max-w-fit w-[125px]' disabled type='text' id="domain" placeholder="github.com/" />
+                                <FormControl className="flex-1">
+                                    <Input className='flex-1 rounded-l-none' placeholder="name of organisation" {...field} />
                                 </FormControl>
                             </div>
                             <FormDescription>This is the github url of the project</FormDescription>
@@ -265,7 +265,7 @@ export default function PublishForm() {
                                                 input.blur();
                                             }
                                         }
-                                    }} className="overflow-visible bg-transparent text-base">
+                                    }} className="overflow-visible bg-transparent">
                                         <div
                                             className="group border border-input px-3 py-2 text-sm ring-offset-background rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
                                         >
@@ -305,7 +305,7 @@ export default function PublishForm() {
                                                     onBlur={() => setOpen(false)}
                                                     onFocus={() => setOpen(true)}
                                                     placeholder="Select frameworks..."
-                                                    className="ml-2 bg-transparent outline-none placeholder:text-muted-foreground flex-1"
+                                                    className="ml-2 bg-transparent outline-none placeholder:text-muted-foreground flex-1 text-base"
                                                 />
                                             </div>
                                         </div>
@@ -361,7 +361,7 @@ export default function PublishForm() {
                         </div>
                     )}
                 />
-                <Button className='self-end' type="submit">Proceed to payment</Button>
+                <Button className='self-end' type="submit">Create offer</Button>
             </form>
         </Form>
     )
