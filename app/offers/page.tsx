@@ -20,9 +20,9 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/server";
-import { off } from "process";
 
 export default async function OffersPage() {
+    
     const resultNumber = 10;
     const offers = [
         {
@@ -30,13 +30,13 @@ export default async function OffersPage() {
             title: "SteinPrograms",
             badges: ["C++", "Python", "API", "Trading"],
             description: "Evolving in the trading sector, we are developing robust algorithms in C++. Our software needs to be reliable and verified by different entities to ensure extreme reliability.",
-            budget: '1 000',
+            budget: '1000',
 
         },
     ]
     // get offers from db here
     const supabase = createClient();
-    const { data, error } = await supabase.from('offers').select('*');
+    const { data, error } = await supabase.from('offers').select('*').eq('payment_status','complete');
     console.log(data)
     // combine offers from db and offers from the array
     offers.push(...(data as any[])?.map(offer => ({
@@ -46,6 +46,11 @@ export default async function OffersPage() {
         description: offer.description,
         budget: offer.budget,
     })))
+
+    let USDollar = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    });
 
     return (
         <div className="flex gap-6 flex-col md:flex-row">
@@ -66,7 +71,7 @@ export default async function OffersPage() {
                                         <div className="flex gap-2 flex-col w-full">
                                             <div className="flex flex-col sm:flex-row justify-between items-center">
                                                 <CardTitle className="self-start">{offer.title}</CardTitle>
-                                                <p className="self-start sm:flex-end">{offer.budget + ' $'}</p>
+                                                <p className="self-start sm:flex-end">{USDollar.format(Number(offer.budget))}</p>
                                             </div>
                                             <div className="flex gap-2 flex-wrap">
                                                 {offer.badges.map(badge => (

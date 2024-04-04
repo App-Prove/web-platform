@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CalendarIcon } from "@radix-ui/react-icons"
+import { CalendarIcon, ReloadIcon } from "@radix-ui/react-icons"
 import { addDays, format, subDays } from "date-fns"
 import { DateRange } from "react-day-picker"
 
@@ -49,6 +49,8 @@ import { Badge } from "@/components/ui/badge";
 import { Command as CommandPrimitive } from "cmdk";
 import { postFormToDB } from "@/app/publish/actions"
 import { CheckoutForm } from "./checkout"
+import CurrencyInput from 'react-currency-input-field';
+
 
 
 type Framework = Record<"value" | "label", string>;
@@ -118,6 +120,7 @@ const FormSchema = z.object({
 
 export default function PublishForm() {
     const [open, setOpen] = React.useState(false)
+    const [loading, setLoading] = React.useState(false)
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -140,6 +143,9 @@ export default function PublishForm() {
         //         </pre>
         //     ),
         // })
+
+        // If we go backwards, we should be able to modify content of the db 
+        // and create a new payment intent
 
         postFormToDB(data)
     }
@@ -356,14 +362,42 @@ export default function PublishForm() {
                         <div className="grid w-full gap-1.5">
                             <FormLabel>Budget</FormLabel>
                             <FormControl>
-                                <Input className="self-start " type='number' id="budget" placeholder="how much are you willing to spend?" {...field} />
+                                <CurrencyInput
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50k text-base"
+                                    id="budget"
+                                    placeholder="Define your budget"
+                                    decimalsLimit={2}
+                                    onValueChange={(value, name, values) => form.setValue('budget',value as string)}
+                                    prefix="$"
+                                />
                             </FormControl>
                             <FormDescription>This is the budget you are willing to spend for the audit</FormDescription>
                             <FormMessage />
                         </div>
                     )}
                 />
-                <Button className='self-end' type="submit">Go to payment</Button>
+                <Button
+                    className='self-end'
+                    type="submit"
+                    onClick={() => {
+                        if (form.formState.isValid){
+                        setLoading(true)
+                        form.handleSubmit(onSubmit, onError)()
+                        }
+                    }
+                    }
+                    disabled={loading}
+                >
+                    {!loading ?
+
+                        <>Proceed payment</>
+                        :
+                        <>
+                            <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                            <p>Please wait</p>
+                        </>
+                    }
+                </Button>
             </form>
         </Form>
     )

@@ -30,28 +30,6 @@ export default async function PrivatePage() {
             <h1>Payment processed</h1>
            <Return></Return> 
             </div>
-            <Breadcrumb className='self-center'>
-                <BreadcrumbList>
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <BreadcrumbEllipsis />
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <Link href="/publish">
-                        <BreadcrumbPage>Offer creation</BreadcrumbPage>
-                        </Link>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <BreadcrumbPage>Payment</BreadcrumbPage>
-                    </BreadcrumbItem>
-                </BreadcrumbList>
-            </Breadcrumb>
-
         </div>
     )
 }

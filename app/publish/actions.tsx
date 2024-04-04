@@ -32,6 +32,7 @@ export async function postFormToDB(formData: any) {
     // redirect to payment page
 
     if (data) {
+        // Create payment intent
         redirect(`/publish/payment?budget=${formData.budget}&id=${data[0]?.id ?? ''}`)
     }
     redirect(`/publish/error`)
