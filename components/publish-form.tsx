@@ -48,6 +48,7 @@ import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Command as CommandPrimitive } from "cmdk";
 import { postFormToDB } from "@/app/publish/actions"
+import { CheckoutForm } from "./checkout"
 
 
 type Framework = Record<"value" | "label", string>;
@@ -139,6 +140,7 @@ export default function PublishForm() {
                 </pre>
             ),
         })
+
         postFormToDB(data)
     }
 
@@ -361,7 +363,7 @@ export default function PublishForm() {
                         </div>
                     )}
                 />
-                <Button className='self-end' type="submit">Create offer</Button>
+                <Button className='self-end' type="submit">Go to payment</Button>
             </form>
         </Form>
     )

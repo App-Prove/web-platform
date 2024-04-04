@@ -3,6 +3,7 @@ import * as React from "react"
 import { redirect } from 'next/navigation'
 import PublishForm from "@/components/publish-form"
 import { createClient } from "@/utils/supabase/server"
+import { CheckoutForm } from "@/components/checkout"
 
 
 

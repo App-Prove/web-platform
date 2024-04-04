@@ -25,10 +25,10 @@ export default async function PrivatePage() {
     }
 
     return (
-        <div className='flex flex-1 flex-col'>
+        <div className='flex-1 flex flex-col'>
             <div className='flex-1'>
-            <h1>Payment</h1>
-                <CheckoutForm></CheckoutForm>
+            <h1>Payment processed</h1>
+           <Return></Return> 
             </div>
             <Breadcrumb className='self-center'>
                 <BreadcrumbList>
