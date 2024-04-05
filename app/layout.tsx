@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react"
+import { set } from "date-fns";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,8 +24,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const supabase = createClient();
-  const { data, error } = await supabase.auth.refreshSession();
-  const {session, user} = data;
+  const { data, error } = await supabase.auth.getUser();
+  const user = data?.user;
   return (
     <html lang="en">
       <body className={inter.className}>

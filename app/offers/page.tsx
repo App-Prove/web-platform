@@ -42,7 +42,7 @@ export default async function OffersPage() {
     offers.push(...(data as any[])?.map(offer => ({
         url: offer.id,
         title: offer.url,
-        badges: offer.frameworks.split(','),
+        badges: offer.keywords.split(','),
         description: offer.description,
         budget: offer.budget,
     })))

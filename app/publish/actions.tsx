@@ -22,11 +22,14 @@ export async function postFormToDB(formData: any) {
             from: formData.date.from,
             to: formData.date.to,
             budget: formData.budget,
-            frameworks: formData.frameworks.map((framework: { label: string; }) => (framework.label)).join(','), // convert array to string
+            keywords: formData.keywords.map((keyword: { label: string; }) => (keyword.label)).join(','), // convert array to string
             payment_status: 'pending'
         }
     ]).select()
     console.log(error)
+    if (error) {
+        redirect(`/publish/error`)
+    }
     console.log(data)
     // create a payment intent with stripe
     // redirect to payment page
@@ -36,4 +39,14 @@ export async function postFormToDB(formData: any) {
         redirect(`/publish/payment?budget=${formData.budget}&id=${data[0]?.id ?? ''}`)
     }
     redirect(`/publish/error`)
+}
+
+export async function publishNewKeyword(keyword: string) {
+    const supabase = createClient();
+    const { data, error } = await supabase.from('keywords').insert([
+        {
+            label: keyword
+        }
+    ]).select()
+    return { data, error}
 }

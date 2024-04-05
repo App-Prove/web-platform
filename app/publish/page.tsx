@@ -12,16 +12,22 @@ export default async function PrivatePage() {
 
     const { data, error } = await supabase.auth.getUser()
     if (error || !data?.user) {
-        console.log(data)
         redirect('/login')
     }
+    const { data: keywordList } = await supabase.from('keywords').select('*')
+    const keywords: Keyword[] = keywordList?.map((keyword) => {
+        return {
+            value: keyword.label.toLowerCase(),
+            label: keyword.label,
+        }
+    }) || [];
 
     return (
         <div className='h-full w-full mx-auto flex flex-col gap-4 mb-16 overflow-visible'>
             <h1>
                 Offer details
             </h1>
-            <PublishForm></PublishForm>
+            <PublishForm keywords={keywords}></PublishForm>
         </div>
     )
 }

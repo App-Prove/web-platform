@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { CalendarIcon, ReloadIcon } from "@radix-ui/react-icons"
-import { addDays, format, subDays } from "date-fns"
+import { addDays, format, set, subDays } from "date-fns"
 import { DateRange } from "react-day-picker"
 
 import { Calendar } from "@/components/ui/calendar"
@@ -42,53 +42,17 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
+    CommandShortcut,
 } from "@/components/ui/command"
 import { X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Command as CommandPrimitive } from "cmdk";
-import { postFormToDB } from "@/app/publish/actions"
+import { postFormToDB, publishNewKeyword } from "@/app/publish/actions"
 import { CheckoutForm } from "./checkout"
 import CurrencyInput from 'react-currency-input-field';
+import { useRef } from "react"
 
-
-
-type Framework = Record<"value" | "label", string>;
-
-const FRAMEWORKS = [
-    {
-        value: "next.js",
-        label: "Next.js",
-    },
-    {
-        value: "sveltekit",
-        label: "SvelteKit",
-    },
-    {
-        value: "nuxt.js",
-        label: "Nuxt.js",
-    },
-    {
-        value: "remix",
-        label: "Remix",
-    },
-    {
-        value: "astro",
-        label: "Astro",
-    },
-    {
-        value: "wordpress",
-        label: "WordPress",
-    },
-    {
-        value: "express.js",
-        label: "Express.js",
-    },
-    {
-        value: "nest.js",
-        label: "Nest.js",
-    }
-] satisfies Framework[];
 const FormSchema = z.object({
     url: z.string({
         required_error: "Please put a valid github repo",
@@ -107,34 +71,30 @@ const FormSchema = z.object({
         if ((value.from as Date) < subDays(new Date(), 1)) return false
         return true
     }, { message: 'Please select a valid date.' }),
-    frameworks: z.custom<Framework[]>((value) => {
-        console.log(value)
+    keywords: z.custom<Keyword[]>((value) => {
         if (!value) return false
         if (typeof value !== "object" || !Array.isArray(value)) return false;
         // check if there is at least one element
         if (value.length === 0) return false
         return true
-    }, { message: 'Please select at least one framework.' }),
+    }, { message: 'Please select at least one keyword.' }),
 })
 
 
-export default function PublishForm() {
+export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const [open, setOpen] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            url: "",
-            description: "Default description for the project.",
-            date: { from: new Date(), to: addDays(new Date(), 20) },
-            budget: '100',
-            frameworks: [],
-        },
+            keywords: [],
+        }
     })
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
-        console.log(data)
+        // save all data in states
+        saveState(data)
         // toast({
         //     title: "You submitted the following values:",
         //     description: (
@@ -154,10 +114,26 @@ export default function PublishForm() {
         console.log(errors)
     }
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const [selected, setSelected] = React.useState<Framework[]>([]);
+    const [selected, setSelected] = React.useState<Keyword[]>([]);
     const [inputValue, setInputValue] = React.useState("");
 
-    const selectables = FRAMEWORKS.filter(framework => !selected.includes(framework));
+    // Save all values in const
+    const [selectedKeywords, setSelectedKeywords] = React.useState<Keyword[]>(keywords);
+    const [budget, setBudget] = React.useState<string>("");
+    const [url, setUrl] = React.useState<string>("");
+    const [description, setDescription] = React.useState<string>("");
+    const [date, setDate] = React.useState<DateRange>({ from: new Date(), to: addDays(new Date(), 7) });
+    function saveState(data: { url: string; description: string; budget: string; date: DateRange; keywords: Keyword[] }) {
+        setUrl(data.url)
+        setDescription(data.description)
+        setBudget(data.budget)
+        setDate(data.date)
+        setSelectedKeywords(data.keywords)
+    }
+
+
+    const selectables = keywords.filter(keyword => !selected.includes(keyword));
+    const inputValueRef = useRef<string | undefined>();
 
     return (
         <Form {...form}>
@@ -171,7 +147,7 @@ export default function PublishForm() {
                             <div className='flex'>
                                 <Input className='rounded-r-none border-r-0 placeholder:text-muted-foreground max-w-fit w-[125px]' disabled type='text' id="domain" placeholder="github.com/" />
                                 <FormControl className="flex-1">
-                                    <Input className='flex-1 rounded-l-none' placeholder="name of organisation" {...field} />
+                                    <Input className='flex-1 rounded-l-none' id="url" placeholder="name of organisation" {...field} />
                                 </FormControl>
                             </div>
                             <FormDescription>This is the github url of the project</FormDescription>
@@ -249,62 +225,106 @@ export default function PublishForm() {
                 <Separator />
                 <FormField
                     control={form.control}
-                    name="frameworks"
+                    name="keywords"
                     render={({ field }) => (
                         <div className="grid w-full gap-1.5">
-                            <FormLabel>Framework</FormLabel>
+                            <FormLabel>Keyword</FormLabel>
                             <FormItem>
                                 <FormControl>
-                                    <Command onKeyDown={(e) => {
+                                    <Command onKeyDown={async (e) => {
                                         const input = inputRef.current
                                         if (input) {
                                             if (e.key === "Delete" || e.key === "Backspace") {
+                                                // If we want to delete the last keyword
                                                 if (input.value === "") {
+                                                    // Remove the last keyword from selected
                                                     setSelected(prev => {
                                                         const newSelected = [...prev];
                                                         newSelected.pop();
                                                         return newSelected;
                                                     })
-                                                    form.setValue("frameworks", field.value.slice(0, -1));
+                                                    // Remove the last keyword from the form
+                                                    if (field.value && field.value.length > 0) {
+                                                        form.setValue("keywords", field.value.slice(0, -1));
+                                                    }
                                                 }
                                             }
                                             // This is not a default behaviour of the <input /> field
                                             if (e.key === "Escape") {
                                                 input.blur();
                                             }
+                                            // If we want to add a new keyword
+                                            if (e.key === "Spacebar" || e.key === " ") {
+                                                if (inputValue.trim() === "") {
+                                                    return;
+                                                }
+                                                // Remove the space from the input value
+                                                setInputValue(inputValue.trim());
+                                                inputValueRef.current = inputValue.trim();
+                                                // Server action to publish new keyword
+                                                const { data, error } = await publishNewKeyword(inputValueRef.current)
+                                                if (error) {
+                                                    toast({
+                                                        title: "Error",
+                                                        description: "An error occured while adding the keyword " + error.message,
+                                                    })
+                                                    return
+                                                }
+                                                toast({
+                                                    title: "Keyword added",
+                                                    description: "The keyword has been added to the list",
+                                                })
+                                                const newKeyword = { value: inputValueRef.current?.toLowerCase(), label: inputValueRef.current }
+                                                // Add it to the list of possibilities
+                                                keywords.push(newKeyword)
+                                                // Add it to the list of selected keywords
+                                                setSelected(prev => [...prev, newKeyword])
+                                                form.setValue("keywords", [...field.value, newKeyword])
+                                                setInputValue("")
+                                                // Don't take the space into consideration
+                                                e.preventDefault();
+                                            }
                                         }
-                                    }} className="overflow-visible bg-transparent">
+                                        // What happens if there is nothing in selectables?
+                                        console.log('selectables', selectables)
+                                    }
+                                    }
+                                        className="overflow-visible bg-transparent">
                                         <div
                                             className="group border border-input px-3 py-2 text-sm ring-offset-background rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
                                         >
                                             <div className="flex gap-1 flex-wrap">
-                                                {field.value.map((framework) => {
-                                                    return (
-                                                        <Badge key={framework.value} variant="secondary">
-                                                            {framework.label}
-                                                            <button
-                                                                className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                                                onKeyDown={(e) => {
-                                                                    if (e.key === "Enter") {
-                                                                        setSelected(prev => prev.filter(s => s.value !== framework.value));
-                                                                        form.setValue("frameworks", field.value.filter(f => f.value !== framework.value));
+                                                {
+                                                    // This is the list of selected keywords
+                                                    // Displays a badge for each keyword
+                                                    // Can't be undefined
+                                                    field.value.map((keyword) => {
+                                                        return (
+                                                            <Badge key={keyword.value} variant="secondary">
+                                                                {keyword.label}
+                                                                <button
+                                                                    className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                                                    onKeyDown={(e) => {
+                                                                        if (e.key === "Enter") {
+                                                                            setSelected(prev => prev.filter(s => s.value !== keyword.value));
+                                                                            form.setValue("keywords", field.value.filter(f => f.value !== keyword.value));
+                                                                        }
+                                                                    }}
+                                                                    onMouseDown={(e) => {
+                                                                        e.preventDefault();
+                                                                        e.stopPropagation();
+                                                                    }}
+                                                                    onClick={() => {
+                                                                        setSelected(prev => prev.filter(s => s.value !== keyword.value));
+                                                                        form.setValue("keywords", field.value.filter(f => f.value !== keyword.value));
                                                                     }
-                                                                }}
-                                                                onMouseDown={(e) => {
-                                                                    e.preventDefault();
-                                                                    e.stopPropagation();
-                                                                }}
-                                                                onClick={() => {
-                                                                    setSelected(prev => prev.filter(s => s.value !== framework.value));
-                                                                    form.setValue("frameworks", field.value.filter(f => f.value !== framework.value));
-                                                                }
-                                                                }
-                                                            >
-                                                                <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                                                            </button>
-                                                        </Badge>
-                                                    )
-                                                })}
+                                                                    }
+                                                                >
+                                                                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                                                                </button>
+                                                            </Badge>
+                                                        )
+                                                    })}
                                                 {/* Avoid having the "Search" Icon */}
                                                 <CommandPrimitive.Input
                                                     ref={inputRef}
@@ -312,36 +332,45 @@ export default function PublishForm() {
                                                     onValueChange={setInputValue}
                                                     onBlur={() => setOpen(false)}
                                                     onFocus={() => setOpen(true)}
-                                                    placeholder="Select frameworks..."
+                                                    placeholder="Select keywords..."
                                                     className="ml-2 bg-transparent outline-none placeholder:text-muted-foreground flex-1 text-base"
                                                 />
                                             </div>
                                         </div>
                                         <div className="relative mt-2">
-                                            {open && selectables.length > 0 ?
+                                            {open ?
                                                 <div className="absolute w-full z-10 top-0 rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
                                                     <CommandList>
-                                                        <CommandGroup className="h-full overflow-auto">
-                                                            {selectables.map((framework) => {
-                                                                return (
-                                                                    <CommandItem
-                                                                        key={framework.value}
-                                                                        onMouseDown={(e) => {
-                                                                            e.preventDefault();
-                                                                            e.stopPropagation();
-                                                                        }}
-                                                                        onSelect={(value) => {
-                                                                            setInputValue("")
-                                                                            setSelected(prev => [...prev, framework])
-                                                                            form.setValue("frameworks", [...field.value, framework])
-                                                                        }}
-                                                                        className={"cursor-pointer"}
-                                                                    >
-                                                                        {framework.label}
-                                                                    </CommandItem>
-                                                                );
-                                                            })}
-                                                        </CommandGroup>
+                                                        <CommandEmpty>No results found. Press <CommandShortcut>spacebar</CommandShortcut> to add new</CommandEmpty>
+                                                        {
+                                                            selectables.length > 0 ?
+                                                                <CommandGroup className="h-full overflow-auto">
+                                                                    {
+                                                                        // This is the list of keywords that can be selected
+
+                                                                        selectables.map((keyword) => {
+                                                                            return (
+                                                                                <CommandItem
+                                                                                    key={keyword.value}
+                                                                                    onMouseDown={(e) => {
+                                                                                        e.preventDefault();
+                                                                                        e.stopPropagation();
+                                                                                    }}
+                                                                                    onSelect={(value) => {
+                                                                                        setInputValue("")
+                                                                                        setSelected(prev => [...prev, keyword])
+                                                                                        form.setValue("keywords", [...field.value, keyword])
+                                                                                    }}
+                                                                                    className={"cursor-pointer"}
+                                                                                >
+                                                                                    {keyword.label}
+                                                                                </CommandItem>
+                                                                            );
+                                                                        })}
+                                                                </CommandGroup>
+                                                                :
+                                                                null
+                                                        }
                                                     </CommandList>
                                                 </div>
                                                 : null}
@@ -349,7 +378,7 @@ export default function PublishForm() {
                                     </Command >
                                 </FormControl>
                             </FormItem>
-                            <FormDescription>This is the framework your code is written with</FormDescription>
+                            <FormDescription>Choose keywords which define your project best</FormDescription>
                             <FormMessage />
                         </div>
                     )}
@@ -367,7 +396,7 @@ export default function PublishForm() {
                                     id="budget"
                                     placeholder="Define your budget"
                                     decimalsLimit={2}
-                                    onValueChange={(value, name, values) => form.setValue('budget',value as string)}
+                                    onValueChange={(value, name, values) => form.setValue('budget', value as string)}
                                     prefix="$"
                                 />
                             </FormControl>
@@ -380,9 +409,9 @@ export default function PublishForm() {
                     className='self-end'
                     type="submit"
                     onClick={() => {
-                        if (form.formState.isValid){
-                        setLoading(true)
-                        form.handleSubmit(onSubmit, onError)()
+                        if (form.formState.isValid) {
+                            setLoading(true)
+                            form.handleSubmit(onSubmit, onError)()
                         }
                     }
                     }
@@ -402,3 +431,4 @@ export default function PublishForm() {
         </Form>
     )
 }
+
