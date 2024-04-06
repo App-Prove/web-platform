@@ -3,13 +3,10 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import AuthButton from "@/components/authButton";
-import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react"
-import { set } from "date-fns";
 
 const inter = Inter({ subsets: ["latin"] });
 

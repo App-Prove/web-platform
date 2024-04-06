@@ -17,12 +17,13 @@ import Link from 'next/link'
 import { CheckoutForm, Return } from '@/components/checkout'
 
 export default async function PrivatePage() {
-    const supabase = createClient()
 
+    const supabase = createClient()
     const { data, error } = await supabase.auth.getUser()
     if (error || !data?.user) {
-        redirect('/login')
+        redirect('/?error=unauthorized')
     }
+
 
     return (
         <div className='flex flex-1 flex-col'>

@@ -11,14 +11,13 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {logout} from "./server/action"
+import LoginButton from "./loginButton";
 
 export default  function AuthButton({user}:{user:any}) {
     return (
         <>
             {!user ?
-                <Link href="/login">
-                    <Button>Login</Button>
-                </Link>
+                <LoginButton></LoginButton>
                 :
                 <DropdownMenu>
                     <DropdownMenuTrigger>

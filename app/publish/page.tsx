@@ -9,10 +9,9 @@ import { CheckoutForm } from "@/components/checkout"
 
 export default async function PrivatePage() {
     const supabase = createClient()
-
     const { data, error } = await supabase.auth.getUser()
     if (error || !data?.user) {
-        redirect('/login')
+        redirect('/?error=unauthorized')
     }
     const { data: keywordList } = await supabase.from('keywords').select('*')
     const keywords: Keyword[] = keywordList?.map((keyword) => {
