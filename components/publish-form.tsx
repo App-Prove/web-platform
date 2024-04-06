@@ -48,7 +48,7 @@ import { X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Command as CommandPrimitive } from "cmdk";
-import { postFormToDB, publishNewKeyword } from "@/app/publish/actions"
+import { createPayment, publishNewKeyword } from "@/app/publish/actions"
 import { CheckoutForm } from "./checkout"
 import CurrencyInput from 'react-currency-input-field';
 import { useRef, useState } from "react"
@@ -149,7 +149,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     function onSubmit(data: z.infer<typeof FormSchema>) {
         // save all data in states
         saveState(data)
-        postFormToDB(data)
+        createPayment(data)
     }
 
     function onError(errors: any) {

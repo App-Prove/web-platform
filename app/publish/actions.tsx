@@ -9,12 +9,9 @@ export async function goToPayment() {
     redirect('/publish/payment')
 }
 
-export async function postFormToDB(formData: any) {
-    console.log('publishing to db')
-    console.log(formData)
+export async function createPayment(formData: any) {
     const supabase = createClient();
     const { data, error } = await supabase.from('offers').insert([
-
         // convert all entries to string
         {
             url: formData.url,
@@ -26,14 +23,12 @@ export async function postFormToDB(formData: any) {
             payment_status: 'pending'
         }
     ]).select()
-    console.log(error)
     if (error) {
         redirect(`/publish/error`)
     }
-    console.log(data)
+
     // create a payment intent with stripe
     // redirect to payment page
-
     if (data) {
         // Create payment intent
         redirect(`/publish/payment?budget=${formData.budget}&id=${data[0]?.id ?? ''}`)
