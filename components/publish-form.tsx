@@ -51,7 +51,8 @@ import { Command as CommandPrimitive } from "cmdk";
 import { postFormToDB, publishNewKeyword } from "@/app/publish/actions"
 import { CheckoutForm } from "./checkout"
 import CurrencyInput from 'react-currency-input-field';
-import { useRef } from "react"
+import { useRef, useState } from "react"
+
 
 const FormSchema = z.object({
     url: z.string({
@@ -60,14 +61,17 @@ const FormSchema = z.object({
     description: z.string({
         required_error: "Please add a description.",
     }),
-    budget: z.string({
-        required_error: "Please fill in the budget field.",
-    }),
+    budget: z.custom<string>((value)=>{
+        console.log('budget',value)
+        if (value === '') return false
+        return true
+
+    }, { message: 'Please add a budget.' }),
     date: z.custom<DateRange>((value) => {
+        console.log('date',value)
         if (!value) return false
         if (typeof value !== "object") return false
         if (!("from" in value) || !("to" in value)) return false
-        if (typeof value.to !== "object") return false
         if ((value.from as Date) < subDays(new Date(), 1)) return false
         return true
     }, { message: 'Please select a valid date.' }),
@@ -84,45 +88,57 @@ const FormSchema = z.object({
 export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const [open, setOpen] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
+    const [selected, setSelected] = React.useState<Keyword[]>([]);
+    const [inputValue, setInputValue] = React.useState("");
+
+    const selectables = keywords.filter(keyword => !selected.includes(keyword));
+    const inputRef = React.useRef<HTMLInputElement>(null);
+    const inputValueRef = useRef<string | undefined>();
+
+    // Load initial state from localStorage
+    const getInitialState = <T extends unknown>(key: string, defaultValue: T): T => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem(key);
+            if (saved) {
+                console.log(saved)
+                if(saved === 'undefined') return defaultValue
+                return JSON.parse(saved);
+            }
+        }
+        return defaultValue;
+    };
+    // Save state to localStorage
+    const useLocalStorage = <T extends unknown>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] => {
+        const [storedValue, setStoredValue] = useState<T>(() => getInitialState(key, initialValue));
+
+        const setValue = (value: T | ((val: T) => T)) => {
+            const valueToStore = value instanceof Function ? value(storedValue) : value;
+            setStoredValue(valueToStore);
+            if (typeof window !== 'undefined') {
+                localStorage.setItem(key, JSON.stringify(valueToStore));
+            }
+        };
+
+        return [storedValue, setValue];
+    };
+
+    const [selectedKeywords, setSelectedKeywords] = useLocalStorage<Keyword[]>('selectedKeywords', []);
+    const [budget, setBudget] = useLocalStorage<string>('budget', "");
+    const [url, setUrl] = useLocalStorage<string>('url', "");
+    const [description, setDescription] = useLocalStorage<string>('description', "");
+    const [date, setDate] = useLocalStorage<DateRange>('date', { from: undefined, to: undefined });
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            keywords: [],
+            url: url,
+            description: description,
+            budget: budget,
+            keywords: selectedKeywords,
+            date: date,
         }
     })
 
-    function onSubmit(data: z.infer<typeof FormSchema>) {
-        // save all data in states
-        saveState(data)
-        // toast({
-        //     title: "You submitted the following values:",
-        //     description: (
-        //         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-        //             <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        //         </pre>
-        //     ),
-        // })
-
-        // If we go backwards, we should be able to modify content of the db 
-        // and create a new payment intent
-
-        postFormToDB(data)
-    }
-
-    function onError(errors: any) {
-        console.log(errors)
-    }
-    const inputRef = React.useRef<HTMLInputElement>(null);
-    const [selected, setSelected] = React.useState<Keyword[]>([]);
-    const [inputValue, setInputValue] = React.useState("");
-
-    // Save all values in const
-    const [selectedKeywords, setSelectedKeywords] = React.useState<Keyword[]>(keywords);
-    const [budget, setBudget] = React.useState<string>("");
-    const [url, setUrl] = React.useState<string>("");
-    const [description, setDescription] = React.useState<string>("");
-    const [date, setDate] = React.useState<DateRange>({ from: new Date(), to: addDays(new Date(), 7) });
     function saveState(data: { url: string; description: string; budget: string; date: DateRange; keywords: Keyword[] }) {
         setUrl(data.url)
         setDescription(data.description)
@@ -130,10 +146,15 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
         setDate(data.date)
         setSelectedKeywords(data.keywords)
     }
+    function onSubmit(data: z.infer<typeof FormSchema>) {
+        // save all data in states
+        saveState(data)
+        postFormToDB(data)
+    }
 
-
-    const selectables = keywords.filter(keyword => !selected.includes(keyword));
-    const inputValueRef = useRef<string | undefined>();
+    function onError(errors: any) {
+        console.log(errors)
+    }
 
     return (
         <Form {...form}>
@@ -394,9 +415,10 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                                 <CurrencyInput
                                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50k text-base"
                                     id="budget"
+                                    value={field.value??''}
                                     placeholder="Define your budget"
                                     decimalsLimit={2}
-                                    onValueChange={(value, name, values) => form.setValue('budget', value as string)}
+                                    onValueChange={(value, name, values) => {console.log(value); form.setValue('budget', value??''); setBudget(value??'')}}
                                     prefix="$"
                                 />
                             </FormControl>

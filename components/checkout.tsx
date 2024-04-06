@@ -66,6 +66,7 @@ export const Return = () => {
   }
 
   if (status === 'complete') {
+    localStorage.clear();
     return (
       <section id="success">
         <p>
