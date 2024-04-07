@@ -106,7 +106,7 @@ const FormSchema = z.object({
 
 export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const [open, setOpen] = React.useState(false)
-    const [loading, setLoading] = React.useState(false)
+    const [processing, setProcessing] = React.useState(false)
     const [selected, setSelected] = React.useState<Keyword[]>([]);
     const [inputValue, setInputValue] = React.useState("");
     const [error, setError] = React.useState<string | undefined>();
@@ -166,10 +166,10 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
         setSelectedKeywords(data.keywords)
     }
     function onSubmit(data: z.infer<typeof FormSchema>) {
+        setProcessing(true)
         // save all data in states
         saveState(data)
         // Check if there is db entry (id in localStorage)
-        const supabase = createClient()
         console.log('ID before', localStorage.getItem('id'))
         if (Number(localStorage.getItem('id')) !== 0) {
             console.log('test')
@@ -230,7 +230,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                             <FormLabel>Project url</FormLabel>
                             <div className='flex'>
                                 <Input className='rounded-r-none border-r-0 placeholder:text-muted-foreground max-w-fit w-[125px]' disabled type='text' id="domain" placeholder="github.com/" />
-                                <FormControl className="flex-1" onChange={() => saveState(form.getValues())}>
+                                <FormControl className="flex-1">
                                     <Input className='flex-1 rounded-l-none' id="url" placeholder="name of organisation" {...field} />
                                 </FormControl>
                             </div>
@@ -247,7 +247,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                     render={({ field }) => (
                         <div className="grid w-full gap-1.5">
                             <FormLabel>Short description</FormLabel>
-                            <FormControl onChange={() => saveState(form.getValues())}>
+                            <FormControl >
                                 <Textarea placeholder="Explain what the auditor has to look at." id="message" {...field} />
                             </FormControl>
                             <FormDescription>This is a short description of the work you are looking for</FormDescription>
@@ -285,7 +285,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                                                 )
                                             ) : (
                                                 <span
-                                                    className="bg-background text-muted-foreground text-base"
+                                                    className="text-muted-foreground text-base"
                                                 >Pick a date</span>
                                             )}
                                         </Button>
@@ -475,7 +475,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                     render={({ field }) => (
                         <div className="grid w-full gap-1.5">
                             <FormLabel>Budget</FormLabel>
-                            <FormControl onChange={() => saveState(form.getValues())}>
+                            <FormControl>
                                 <CurrencyInput
                                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50k text-base"
                                     id="budget"
@@ -494,16 +494,9 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                 <Button
                     className='self-end'
                     type="submit"
-                    onClick={() => {
-                        if (form.formState.isValid) {
-                            setLoading(true)
-                            form.handleSubmit(onSubmit, onError)()
-                        }
-                    }
-                    }
-                    disabled={loading}
+                    disabled={processing}
                 >
-                    {!loading ?
+                    {!processing ?
 
                         <>Proceed payment</>
                         :
