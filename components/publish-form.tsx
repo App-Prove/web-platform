@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CalendarIcon, ReloadIcon } from "@radix-ui/react-icons"
+import { BellIcon, CalendarIcon, ReloadIcon } from "@radix-ui/react-icons"
 import { addDays, format, set, subDays } from "date-fns"
 import { DateRange } from "react-day-picker"
 
@@ -52,7 +52,18 @@ import { Command as CommandPrimitive } from "cmdk";
 import { createPayment, publishNewKeyword, registerOffer, updateOffer } from "@/app/publish/actions"
 import { CheckoutForm } from "./checkout"
 import CurrencyInput from 'react-currency-input-field';
-import { useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+import { ScrollArea } from "./ui/scroll-area"
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
 
 
 const FormSchema = z.object({
@@ -113,6 +124,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const selectables = keywords.filter(keyword => !selected.includes(keyword));
     const inputRef = React.useRef<HTMLInputElement>(null);
     const inputValueRef = useRef<string | undefined>();
+    const [repositories, setRepositories] = React.useState<Repository[]>([])
 
     // Load initial state from localStorage
     const getInitialState = <T extends unknown>(key: string, defaultValue: T): T => {
@@ -157,6 +169,34 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
             date: date,
         }
     })
+    const loadGithubProjects = useCallback(async () => {
+        const supabase = createClient()
+        const { data: userData, error } = await supabase.auth.getUser()
+        const response = await fetch(`https://api.github.com/users/${userData.user?.user_metadata.user_name}/repos`)
+        const data = await response.json()
+        if (data.error) {
+            setError(data.error)
+            return
+        }
+        setRepositories(data.map((project: Repository) => project as Repository))
+    }, []);
+
+    useEffect(() => {
+        loadGithubProjects();
+    }, [loadGithubProjects]);
+
+    // const loadGithubProjects = async () => {
+    //     const supabase = createClient()
+    //     const {data:userData,error} = await supabase.auth.getUser()
+    //     const response = await fetch(`https://api.github.com/users/${userData.user?.user_metadata.user_name}/repos`)
+    //     const data = await response.json()
+    //     if (data.error) {
+    //         setError(data.error)
+    //         return
+    //     }
+    //     setProjects(data.map((project: Repository) => project))
+    // }
+    // loadGithubProjects()
 
     function saveState(data: { url: string; description: string; budget: string; date: DateRange; keywords: Keyword[] }) {
         setUrl(data.url)
@@ -183,7 +223,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                 });
                 console.log(error)
                 if (error) {
-                    setError('An error occured while updating the offer: '+error.message)
+                    setError('An error occured while updating the offer: ' + error.message)
                     return
                 }
                 setId(loadId)
@@ -192,13 +232,13 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
             updateNewOffer();
             if (error)
                 sonner('An error occured while updating the offer')
-                localStorage.clear()
+            localStorage.clear()
             console.log('ID after update', id);
         }
         else {
             console.log('THERE IS NOTHIBNG')
             const registerNewOffer = async () => {
-                const {data:loadId,error} = await registerOffer({
+                const { data: loadId, error } = await registerOffer({
                     ...data,
                     date: {
                         from: data.date?.from,
@@ -228,6 +268,41 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                     render={({ field }) => (<>
                         <FormItem className="grid w-full gap-1.5">
                             <FormLabel>Project url</FormLabel>
+                            <div className='flex flex-1 flex-wrap gap-x-4'>
+                                <FormControl className="flex-1 ">
+                                    <ScrollArea className="h-72 w-48 rounded-md border">
+                                        <div className="p-4">
+                                            <h4 className="mb-4 text-sm font-medium leading-none">Repositories</h4>
+                                            <RadioGroup
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                            >
+                                                {repositories.map((repository) => (
+                                                    <>
+                                                        <div className="flex items-center space-x-2">
+                                                            <RadioGroupItem value={repository.full_name} id={repository.full_name} />
+                                                            <Label htmlFor={repository.full_name}>{repository.full_name}</Label>
+                                                        </div>
+                                                        <Separator className="my-2" />
+                                                    </>
+                                                ))}
+                                            </RadioGroup>
+                                        </div>
+                                    </ScrollArea>
+                                </FormControl>
+                            </div>
+                            <FormDescription>This is the github url of the project</FormDescription>
+                            <FormMessage />
+
+                        </FormItem>
+                    </>)}
+                />
+                {/* <FormField
+                    control={form.control}
+                    name="url"
+                    render={({ field }) => (<>
+                        <FormItem className="grid w-full gap-1.5">
+                            <FormLabel>Project url</FormLabel>
                             <div className='flex'>
                                 <Input className='rounded-r-none border-r-0 placeholder:text-muted-foreground max-w-fit w-[125px]' disabled type='text' id="domain" placeholder="github.com/" />
                                 <FormControl className="flex-1">
@@ -239,7 +314,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
 
                         </FormItem>
                     </>)}
-                />
+                /> */}
                 <Separator />
                 <FormField
                     control={form.control}
