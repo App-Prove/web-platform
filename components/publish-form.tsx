@@ -55,24 +55,42 @@ import { useRef, useState } from "react"
 
 
 const FormSchema = z.object({
-    url: z.string({
-        required_error: "Please put a valid github repo",
-    }),
-    description: z.string({
-        required_error: "Please add a description.",
-    }),
-    budget: z.custom<string>((value)=>{
-        console.log('budget',value)
-        if (value === '') return false
-        return true
+    url: z.string().superRefine((value, ctx) => {
+        if (value === '') {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "You forgot to add a repo",
+            });
+        }
+        // Check if repo value is accessible through github
+    }
+    ),
+    description: z.string().superRefine((
+        (value, ctx) => {
+            if (value === '') ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Please add a description",
+            });
+        }),
+    ),
+    budget: z.string().superRefine((value, ctx) => {
+        if (value === '') ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Please add a budget",
+        });
+        if (Number(value) > 20000) ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Please choose a reasonable budget",
+        });
 
-    }, { message: 'Please add a budget.' }),
+    }),
     date: z.custom<DateRange>((value) => {
-        console.log('date',value)
         if (!value) return false
         if (typeof value !== "object") return false
         if (!("from" in value) || !("to" in value)) return false
         if ((value.from as Date) < subDays(new Date(), 1)) return false
+        if (!['object', 'string'].includes(typeof value.from) || !['object', 'string'].includes(typeof value.to)) return false
+        if ((value.to as Date) < subDays(new Date(), 1)) return false
         return true
     }, { message: 'Please select a valid date.' }),
     keywords: z.custom<Keyword[]>((value) => {
@@ -100,8 +118,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
         if (typeof window !== 'undefined') {
             const saved = localStorage.getItem(key);
             if (saved) {
-                console.log(saved)
-                if(saved === 'undefined') return defaultValue
+                if (saved === 'undefined') return defaultValue
                 return JSON.parse(saved);
             }
         }
@@ -167,7 +184,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                             <FormLabel>Project url</FormLabel>
                             <div className='flex'>
                                 <Input className='rounded-r-none border-r-0 placeholder:text-muted-foreground max-w-fit w-[125px]' disabled type='text' id="domain" placeholder="github.com/" />
-                                <FormControl className="flex-1">
+                                <FormControl className="flex-1" onChange={()=>saveState(form.getValues())}>
                                     <Input className='flex-1 rounded-l-none' id="url" placeholder="name of organisation" {...field} />
                                 </FormControl>
                             </div>
@@ -184,7 +201,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                     render={({ field }) => (
                         <div className="grid w-full gap-1.5">
                             <FormLabel>Short description</FormLabel>
-                            <FormControl>
+                            <FormControl onChange={()=>saveState(form.getValues())}>
                                 <Textarea placeholder="Explain what the auditor has to look at." id="message" {...field} />
                             </FormControl>
                             <FormDescription>This is a short description of the work you are looking for</FormDescription>
@@ -221,8 +238,8 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                                                     format(field.value.from, "LLL dd, y")
                                                 )
                                             ) : (
-                                                <span 
-                                                className="bg-background text-muted-foreground text-base"
+                                                <span
+                                                    className="bg-background text-muted-foreground text-base"
                                                 >Pick a date</span>
                                             )}
                                         </Button>
@@ -370,7 +387,6 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                                                                 <CommandGroup className="h-full overflow-auto">
                                                                     {
                                                                         // This is the list of keywords that can be selected
-
                                                                         selectables.map((keyword) => {
                                                                             return (
                                                                                 <CommandItem
@@ -413,14 +429,14 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                     render={({ field }) => (
                         <div className="grid w-full gap-1.5">
                             <FormLabel>Budget</FormLabel>
-                            <FormControl>
+                            <FormControl onChange={()=>saveState(form.getValues())}>
                                 <CurrencyInput
                                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50k text-base"
                                     id="budget"
-                                    value={field.value??''}
+                                    value={field.value ?? ''}
                                     placeholder="Define your budget"
                                     decimalsLimit={2}
-                                    onValueChange={(value, name, values) => {console.log(value); form.setValue('budget', value??''); setBudget(value??'')}}
+                                    onValueChange={(value, name, values) => { console.log(value); form.setValue('budget', value ?? ''); setBudget(value ?? '') }}
                                     prefix="$"
                                 />
                             </FormControl>
