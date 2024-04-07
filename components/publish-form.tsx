@@ -221,7 +221,9 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                                                     format(field.value.from, "LLL dd, y")
                                                 )
                                             ) : (
-                                                <span>Pick a date</span>
+                                                <span 
+                                                className="bg-background text-muted-foreground text-base"
+                                                >Pick a date</span>
                                             )}
                                         </Button>
                                     </PopoverTrigger>
