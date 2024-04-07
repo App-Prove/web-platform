@@ -14,14 +14,15 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY ?? '');
 
 export const CheckoutForm = () => {
   const fetchClientSecret = useCallback(() => {
-    // get budget and id from the query string
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const budget = urlParams.get('budget');
-    const id = urlParams.get('id');
+    // Get the id from localStorage
+    const id = localStorage.getItem('id');
     // Create a Checkout Session
-    return fetch(`/stripe/create-checkout-session?budget=${budget}&id=${id}`, {
+    return fetch(`/stripe/create-checkout-session`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({id: id})
     })
       .then((res) => res.json())
       .then((data) => data.clientSecret);

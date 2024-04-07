@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.from('offers').update({
       payment_status: 'complete'
     }).eq('id', session.metadata.id).select();
-    console.log(data)
+    //TODO handle error
   }
   return NextResponse.json({
     id: session.metadata.id??'',

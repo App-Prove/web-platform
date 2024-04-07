@@ -34,6 +34,7 @@ import {
 import { toast } from "@/components/ui/use-toast"
 import { createClient } from "@/utils/supabase/clients"
 import { Separator } from "@/components/ui/separator"
+import { toast as sonner } from "sonner"
 
 import {
     Command,
@@ -48,7 +49,7 @@ import { X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Command as CommandPrimitive } from "cmdk";
-import { createPayment, publishNewKeyword } from "@/app/publish/actions"
+import { createPayment, publishNewKeyword, registerOffer, updateOffer } from "@/app/publish/actions"
 import { CheckoutForm } from "./checkout"
 import CurrencyInput from 'react-currency-input-field';
 import { useRef, useState } from "react"
@@ -108,7 +109,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const [loading, setLoading] = React.useState(false)
     const [selected, setSelected] = React.useState<Keyword[]>([]);
     const [inputValue, setInputValue] = React.useState("");
-
+    const [error, setError] = React.useState<string | undefined>();
     const selectables = keywords.filter(keyword => !selected.includes(keyword));
     const inputRef = React.useRef<HTMLInputElement>(null);
     const inputValueRef = useRef<string | undefined>();
@@ -144,6 +145,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const [url, setUrl] = useLocalStorage<string>('url', "");
     const [description, setDescription] = useLocalStorage<string>('description', "");
     const [date, setDate] = useLocalStorage<DateRange>('date', { from: undefined, to: undefined });
+    const [id, setId] = useLocalStorage<number>('id', 0)
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -166,7 +168,51 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     function onSubmit(data: z.infer<typeof FormSchema>) {
         // save all data in states
         saveState(data)
-        createPayment(data)
+        // Check if there is db entry (id in localStorage)
+        const supabase = createClient()
+        console.log('ID before', localStorage.getItem('id'))
+        if (Number(localStorage.getItem('id')) !== 0) {
+            console.log('test')
+            const updateNewOffer = async () => {
+                const { data: loadId, error } = await updateOffer(id, {
+                    ...data,
+                    date: {
+                        from: data.date?.from,
+                        to: data.date?.to || new Date() // Provide a default value if 'to' is not defined
+                    }
+                });
+                console.log(error)
+                if (error) {
+                    setError('An error occured while updating the offer: '+error.message)
+                    return
+                }
+                setId(loadId)
+                createPayment(data)
+            }
+            updateNewOffer();
+            if (error)
+                sonner('An error occured while updating the offer')
+                localStorage.clear()
+            console.log('ID after update', id);
+        }
+        else {
+            console.log('THERE IS NOTHIBNG')
+            const registerNewOffer = async () => {
+                const {data:loadId,error} = await registerOffer({
+                    ...data,
+                    date: {
+                        from: data.date?.from,
+                        to: data.date?.to || new Date() // Provide a default value if 'to' is not defined
+                    }
+                });
+                setId(loadId)
+                createPayment(data)
+            }
+            registerNewOffer();
+            console.log('ID after creation', id);
+        }
+        // If there isn't create a new entry
+        // If there is update the entry
     }
 
     function onError(errors: any) {
@@ -184,7 +230,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                             <FormLabel>Project url</FormLabel>
                             <div className='flex'>
                                 <Input className='rounded-r-none border-r-0 placeholder:text-muted-foreground max-w-fit w-[125px]' disabled type='text' id="domain" placeholder="github.com/" />
-                                <FormControl className="flex-1" onChange={()=>saveState(form.getValues())}>
+                                <FormControl className="flex-1" onChange={() => saveState(form.getValues())}>
                                     <Input className='flex-1 rounded-l-none' id="url" placeholder="name of organisation" {...field} />
                                 </FormControl>
                             </div>
@@ -201,7 +247,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                     render={({ field }) => (
                         <div className="grid w-full gap-1.5">
                             <FormLabel>Short description</FormLabel>
-                            <FormControl onChange={()=>saveState(form.getValues())}>
+                            <FormControl onChange={() => saveState(form.getValues())}>
                                 <Textarea placeholder="Explain what the auditor has to look at." id="message" {...field} />
                             </FormControl>
                             <FormDescription>This is a short description of the work you are looking for</FormDescription>
@@ -429,7 +475,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                     render={({ field }) => (
                         <div className="grid w-full gap-1.5">
                             <FormLabel>Budget</FormLabel>
-                            <FormControl onChange={()=>saveState(form.getValues())}>
+                            <FormControl onChange={() => saveState(form.getValues())}>
                                 <CurrencyInput
                                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50k text-base"
                                     id="budget"
