@@ -31,11 +31,10 @@ export default  function AuthButton({user}:{user:any}) {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild><Link href='profile'>Profile</Link></DropdownMenuItem>
                         <DropdownMenuItem asChild><Link href='billing'>Billing</Link></DropdownMenuItem>
-                        <DropdownMenuLabel>Navigation</DropdownMenuLabel>
+                        <DropdownMenuLabel>My offers</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild><Link href='auditors'>Auditors</Link></DropdownMenuItem>
-                        <DropdownMenuItem asChild><Link href='offers'>Offers</Link></DropdownMenuItem>
-                        <DropdownMenuItem asChild><Link href='publish'>Publish an offer</Link></DropdownMenuItem>
+                        <DropdownMenuItem asChild><Link href='/'>Manage</Link></DropdownMenuItem>
+                        <DropdownMenuItem asChild><Link href='publish'>Publish</Link></DropdownMenuItem>
                         <DropdownMenuItem asChild><form><Button formAction={logout} variant="destructive">Sign Out</Button></form></DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

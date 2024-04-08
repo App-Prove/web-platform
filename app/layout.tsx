@@ -41,12 +41,11 @@ export default async function RootLayout({
                 </svg>
               </Link>
               <Link href="/offers">Offers</Link>
-              <Link href="/auditors">Auditors</Link>
+              <Link className="hidden sm:block" href="/publish">
+                Publish
+              </Link>
             </div>
             <div className="flex gap-6 items-center">
-              <Link className="hidden sm:block" href="/publish">
-                <Button variant="link">Publish</Button>
-              </Link>
               <AuthButton user={user}/>
             </div>
           </div>

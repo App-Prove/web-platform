@@ -60,7 +60,7 @@ export default async function OffersPage() {
             <div className="flex-1 flex flex-col gap-6">
                 {offers.map(offer => (
                     <Link key={offer.title} href={"/offers/" + offer.url}>
-                        <Card className="hover:bg-gray-100 hover:border-black hover:cursor-pointer">
+                        <Card className=" hover:border-black hover:cursor-pointer">
                             <CardHeader>
                                 <div className="flex justify-between w-full">
                                     <div className="flex gap-4 w-full">
@@ -69,10 +69,10 @@ export default async function OffersPage() {
                                         </div>
                                         <div className="flex gap-2 flex-col w-full">
                                             <div className="flex flex-col sm:flex-row justify-between items-center">
-                                                <CardTitle className="self-start">{offer.title.split('/')[0]}</CardTitle>
+                                                <CardTitle className="self-start flex">{offer.title.split('/')[0]}<p className="font-normal text-muted-foreground">{'/'+offer.title.split('/')[1]}</p></CardTitle>
+                                            
                                                 <p className="self-start sm:flex-end">{USDollar.format(Number(offer.budget))}</p>
                                             </div>
-                                            <p>{'/'+offer.title.split('/')[1]}</p>
                                             <div className="flex gap-2 flex-wrap">
                                                 {offer.badges.map(badge => (
                                                     <Badge className="rounded-sm" variant='secondary' key={badge}>{badge}</Badge>
