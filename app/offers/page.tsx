@@ -27,7 +27,7 @@ export default async function OffersPage() {
     const offers = [
         {
             url: "steinprograms",
-            title: "SteinPrograms",
+            title: "SteinPrograms/trading-algorithm",
             badges: ["C++", "Python", "API", "Trading"],
             description: "Evolving in the trading sector, we are developing robust algorithms in C++. Our software needs to be reliable and verified by different entities to ensure extreme reliability.",
             budget: '1000',
@@ -65,13 +65,14 @@ export default async function OffersPage() {
                                 <div className="flex justify-between w-full">
                                     <div className="flex gap-4 w-full">
                                         <div className="self-center">
-                                            <Image className='rounded-sm' width={64} height={64} src={"https://github.com/" + offer.title.toLowerCase() + ".png"} alt={"logo-" + offer.title}></Image>
+                                            <Image className='rounded-sm' width={64} height={64} src={"https://github.com/" + offer.title.toLowerCase().split('/')[0] + ".png"} alt={"logo-" + offer.title}></Image>
                                         </div>
                                         <div className="flex gap-2 flex-col w-full">
                                             <div className="flex flex-col sm:flex-row justify-between items-center">
-                                                <CardTitle className="self-start">{offer.title}</CardTitle>
+                                                <CardTitle className="self-start">{offer.title.split('/')[0]}</CardTitle>
                                                 <p className="self-start sm:flex-end">{USDollar.format(Number(offer.budget))}</p>
                                             </div>
+                                            <p>{'/'+offer.title.split('/')[1]}</p>
                                             <div className="flex gap-2 flex-wrap">
                                                 {offer.badges.map(badge => (
                                                     <Badge className="rounded-sm" variant='secondary' key={badge}>{badge}</Badge>
