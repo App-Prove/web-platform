@@ -28,14 +28,13 @@ export default  function AuthButton({user}:{user:any}) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                         <DropdownMenuLabel>Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
                         <DropdownMenuItem asChild><Link href='profile'>Profile</Link></DropdownMenuItem>
                         <DropdownMenuItem asChild><Link href='billing'>Billing</Link></DropdownMenuItem>
-                        <DropdownMenuLabel>Navigation</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild><Link href='auditors'>Auditors</Link></DropdownMenuItem>
-                        <DropdownMenuItem asChild><Link href='offers'>Offers</Link></DropdownMenuItem>
-                        <DropdownMenuItem asChild><Link href='publish'>Publish an offer</Link></DropdownMenuItem>
+                        <DropdownMenuLabel>My offers</DropdownMenuLabel>
+                        <DropdownMenuItem asChild><Link href='publish'>Publish</Link></DropdownMenuItem>
+                        <DropdownMenuItem asChild><Link href='billing'>Manage</Link></DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem asChild><form><Button formAction={logout} variant="destructive">Sign Out</Button></form></DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
