@@ -45,7 +45,7 @@ import {
     CommandList,
     CommandShortcut,
 } from "@/components/ui/command"
-import { X } from "lucide-react";
+import { Search, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Command as CommandPrimitive } from "cmdk";
@@ -93,6 +93,10 @@ const FormSchema = z.object({
         if (Number(value) > 20000) ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Please choose a reasonable budget",
+        });
+        if (Number(value) <= 10) ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Please choose a budget above 10$",
         });
 
     }),
@@ -271,8 +275,8 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                             <div className='flex flex-1 flex-wrap gap-x-4'>
                                 <FormControl className="flex-1 ">
                                     <ScrollArea className="h-72 w-48 rounded-md border">
-                                        <div className="p-4">
-                                            <h4 className="mb-4 text-sm font-medium leading-none">Repositories</h4>
+                                        <div className="p-4 flex flex-col gap-2">
+                                            <h4 className="mb-4 text-sm font-medium leading-none">My repositories</h4>
                                             <RadioGroup
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}

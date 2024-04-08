@@ -20,9 +20,10 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/server";
+import { Search } from "lucide-react";
 
 export default async function OffersPage() {
-    
+
     const resultNumber = 10;
     const offers = [
         {
@@ -36,7 +37,7 @@ export default async function OffersPage() {
     ]
     // get offers from db here
     const supabase = createClient();
-    const { data, error } = await supabase.from('offers').select('*').eq('payment_status','complete');
+    const { data, error } = await supabase.from('offers').select('*').eq('payment_status', 'complete');
     // combine offers from db and offers from the array
     offers.push(...(data as any[])?.map(offer => ({
         url: offer.id,
@@ -54,8 +55,17 @@ export default async function OffersPage() {
     return (
         <div className="flex gap-6 flex-col md:flex-row">
             <div className="flex w-full md:w-fit self-start items-center text-nowrap gap-2">
-                <p>{offers.length} Results</p>
-                <Input placeholder="Search keywords"></Input>
+                <form className="flex-1 flex-shrink-0 w-full">
+                    <div className="relative">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            type="search"
+                            placeholder="Search by keyword"
+                            className="w-full appearance-none bg-background pl-8 shadow-none "
+                        />
+                    </div>
+                </form>
+                <p className="flex-shrink">{offers.length} Results</p>
             </div>
             <div className="flex-1 flex flex-col gap-6">
                 {offers.map(offer => (
@@ -64,13 +74,17 @@ export default async function OffersPage() {
                             <CardHeader>
                                 <div className="flex justify-between w-full">
                                     <div className="flex gap-4 w-full">
-                                        <div className="self-center">
+                                        <div className="self-center flex-shrink-0">
                                             <Image className='rounded-sm' width={64} height={64} src={"https://github.com/" + offer.title.toLowerCase().split('/')[0] + ".png"} alt={"logo-" + offer.title}></Image>
                                         </div>
                                         <div className="flex gap-2 flex-col w-full">
                                             <div className="flex flex-col sm:flex-row justify-between items-center">
-                                                <CardTitle className="self-start flex">{offer.title.split('/')[0]}<p className="font-normal text-muted-foreground">{'/'+offer.title.split('/')[1]}</p></CardTitle>
-                                            
+                                                <CardTitle className="self-start flex flex-wrap">
+                                                    {offer.title.split('/')[0]}
+                                                    <p className="font-normal text-muted-foreground">
+                                                        {'/' + offer.title.split('/')[1]}
+                                                    </p>
+                                                </CardTitle>
                                                 <p className="self-start sm:flex-end">{USDollar.format(Number(offer.budget))}</p>
                                             </div>
                                             <div className="flex gap-2 flex-wrap">
