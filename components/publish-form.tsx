@@ -223,7 +223,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const searchGithubProjects = useCallback(async (value: string) => {
         setSearchValue(value)
         console.log(value)
-        const response = await fetch(`https://api.github.com/users/${value}/repos`)
+        const response = await fetch(`https://api.github.com/orgs/${value}/repos`)
         const data = await response.json()
         console.log(data)
         if (data.error) {
@@ -254,7 +254,6 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
         // Check if there is db entry (id in localStorage)
         console.log('ID before', localStorage.getItem('id'))
         if (Number(localStorage.getItem('id')) !== 0) {
-            console.log('test')
             const updateNewOffer = async () => {
                 const { data: loadId, error } = await updateOffer(id, {
                     ...data,
@@ -317,6 +316,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                                     onValueChange={
                                         (e) => {
                                             // If there is 2 sec without a key press, search for the project
+                                            if (e.includes('/')) return
                                             if (searchTimeout) clearTimeout(searchTimeout)
                                             setSearchTimeout(setTimeout(() => {
                                                 searchGithubProjects(e)
