@@ -329,7 +329,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                                             setSearchTimeout(setTimeout(() => {
                                                 searchGithubProjects(e)
                                             }
-                                                , 200))
+                                                , 2000))
                                         }
                                     }
                                 />
