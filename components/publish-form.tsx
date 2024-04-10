@@ -195,6 +195,10 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
         const { data: userData, error } = await supabase.auth.getUser()
         const response = await fetch(`https://api.github.com/users/${userData.user?.user_metadata.user_name}/repos`)
         const data = await response.json()
+        if (data.message){
+            setError(data.message)
+            return
+        }
         if (data.error) {
             setError(data.error)
             return
@@ -231,6 +235,10 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
             return
         }
         if (data.message === 'Not Found') return setError('No repositories found for this user.')
+        if (data.message){
+            setError(data.message)
+            return
+        }
         setCustomRepositories(data.map((project: Repository) => project as Repository))
     }, [searchValue]);
 
