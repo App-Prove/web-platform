@@ -38,6 +38,7 @@ import { toast as sonner } from "sonner"
 
 import {
     Command,
+    CommandDialog,
     CommandEmpty,
     CommandGroup,
     CommandInput,
@@ -65,6 +66,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { ScrollArea } from "./ui/scroll-area"
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
 
+import { Slider } from "@/components/ui/slider"
+
 
 const FormSchema = z.object({
     url: z.string().superRefine((value, ctx) => {
@@ -82,6 +85,14 @@ const FormSchema = z.object({
             if (value === '') ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Please add a description",
+            });
+        }),
+    ),
+    auditors: z.number().superRefine((
+        (value, ctx) => {
+            if (value < 1) ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Please add at least one auditor",
             });
         }),
     ),
@@ -121,6 +132,7 @@ const FormSchema = z.object({
 
 export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const [open, setOpen] = React.useState(false)
+    const [commandOpen, setCommandOpen] = React.useState(false)
     const [processing, setProcessing] = React.useState(false)
     const [selected, setSelected] = React.useState<Keyword[]>([]);
     const [inputValue, setInputValue] = React.useState("");
@@ -129,6 +141,9 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const inputRef = React.useRef<HTMLInputElement>(null);
     const inputValueRef = useRef<string | undefined>();
     const [repositories, setRepositories] = React.useState<Repository[]>([])
+    const [customRepositories, setCustomRepositories] = React.useState<Repository[]>([])
+    const [searchTimeout, setSearchTimeout] = React.useState<NodeJS.Timeout>()
+    const [searchValue, setSearchValue] = React.useState<string>()
 
     // Load initial state from localStorage
     const getInitialState = <T extends unknown>(key: string, defaultValue: T): T => {
@@ -161,6 +176,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const [url, setUrl] = useLocalStorage<string>('url', "");
     const [description, setDescription] = useLocalStorage<string>('description', "");
     const [date, setDate] = useLocalStorage<DateRange>('date', { from: undefined, to: undefined });
+    const [auditors, setAuditors] = useLocalStorage<number>('auditors', 1)
     const [id, setId] = useLocalStorage<number>('id', 0)
 
     const form = useForm<z.infer<typeof FormSchema>>({
@@ -171,6 +187,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
             budget: budget,
             keywords: selectedKeywords,
             date: date,
+            auditors:auditors
         }
     })
     const loadGithubProjects = useCallback(async () => {
@@ -185,29 +202,50 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
         setRepositories(data.map((project: Repository) => project as Repository))
     }, []);
 
+    const toastError = useCallback(() => {
+        if (error) {
+            toast({
+                title: "Error",
+                description: error,
+            })
+        }
+    }
+        , [error])
+    useEffect(() => {
+        toastError()
+
+    }, [toastError])
+
     useEffect(() => {
         loadGithubProjects();
     }, [loadGithubProjects]);
 
-    // const loadGithubProjects = async () => {
-    //     const supabase = createClient()
-    //     const {data:userData,error} = await supabase.auth.getUser()
-    //     const response = await fetch(`https://api.github.com/users/${userData.user?.user_metadata.user_name}/repos`)
-    //     const data = await response.json()
-    //     if (data.error) {
-    //         setError(data.error)
-    //         return
-    //     }
-    //     setProjects(data.map((project: Repository) => project))
-    // }
-    // loadGithubProjects()
+    const searchGithubProjects = useCallback(async (value: string) => {
+        setSearchValue(value)
+        console.log(value)
+        const response = await fetch(`https://api.github.com/users/${value}/repos`)
+        const data = await response.json()
+        console.log(data)
+        if (data.error) {
+            setError(data.error)
+            return
+        }
+        if (data.message === 'Not Found') return setError('No repositories found for this user.')
+        setCustomRepositories(data.map((project: Repository) => project as Repository))
+    }, [searchValue]);
 
-    function saveState(data: { url: string; description: string; budget: string; date: DateRange; keywords: Keyword[] }) {
+    let USDollar = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+    });
+
+    function saveState(data: { url: string; description: string; budget: string; date: DateRange; keywords: Keyword[]; auditors: number}) {
         setUrl(data.url)
         setDescription(data.description)
         setBudget(data.budget)
         setDate(data.date)
         setSelectedKeywords(data.keywords)
+        setAuditors(data.auditors)
     }
     function onSubmit(data: z.infer<typeof FormSchema>) {
         setProcessing(true)
@@ -269,56 +307,75 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                 <FormField
                     control={form.control}
                     name="url"
-                    render={({ field }) => (<>
-                        <FormItem className="grid w-full gap-1.5">
-                            <FormLabel>Project url</FormLabel>
-                            <div className='flex flex-1 flex-wrap gap-x-4'>
-                                <FormControl className="flex-1 ">
-                                    <ScrollArea className="h-72 w-48 rounded-md border">
-                                        <div className="p-4 flex flex-col gap-2">
-                                            <h4 className="mb-4 text-sm font-medium leading-none">My repositories</h4>
-                                            <RadioGroup
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value}
+                    render={({ field }) => (
+                        <>
+                            <Button type={'reset'} variant={form.getValues('url')?'outline':'default'} onClick={() => setCommandOpen(true)}>{form.getValues('url')?field.value:'Choose a repository'}</Button>
+                            <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
+                                <CommandInput
+                                    placeholder="Search framework..."
+                                    className="h-9 w-[200px]"
+                                    onValueChange={
+                                        (e) => {
+                                            // If there is 2 sec without a key press, search for the project
+                                            if (searchTimeout) clearTimeout(searchTimeout)
+                                            setSearchTimeout(setTimeout(() => {
+                                                searchGithubProjects(e)
+                                            }
+                                                , 200))
+                                        }
+                                    }
+                                />
+                                <CommandEmpty>No framework found. Press <CommandShortcut>spacebar</CommandShortcut></CommandEmpty>
+                                <CommandList>
+                                    <CommandGroup heading={searchValue ? searchValue + ' organisation' : 'Start typing to search'}>
+                                        {customRepositories.map((repository) => (
+                                            <CommandItem
+                                                value={repository.full_name}
+                                                key={repository.full_name}
+                                                onSelect={() => {
+                                                    form.setValue("url", repository.full_name)
+                                                    setCommandOpen(false)
+                                                }}
                                             >
-                                                {repositories.map((repository) => (
-                                                    <>
-                                                        <div className="flex items-center space-x-2">
-                                                            <RadioGroupItem value={repository.full_name} id={repository.full_name} />
-                                                            <Label htmlFor={repository.full_name}>{repository.full_name}</Label>
-                                                        </div>
-                                                        <Separator className="my-2" />
-                                                    </>
-                                                ))}
-                                            </RadioGroup>
-                                        </div>
-                                    </ScrollArea>
-                                </FormControl>
-                            </div>
-                            <FormDescription>This is the github url of the project</FormDescription>
-                            <FormMessage />
+                                                {repository.name}
+                                                <CheckIcon
+                                                    className={cn(
+                                                        "ml-auto h-4 w-4",
+                                                        repository.full_name === field.value
+                                                            ? "opacity-100"
+                                                            : "opacity-0"
+                                                    )}
+                                                />
+                                            </CommandItem>
+                                        ))}
+                                    </CommandGroup>
+                                    <CommandGroup heading='My repositories'>
+                                        {repositories.map((repository) => (
+                                            <CommandItem
+                                                value={repository.full_name}
+                                                key={repository.full_name}
+                                                onSelect={() => {
+                                                    form.setValue("url", repository.full_name)
+                                                    setCommandOpen(false)
+                                                }}
+                                            >
+                                                {repository.name}
+                                                <CheckIcon
+                                                    className={cn(
+                                                        "ml-auto h-4 w-4",
+                                                        repository.full_name === field.value
+                                                            ? "opacity-100"
+                                                            : "opacity-0"
+                                                    )}
+                                                />
+                                            </CommandItem>
+                                        ))}
+                                    </CommandGroup>
+                                </CommandList>
 
-                        </FormItem>
-                    </>)}
-                />
-                {/* <FormField
-                    control={form.control}
-                    name="url"
-                    render={({ field }) => (<>
-                        <FormItem className="grid w-full gap-1.5">
-                            <FormLabel>Project url</FormLabel>
-                            <div className='flex'>
-                                <Input className='rounded-r-none border-r-0 placeholder:text-muted-foreground max-w-fit w-[125px]' disabled type='text' id="domain" placeholder="github.com/" />
-                                <FormControl className="flex-1">
-                                    <Input className='flex-1 rounded-l-none' id="url" placeholder="name of organisation" {...field} />
-                                </FormControl>
-                            </div>
-                            <FormDescription>This is the github url of the project</FormDescription>
-                            <FormMessage />
-
-                        </FormItem>
-                    </>)}
-                /> */}
+                            </CommandDialog>
+                        </>
+                    )} />
                 <Separator />
                 <FormField
                     control={form.control}
@@ -570,6 +627,26 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                         </div>
                     )}
                 />
+                <Separator />
+                <FormField
+                    control={form.control}
+                    name="auditors"
+                    render={({ field }) => (
+                        <div className="grid w-full gap-1.5">
+                            <FormLabel>Auditors : {field.value}</FormLabel>
+                            <FormControl>
+                            <Slider  defaultValue={[1]} min={1} max={100} step={1} onValueChange={(e)=>{
+                                form.setValue('auditors',e[0])
+                                setAuditors(e[0])
+                            }
+                            }/>
+                            </FormControl>
+                            <FormDescription>This is the number of auditors you are looking for. Based on your budget each auditor will get paid {USDollar.format((Number(form.getValues('budget'))*0.8/form.getValues('auditors')))}</FormDescription>
+                            <FormMessage />
+                        </div>
+                    )}
+                />
+
                 <Button
                     className='self-end'
                     type="submit"
