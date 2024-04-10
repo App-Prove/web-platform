@@ -1,14 +1,5 @@
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import {
     Card,
     CardContent,
     CardDescription,
@@ -20,23 +11,19 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/server";
-import { Github, Search } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Search } from "lucide-react";
 
 
 export default async function OffersPage() {
+    type offer = {
+        url: string,
+        title: string,
+        badges: string[],
+        description: string,
+        budget: string,
+    }
+    const offers: offer[] = [];
 
-    const resultNumber = 10;
-    const offers = [
-        {
-            url: "steinprograms",
-            title: "SteinPrograms/trading-algorithm",
-            badges: ["C++", "Python", "API", "Trading"],
-            description: "Evolving in the trading sector, we are developing robust algorithms in C++. Our software needs to be reliable and verified by different entities to ensure extreme reliability.",
-            budget: '1000',
-
-        },
-    ]
     // get offers from db here
     const supabase = createClient();
     const { data, error } = await supabase.from('offers').select('*').eq('payment_status', 'complete');
@@ -67,16 +54,6 @@ export default async function OffersPage() {
                         />
                     </div>
                 </form>
-                {/* <Select>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Sort by" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="date">Date</SelectItem>
-                        <SelectItem value="name">Name</SelectItem>
-                        <SelectItem value="value">Value</SelectItem>
-                    </SelectContent>
-                </Select> */}
             </div>
             <div className="flex-1 flex flex-col gap-4">
                 {offers.map(offer => (
@@ -112,13 +89,13 @@ export default async function OffersPage() {
                                 </div>
                             </CardHeader>
                             <CardContent className="flex flex-col gap-y-4 sm:gap-y-0 text-sm sm:text-base text-justify sm:text-pretty">
-                            <div className="flex gap-2 pb-2 sm:hidden">
-                            {offer.badges.map(badge => (
-                                                    <Badge className='font-normal sm:hidden' variant='secondary' key={badge}>{badge}</Badge>
-                                                ))}
-                            </div>
+                                <div className="flex gap-2 pb-2 sm:hidden">
+                                    {offer.badges.map(badge => (
+                                        <Badge className='font-normal sm:hidden' variant='secondary' key={badge}>{badge}</Badge>
+                                    ))}
+                                </div>
                                 {offer.description}
-                                                <p className="self-end text-muted-foreground block sm:hidden text-xs">Estimated payout {USDollar.format(Number(offer.budget))}</p>
+                                <p className="self-end text-muted-foreground block sm:hidden text-xs">Estimated payout {USDollar.format(Number(offer.budget))}</p>
                             </CardContent>
                         </Card>
                     </Link>
