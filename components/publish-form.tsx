@@ -643,7 +643,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                         <div className="grid w-full gap-1.5">
                             <FormLabel>Auditors : {field.value}</FormLabel>
                             <FormControl>
-                            <Slider  defaultValue={[1]} min={1} max={100} step={1} onValueChange={(e)=>{
+                            <Slider  defaultValue={[1]} min={1} max={10} step={1} onValueChange={(e)=>{
                                 form.setValue('auditors',e[0])
                                 setAuditors(e[0])
                             }
