@@ -31,7 +31,7 @@ export default async function OfferPage({ params }: { params: { slug: string } }
     console.log(offer)
     const { data: { user } } = await supabase.auth.getUser()
     // Check if user id is in the list of participants
-    const isParticipating = user ? offer.participants.includes(user.id) : false;
+    const isParticipating = user ? offer.participants?.includes(user.id) : false;
     return (
         <div className="flex flex-col gap-4">
             <div className="flex gap-4 align-top">
