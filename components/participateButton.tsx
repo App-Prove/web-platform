@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache"
 import { User } from "@supabase/supabase-js"
 
 export function ParticipateButton({ user, participants, offerID }: { user: User, participants: string[], offerID: number }) {
-    const [participating, setParticipating] = useState(false)
+    const [participating, setParticipating] = useState(participants?.includes(user?.id))
     const participate = useCallback(async () => {
         const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
