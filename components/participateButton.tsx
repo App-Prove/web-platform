@@ -17,7 +17,12 @@ export function ParticipateButton({ user, participants, offerID }: { user: User,
             console.log('User not found')
             return
         }
-        participants.push(user?.id)
+        if (participants) {
+            participants.push(user?.id)
+        }
+        else {
+            participants = [user?.id]
+        }
         const { data: result, error } = await supabase.from('offers').update({ participants: participants }).eq('id', offerID).select()
         if (error) {
             console.log(error)
