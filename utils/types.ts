@@ -101,3 +101,15 @@ type Repository = {
     watchers: number;
     default_branch: string;
 };
+
+
+type offer = {
+    participants: string[];
+    id: number,
+    url: string,
+    badges: string[],
+    description: string,
+    budget: string,
+    from: string,
+    to: string,
+}
