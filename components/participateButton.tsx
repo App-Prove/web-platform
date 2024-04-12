@@ -10,7 +10,6 @@ export function ParticipateButton({ user, participants, offerID }: { user: User,
     const participate = useCallback(async () => {
         const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
-        console.log(user)
         // upload to db
         // Check if user exists
         if (!user) {
