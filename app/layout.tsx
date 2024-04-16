@@ -11,8 +11,8 @@ import { Analytics } from "@vercel/analytics/react"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "CodeShield",
-  description: "Make people trust your code.",
+  title: "AppProve",
+  description: "Prove your app's safety.",
 };
 
 export default async function RootLayout({
