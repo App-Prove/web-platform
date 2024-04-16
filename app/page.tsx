@@ -31,7 +31,7 @@ export default function Home() {
         <strong>safe?</strong>
       </h1>
       <p className="mt-6 text-lg">
-        CodeShield is the <strong>best</strong> place to find <br />
+        AppProve is the <strong>best</strong> place to find <br />
         <strong>reliable</strong> auditors to certify your code.
       </p>
       <div className="flex sm:gap-x-6 gap-x-2 gap-y-2 mt-2 flex-wrap">
