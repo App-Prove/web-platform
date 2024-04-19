@@ -283,9 +283,11 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                 sonner('An error occured while updating the offer')
             localStorage.clear()
             console.log('ID after update', id);
+            // Refresh page
+            window.location.reload()
         }
         else {
-            console.log('THERE IS NOTHIBNG')
+            console.log('THERE IS NOTHING YET IN DB')
             const registerNewOffer = async () => {
                 const { data: loadId, error } = await registerOffer({
                     ...data,
