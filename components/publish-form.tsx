@@ -1,21 +1,14 @@
 "use client"
 
+import { CalendarIcon, ReloadIcon } from "@radix-ui/react-icons"
+import { format, subDays } from "date-fns"
 import * as React from "react"
-import { BellIcon, CalendarIcon, ReloadIcon } from "@radix-ui/react-icons"
-import { addDays, format, set, subDays } from "date-fns"
 import { DateRange } from "react-day-picker"
-
 import { Calendar } from "@/components/ui/calendar"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons"
+import { CheckIcon } from "@radix-ui/react-icons"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
-import { cn } from "@/lib/utils"
-import { redirect } from 'next/navigation'
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
     Form,
@@ -26,16 +19,18 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
+import { Label } from "@/components/ui/label"
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { toast } from "@/components/ui/use-toast"
-import { createClient } from "@/utils/supabase/clients"
 import { Separator } from "@/components/ui/separator"
+import { Textarea } from "@/components/ui/textarea"
+import { toast } from "@/components/ui/use-toast"
+import { cn } from "@/lib/utils"
+import { createClient } from "@/utils/supabase/clients"
 import { toast as sonner } from "sonner"
-
 import {
     Command,
     CommandDialog,
@@ -46,28 +41,13 @@ import {
     CommandList,
     CommandShortcut,
 } from "@/components/ui/command"
-import { Search, X } from "lucide-react";
-
-import { Badge } from "@/components/ui/badge";
-import { Command as CommandPrimitive } from "cmdk";
+import { X } from "lucide-react"
 import { createPayment, publishNewKeyword, registerOffer, updateOffer } from "@/app/publish/actions"
-import { CheckoutForm } from "./checkout"
-import CurrencyInput from 'react-currency-input-field';
+import { Badge } from "@/components/ui/badge"
+import { Command as CommandPrimitive } from "cmdk"
 import { useCallback, useEffect, useRef, useState } from "react"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
-import { ScrollArea } from "./ui/scroll-area"
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
-
+import CurrencyInput from 'react-currency-input-field'
 import { Slider } from "@/components/ui/slider"
-
 
 const FormSchema = z.object({
     url: z.string().superRefine((value, ctx) => {
@@ -156,6 +136,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
         }
         return defaultValue;
     };
+
     // Save state to localStorage
     const useLocalStorage = <T extends unknown>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] => {
         const [storedValue, setStoredValue] = useState<T>(() => getInitialState(key, initialValue));
@@ -190,6 +171,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
             auditors:auditors
         }
     })
+
     const loadGithubProjects = useCallback(async () => {
         const supabase = createClient()
         const { data: userData, error } = await supabase.auth.getUser()
@@ -255,6 +237,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
         setSelectedKeywords(data.keywords)
         setAuditors(data.auditors)
     }
+
     function onSubmit(data: z.infer<typeof FormSchema>) {
         setProcessing(true)
         // save all data in states
