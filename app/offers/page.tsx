@@ -40,7 +40,7 @@ export default async function OffersPage() {
     return (
             <div className="flex-1 flex flex-col gap-4">
                 {offers.map(offer => (
-                    <Link key={offer.url} href={"/offers/" + offer.id}>
+                    <Link key={offer.url} href={"/offer/" + offer.id}>
                         <Card className="hover:cursor-pointer flex gap-0 flex-col">
                             <CardHeader className="pb-2">
                                 <div className="flex justify-between w-full">
