@@ -54,6 +54,7 @@ export function ParticipateButton({ user, participants, offerID }: { user: User,
             return
         }
 
+
         toast('Cancelled participation')
         setParticipating(false)
     }
