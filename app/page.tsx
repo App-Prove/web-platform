@@ -32,11 +32,11 @@ export default function Home() {
   }, [error]);
   return (
     <div className="min-h-full mb-24">
-      <div className="flex flex-col h-screen relative overflow-hidden justify-center -mt-24">
         <Toaster />
+      <div className="flex flex-col h-screen relative overflow-hidden justify-center ">
         <h1 className={cn("text-5xl font-medium", whyte.className)}>
           IS YOUR APP<br />
-          <strong className="text-secondary">SECURE?</strong>
+          <strong className="text-orange">SECURE?</strong>
         </h1>
         <p className="mt-2 text-lg">
           App-Prove is the <strong>best</strong> place to find <br />
@@ -44,7 +44,7 @@ export default function Home() {
         </p>
         <div className="flex sm:gap-x-6 gap-x-2 gap-y-2 mt-8 flex-wrap">
           <Link href="publish">
-            <Button variant="secondary">Ask for feedback</Button>
+            <Button className="bg-orange">Ask for feedback</Button>
           </Link>
           <Link href="profile">
             <Button variant="link">Enroll as certified auditor</Button>
@@ -53,8 +53,8 @@ export default function Home() {
       </div>
       <div className="flex flex-col gap-12">
         <div className="flex flex-col gap-2">
-          <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>Make people <strong className="text-secondary">trust</strong> your code</h2>
-          <p className={cn("text-muted-foreground")} >Developers encounter manyy difficulties when it comes to having their code audited</p>
+          <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>Make people <strong className="text-orange">trust</strong> your code</h2>
+          <p className={cn("text-muted-foreground")} >Developers encounter many difficulties when it comes to having their code audited</p>
           <ul className="flex gap-4 flex-col pl-6 list-disc">
             <li>Limited existing solution</li>
             <li>Expensive</li>
@@ -63,7 +63,7 @@ export default function Home() {
           </ul>
         </div>
         <div className="flex flex-col gap-2">
-          <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>Audit platform with full <strong className="text-secondary">transparency</strong></h2>
+          <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>Audit platform with full <strong className="text-orange">transparency</strong></h2>
           <p className={cn("text-muted-foreground")} >
             A platform prioritizing exchange with experts tailored to your needs through the publication of your personalized offer.
             <br />
@@ -73,7 +73,7 @@ export default function Home() {
         <div className="flex flex-col gap-2">
           <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>
             Ensure your code
-            <strong className="text-secondary"> security </strong>
+            <strong className="text-orange"> security </strong>
             in 3 steps
           </h2>
           <Image src={'/steps.png'} width={1280} height={720} alt={"3 simple steps consisting in publishing, paying and receiving feedback"}></Image>
@@ -81,7 +81,7 @@ export default function Home() {
         <div className="flex flex-col gap-2">
           <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>
             Questions &
-            <strong className="text-secondary"> Answers </strong>
+            <strong className="text-orange"> Answers </strong>
           </h2>
           <Accordion type="multiple">
             <AccordionItem value="item-1">
@@ -146,7 +146,7 @@ export default function Home() {
           </p>
           <div className="flex sm:gap-x-6 gap-x-2 gap-y-2 mt-8 flex-wrap">
             <Link href="publish">
-              <Button variant="secondary">Ask for feedback</Button>
+              <Button className="bg-orange" >Ask for feedback</Button>
             </Link>
             <Link href="profile">
               <Button variant="link">Enroll as certified auditor</Button>
