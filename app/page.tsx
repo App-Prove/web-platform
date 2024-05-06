@@ -31,7 +31,7 @@ export default function Home() {
     }
   }, [error]);
   return (
-    <div className="min-h-full mb-24">
+    <div className="min-h-full mb-24 w-full">
         <Toaster />
       <div className="flex flex-col h-screen relative overflow-hidden justify-center ">
         <h1 className={cn("text-5xl font-medium", whyte.className)}>
