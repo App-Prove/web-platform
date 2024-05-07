@@ -87,7 +87,7 @@ export default function Home() {
             <AccordionItem value="item-1">
               <AccordionTrigger>What is App-Prove?</AccordionTrigger>
               <AccordionContent>
-                CodeShield is a web platform designed for developers to find auditors who can review their code for flaws and vulnerabilities.
+                App-Prove is a web platform designed for developers to find auditors who can review their code for flaws and vulnerabilities.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
