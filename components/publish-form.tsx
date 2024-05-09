@@ -1,6 +1,6 @@
 "use client"
 
-import { CalendarIcon, ReloadIcon } from "@radix-ui/react-icons"
+import { CalendarIcon, CaretSortIcon, ReloadIcon } from "@radix-ui/react-icons"
 import { format, subDays } from "date-fns"
 import * as React from "react"
 import { DateRange } from "react-day-picker"
@@ -68,6 +68,14 @@ const FormSchema = z.object({
             });
         }),
     ),
+    auditType: z.string().superRefine((
+        (value, ctx) => {
+            if (value === '') ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Please add a description",
+            });
+        }),
+    ),
     auditors: z.number().superRefine((
         (value, ctx) => {
             if (value < 1) ctx.addIssue({
@@ -124,6 +132,10 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const [customRepositories, setCustomRepositories] = React.useState<Repository[]>([])
     const [searchTimeout, setSearchTimeout] = React.useState<NodeJS.Timeout>()
     const [searchValue, setSearchValue] = React.useState<string>()
+    const auditTypes = [
+        { label: "Security", value: "security" },
+        { label: "Reliability", value: "reliability" },
+    ] as const
 
     // Load initial state from localStorage
     const getInitialState = <T extends unknown>(key: string, defaultValue: T): T => {
@@ -155,7 +167,9 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const [selectedKeywords, setSelectedKeywords] = useLocalStorage<Keyword[]>('selectedKeywords', []);
     const [budget, setBudget] = useLocalStorage<string>('budget', "");
     const [url, setUrl] = useLocalStorage<string>('url', "");
-    const [description, setDescription] = useLocalStorage<string>('description', "");
+    const [description, setDescription] = useLocalStorage<string>('description',"");
+    const [selectedRepository, setSelectedRepository] = useLocalStorage<Repository | undefined>('selectedRepository',undefined);
+    const [auditType, setAuditType] = useLocalStorage<string>('auditType', auditTypes[0].value);
     const [date, setDate] = useLocalStorage<DateRange>('date', { from: undefined, to: undefined });
     const [auditors, setAuditors] = useLocalStorage<number>('auditors', 1)
     const [id, setId] = useLocalStorage<number>('id', 0)
@@ -165,10 +179,11 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
         defaultValues: {
             url: url,
             description: description,
+            auditType: auditType,
             budget: budget,
             keywords: selectedKeywords,
             date: date,
-            auditors:auditors
+            auditors: auditors
         }
     })
 
@@ -177,7 +192,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
         const { data: userData, error } = await supabase.auth.getUser()
         const response = await fetch(`https://api.github.com/users/${userData.user?.user_metadata.user_name}/repos`)
         const data = await response.json()
-        if (data.message){
+        if (data.message) {
             setError(data.message)
             return
         }
@@ -217,7 +232,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
             return
         }
         if (data.message === 'Not Found') return setError('No repositories found for this user.')
-        if (data.message){
+        if (data.message) {
             setError(data.message)
             return
         }
@@ -229,7 +244,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
         currency: 'USD',
     });
 
-    function saveState(data: { url: string; description: string; budget: string; date: DateRange; keywords: Keyword[]; auditors: number}) {
+    function saveState(data: { url: string; description: string; budget: string; date: DateRange; keywords: Keyword[]; auditors: number }) {
         setUrl(data.url)
         setDescription(data.description)
         setBudget(data.budget)
@@ -301,7 +316,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                     name="url"
                     render={({ field }) => (
                         <>
-                            <Button type={'reset'} variant={form.getValues('url')?'outline':'default'} onClick={() => setCommandOpen(true)}>{form.getValues('url')?field.value:'Choose a repository'}</Button>
+                            <Button type={'reset'} variant={form.getValues('url') ? 'outline' : 'default'} onClick={() => setCommandOpen(true)}>{form.getValues('url') ? field.value : 'Choose a repository'}</Button>
                             <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
                                 <CommandInput
                                     placeholder="Search framework..."
@@ -327,6 +342,9 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                                                 key={repository.full_name}
                                                 onSelect={() => {
                                                     form.setValue("url", repository.full_name)
+                                                    setSelectedRepository(repository)
+                                                    setDescription(repository.description)
+                                                    form.setValue("description", repository.description)
                                                     setCommandOpen(false)
                                                 }}
                                             >
@@ -349,6 +367,9 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                                                 key={repository.full_name}
                                                 onSelect={() => {
                                                     form.setValue("url", repository.full_name)
+                                                    setSelectedRepository(repository)
+                                                    setDescription(repository.description)
+                                                    form.setValue("description", repository.description)
                                                     setCommandOpen(false)
                                                 }}
                                             >
@@ -377,11 +398,79 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                         <div className="grid w-full gap-1.5">
                             <FormLabel>Short description</FormLabel>
                             <FormControl >
-                                <Textarea placeholder="Explain what the auditor has to look at." id="message" {...field} />
+                                <Textarea placeholder="Give a short description of your project" id="message" {...field} />
                             </FormControl>
                             <FormDescription>This is a short description of the work you are looking for</FormDescription>
                             <FormMessage />
                         </div>
+                    )}
+                />
+                <Separator />
+                <FormField
+                    control={form.control}
+                    name="auditType"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                            <FormLabel>Audit type</FormLabel>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <FormControl>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            className={cn(
+                                                "w-[200px] justify-between",
+                                                !field.value && "text-muted-foreground"
+                                            )}
+                                        >
+                                            {field.value
+                                                ? auditTypes.find(
+                                                    (auditType) => auditType.value === field.value
+                                                )?.label
+                                                : "Select type"}
+                                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[200px] p-0">
+                                    <Command>
+                                        <CommandList>
+
+                                        <CommandInput
+                                            placeholder="Search type..."
+                                            className="h-9"
+                                        />
+                                        <CommandEmpty>No type found.</CommandEmpty>
+                                        <CommandGroup>
+                                            {auditTypes.map((auditType) => (
+                                                <CommandItem
+                                                    value={auditType.label}
+                                                    key={auditType.value}
+                                                    onSelect={() => {
+                                                        form.setValue("auditType", auditType.value)
+                                                    }}
+                                                >
+                                                    {auditType.label}
+                                                    <CheckIcon
+                                                        className={cn(
+                                                            "ml-auto h-4 w-4",
+                                                            auditType.value === field.value
+                                                                ? "opacity-100"
+                                                                : "opacity-0"
+                                                        )}
+                                                    />
+                                                </CommandItem>
+                                            ))}
+                                        </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
+                            <FormDescription>
+                                This is the type of your audit
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
                     )}
                 />
                 <Separator />
@@ -628,13 +717,13 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                         <div className="grid w-full gap-1.5">
                             <FormLabel>Auditors : {field.value}</FormLabel>
                             <FormControl>
-                            <Slider  defaultValue={[1]} min={1} max={10} step={1} onValueChange={(e)=>{
-                                form.setValue('auditors',e[0])
-                                setAuditors(e[0])
-                            }
-                            }/>
+                                <Slider value={[field.value]} min={1} max={10} step={1} onValueChange={(e) => {
+                                    form.setValue('auditors', e[0])
+                                    setAuditors(e[0])
+                                }
+                                } />
                             </FormControl>
-                            <FormDescription>This is the number of auditors you are looking for. Based on your budget each auditor will get paid {USDollar.format((Number(form.getValues('budget'))*0.8/form.getValues('auditors')))}</FormDescription>
+                            <FormDescription>This is the number of auditors you are looking for. Based on your budget each auditor will get paid {USDollar.format((Number(form.getValues('budget')) * 0.8 / form.getValues('auditors')))}</FormDescription>
                             <FormMessage />
                         </div>
                     )}

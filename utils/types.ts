@@ -113,3 +113,8 @@ type Offer = {
     from: string,
     to: string,
 }
+
+type AuditType = {
+    label: string;
+    value: string;
+};
