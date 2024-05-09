@@ -32,7 +32,7 @@ export default async function OffersPage({
         participants: offer.participants,
     })))
 
-    var filteredOffers = offers.filter(offer => offer.url.includes(query));
+    var filteredOffers = offers.filter(offer => offer.url.toLowerCase().includes(query.toLowerCase()));
 
     return (
         <div className="flex-1 flex flex-col gap-4">
