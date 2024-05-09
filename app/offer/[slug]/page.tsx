@@ -17,7 +17,7 @@ export default async function OfferPage({ params }: { params: { slug: string } }
     const id = params.slug
     const supabase = createClient();
     const { data, error } = await supabase.from('offers').select('*').eq('id', id);
-    const offer: offer = data && data[0] && {
+    const offer: Offer = data && data[0] && {
         id: data[0].id,
         url: data[0].url,
         badges: data[0].keywords.split(','),
@@ -26,7 +26,7 @@ export default async function OfferPage({ params }: { params: { slug: string } }
         from: data[0].from,
         to: data[0].to,
         participants: data[0].participants,
-    } as offer;
+    } as Offer;
 
     console.log(offer)
     const { data: { user } } = await supabase.auth.getUser()

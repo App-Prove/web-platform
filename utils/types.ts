@@ -103,7 +103,7 @@ type Repository = {
 };
 
 
-type offer = {
+type Offer = {
     participants: string[];
     id: number,
     url: string,
