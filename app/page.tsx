@@ -12,6 +12,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function Home() {
   // Create a Checkout Session
@@ -32,7 +34,7 @@ export default function Home() {
   }, [error]);
   return (
     <div className="min-h-full mb-24 w-full">
-        <Toaster />
+      <Toaster />
       <div className="flex flex-col h-screen relative overflow-hidden justify-center ">
         <h1 className={cn("text-5xl font-medium", whyte.className)}>
           IS YOUR APP<br />
@@ -40,20 +42,20 @@ export default function Home() {
         </h1>
         <p className="mt-2 text-lg">
           App-Prove is the <strong>best</strong> place to find <br />
-          <strong>reliable</strong> auditors to certify your code.
+          <strong>reliable</strong> auditors to certify your code
         </p>
         <div className="flex sm:gap-x-6 gap-x-2 gap-y-2 mt-8 flex-wrap">
           <Link href="publish">
-            <Button className="bg-orange">Ask for feedback</Button>
+            <Button className="bg-orange">Ask feedback</Button>
           </Link>
           <Link href="profile">
-            <Button variant="link">Enroll as certified auditor</Button>
+            <Button variant="secondary">Become an auditor</Button>
           </Link>
         </div>
       </div>
       <div className="flex flex-col gap-12">
         <div className="flex flex-col gap-2">
-          <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>Make people <strong className="text-orange">trust</strong> your code</h2>
+          <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>Help people <strong className="text-orange">trust</strong> your code</h2>
           <p className={cn("text-muted-foreground")} >Developers encounter many difficulties when it comes to having their code audited</p>
           <ul className="flex gap-4 flex-col pl-6 list-disc">
             <li>Limited existing solution</li>
@@ -62,14 +64,26 @@ export default function Home() {
             <li>Lack of transparency</li>
           </ul>
         </div>
+        <Separator />
         <div className="flex flex-col gap-2">
           <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>Audit platform with full <strong className="text-orange">transparency</strong></h2>
-          <p className={cn("text-muted-foreground")} >
+          <p className={cn("text-muted-foreground text-pretty")} >
             A platform prioritizing exchange with experts tailored to your needs through the publication of your personalized offer.
+            <br />
             <br />
             Furthermore, the platform is completely transparent regarding how money is shared among parties.
           </p>
+          <div className="">
+
+            <Image src={"/share.png"} alt={"Revenue sharing"} width={1920} height={1080} className="w-full"></Image>
+            <div className="flex gap-x-4 mt-4">
+            <h3 className={cn(whyte.className, "font-bold text-5xl text-orange")}>&lt;20%</h3>
+            <p className="text-muted-foreground">revenue shared for each approved* review</p>
+            </div>
+            <p className="text-muted-foreground text-sm mt-8 text-justify">* At the end of the audit period, our team and developers who participated, ensure reviews follow our standards</p>
+          </div>
         </div>
+        <Separator />
         <div className="flex flex-col gap-2">
           <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>
             Ensure your code
@@ -78,6 +92,7 @@ export default function Home() {
           </h2>
           <Image src={'/steps.png'} width={1280} height={720} alt={"3 simple steps consisting in publishing, paying and receiving feedback"}></Image>
         </div>
+        <Separator />
         <div className="flex flex-col gap-2">
           <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>
             Questions &
@@ -139,22 +154,20 @@ export default function Home() {
         {/* CTA */}
         <div className="flex flex-col justify-center items-center">
           <h2 className={cn("font-medium text-3xl", whyte.className)}>Try our platform now!</h2>
-          <p className="text-center">
-            App-Prove allows you to perform audits based on your needs.
-            <br />
-            Publish your offer in less than 5 minutes through our platform or become an auditor to get rewarded for your knowledge.
+          <p className="text-center text-muted-foreground">
+            Publish your offer in less than 5 minutes through our platform or become an auditor to get rewarded for your knowledge
           </p>
           <div className="flex sm:gap-x-6 gap-x-2 gap-y-2 mt-8 flex-wrap">
             <Link href="publish">
-              <Button className="bg-orange" >Ask for feedback</Button>
+              <Button className="bg-orange">Ask feedback</Button>
             </Link>
             <Link href="profile">
-              <Button variant="link">Enroll as certified auditor</Button>
+              <Button variant="secondary">Become an auditor</Button>
             </Link>
           </div>
-
         </div>
       </div>
+      
     </div>
   );
 }
