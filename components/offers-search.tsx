@@ -2,12 +2,13 @@
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import { useDebouncedCallback } from 'use-debounce';
 
 export default function OffersSearch() {
     const pathname = usePathname();
     const { replace } = useRouter();
     const searchParams = useSearchParams();
-    function handleSearch(term: string) {
+    const handleSearch = useDebouncedCallback((term: string) =>{
         console.log(term);
         const params = new URLSearchParams(searchParams);
         if (term) {
@@ -16,7 +17,7 @@ export default function OffersSearch() {
             params.delete('query');
         }
         replace(`${pathname}?${params.toString()}`);
-    }
+    },300)
 
     return (
         <div className="flex gap-4">
