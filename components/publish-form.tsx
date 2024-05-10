@@ -1,7 +1,7 @@
 "use client"
 
 import { CalendarIcon, CaretSortIcon, ReloadIcon } from "@radix-ui/react-icons"
-import { format, subDays } from "date-fns"
+import { format, set, subDays } from "date-fns"
 import * as React from "react"
 import { DateRange } from "react-day-picker"
 import { Calendar } from "@/components/ui/calendar"
@@ -48,6 +48,7 @@ import { Command as CommandPrimitive } from "cmdk"
 import { useCallback, useEffect, useRef, useState } from "react"
 import CurrencyInput from 'react-currency-input-field'
 import { Slider } from "@/components/ui/slider"
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
 
 const FormSchema = z.object({
     url: z.string().superRefine((value, ctx) => {
@@ -68,7 +69,7 @@ const FormSchema = z.object({
             });
         }),
     ),
-    auditType: z.string().superRefine((
+    type: z.string().superRefine((
         (value, ctx) => {
             if (value === '') ctx.addIssue({
                 code: z.ZodIssueCode.custom,
@@ -132,10 +133,6 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const [customRepositories, setCustomRepositories] = React.useState<Repository[]>([])
     const [searchTimeout, setSearchTimeout] = React.useState<NodeJS.Timeout>()
     const [searchValue, setSearchValue] = React.useState<string>()
-    const auditTypes = [
-        { label: "Security", value: "security" },
-        { label: "Reliability", value: "reliability" },
-    ] as const
 
     // Load initial state from localStorage
     const getInitialState = <T extends unknown>(key: string, defaultValue: T): T => {
@@ -167,9 +164,9 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     const [selectedKeywords, setSelectedKeywords] = useLocalStorage<Keyword[]>('selectedKeywords', []);
     const [budget, setBudget] = useLocalStorage<string>('budget', "");
     const [url, setUrl] = useLocalStorage<string>('url', "");
-    const [description, setDescription] = useLocalStorage<string>('description',"");
-    const [selectedRepository, setSelectedRepository] = useLocalStorage<Repository | undefined>('selectedRepository',undefined);
-    const [auditType, setAuditType] = useLocalStorage<string>('auditType', auditTypes[0].value);
+    const [description, setDescription] = useLocalStorage<string>('description', "");
+    const [selectedRepository, setSelectedRepository] = useLocalStorage<Repository | undefined>('selectedRepository', undefined);
+    const [type, setType] = useLocalStorage<string>('type', '');
     const [date, setDate] = useLocalStorage<DateRange>('date', { from: undefined, to: undefined });
     const [auditors, setAuditors] = useLocalStorage<number>('auditors', 1)
     const [id, setId] = useLocalStorage<number>('id', 0)
@@ -179,7 +176,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
         defaultValues: {
             url: url,
             description: description,
-            auditType: auditType,
+            type: type,
             budget: budget,
             keywords: selectedKeywords,
             date: date,
@@ -408,67 +405,40 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                 <Separator />
                 <FormField
                     control={form.control}
-                    name="auditType"
+                    name="type"
                     render={({ field }) => (
-                        <FormItem className="flex flex-col">
+                        <FormItem className="space-y-3">
                             <FormLabel>Audit type</FormLabel>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <FormControl>
-                                        <Button
-                                            variant="outline"
-                                            role="combobox"
-                                            className={cn(
-                                                "w-[200px] justify-between",
-                                                !field.value && "text-muted-foreground"
-                                            )}
-                                        >
-                                            {field.value
-                                                ? auditTypes.find(
-                                                    (auditType) => auditType.value === field.value
-                                                )?.label
-                                                : "Select type"}
-                                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                        </Button>
-                                    </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-[200px] p-0">
-                                    <Command>
-                                        <CommandList>
-
-                                        <CommandInput
-                                            placeholder="Search type..."
-                                            className="h-9"
-                                        />
-                                        <CommandEmpty>No type found.</CommandEmpty>
-                                        <CommandGroup>
-                                            {auditTypes.map((auditType) => (
-                                                <CommandItem
-                                                    value={auditType.label}
-                                                    key={auditType.value}
-                                                    onSelect={() => {
-                                                        form.setValue("auditType", auditType.value)
-                                                    }}
-                                                >
-                                                    {auditType.label}
-                                                    <CheckIcon
-                                                        className={cn(
-                                                            "ml-auto h-4 w-4",
-                                                            auditType.value === field.value
-                                                                ? "opacity-100"
-                                                                : "opacity-0"
-                                                        )}
-                                                    />
-                                                </CommandItem>
-                                            ))}
-                                        </CommandGroup>
-                                        </CommandList>
-                                    </Command>
-                                </PopoverContent>
-                            </Popover>
-                            <FormDescription>
-                                This is the type of your audit
-                            </FormDescription>
+                            <FormControl>
+                                <RadioGroup
+                                    onValueChange={(e) => {
+                                        setType(e)
+                                        field.onChange(e)
+                                    }
+                                    }
+                                    defaultValue={type}
+                                    className="flex flex-col space-y-1"
+                                >
+                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                        <FormControl>
+                                            <RadioGroupItem value="security" />
+                                        </FormControl>
+                                        <FormLabel className="font-normal">
+                                            Security
+                                        </FormLabel>
+                                        <FormDescription>Auditors are going to seek for data breaches</FormDescription>
+                                    </FormItem>
+                                    <FormItem className="flex items-center space-x-3 space-y-0">
+                                        <FormControl>
+                                            <RadioGroupItem value="fiability" />
+                                        </FormControl>
+                                        <FormLabel className="font-normal">
+                                            Fiability
+                                        </FormLabel>
+                                        <FormDescription>Auditors are going to seek for bugs and errors</FormDescription>
+                                    </FormItem>
+                                </RadioGroup>
+                            </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}

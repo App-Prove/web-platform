@@ -112,6 +112,8 @@ type Offer = {
     budget: string,
     from: string,
     to: string,
+    type: string,
+    owner:string,
 }
 
 type AuditType = {

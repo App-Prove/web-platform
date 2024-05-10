@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge"
+import { cn } from "@/lib/utils";
 
 
 export default function Offers({offers}:{offers: Offer[]}) {
@@ -38,6 +39,7 @@ export default function Offers({offers}:{offers: Offer[]}) {
                                                 {offer.url}
                                             </Badge>
 
+                                    <Badge onClick={(e)=>{e.stopPropagation()}} className={cn('z-50 cursor-pointer font-normal hidden sm:block',offer.type=='security'?'bg-orange text-white':'bg-blue-500 text-white')} variant='secondary' key={offer.type}>{offer.type}</Badge>
                                             {offer.badges.map(badge => (
                                                 <Badge className='font-normal hidden sm:block' variant='secondary' key={badge}>{badge}</Badge>
                                             ))}
@@ -48,6 +50,8 @@ export default function Offers({offers}:{offers: Offer[]}) {
                         </CardHeader>
                         <CardContent className="flex flex-col gap-y-4 sm:gap-y-0 text-sm sm:text-base text-justify sm:text-pretty">
                             <div className="flex gap-2 pb-2 sm:hidden">
+                                    <Badge onClick={(e)=>{e.stopPropagation()}} className={cn('z-50 cursor-pointer font-normal sm:hidden',offer.type=='security'?'bg-orange text-white':'bg-blue-500 text-white')} variant='secondary' key={offer.type}>{offer.type}</Badge>
+
                                 {offer.badges.map(badge => (
                                     <Badge className='font-normal sm:hidden' variant='secondary' key={badge}>{badge}</Badge>
                                 ))}

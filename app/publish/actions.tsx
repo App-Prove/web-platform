@@ -37,8 +37,9 @@ export async function publishNewKeyword(keyword: string) {
     return { data, error }
 }
 
-export async function registerOffer(data: { url: any; description: any; date: { from: any; to: any; }; budget: any; keywords: { label: string; }[]; }) {
+export async function registerOffer(data: { url: any; description: any; date: { from: any; to: any; }; budget: any; keywords: { label: string; }[]; type: string; }) {
     const supabase = createClient()
+    const {data:userData,error:userError} = await supabase.auth.getUser()
     const { data: offerData, error } = await supabase.from('offers').insert([
         {
             url: data.url,
@@ -47,7 +48,9 @@ export async function registerOffer(data: { url: any; description: any; date: { 
             to: data.date.to,
             budget: data.budget,
             keywords: data.keywords.map((keyword: { label: string; }) => (keyword.label)).join(','), // convert array to string
-            payment_status: 'pending'
+            payment_status: 'pending',
+            type: data.type,
+            owner: userData.user?.id,
         }
     ]).select()
     if (offerData && offerData[0]) {
@@ -57,8 +60,9 @@ export async function registerOffer(data: { url: any; description: any; date: { 
     console.log('ERROR REGISTER', error)
     return {data:null,error:error}
 }
-export async function updateOffer(id: number, data: { url: any; description: any; date: { from: any; to: any; }; budget: any; keywords: { label: string; }[]; }) {
+export async function updateOffer(id: number, data: { url: any; description: any; date: { from: any; to: any; }; budget: any; keywords: { label: string; }[]; type:string;}) {
     const supabase = createClient()
+    const {data:userData,error:userError} = await supabase.auth.getUser()
     const { data: offerData, error } = await supabase.from('offers').update(
         {
             url: data.url,
@@ -67,6 +71,8 @@ export async function updateOffer(id: number, data: { url: any; description: any
             to: data.date.to,
             budget: data.budget,
             keywords: data.keywords.map((keyword: { label: string; }) => (keyword.label)).join(','), // convert array to string
+            type: data.type,
+            owner: userData.user?.id,
         }
     ).eq('id',id).select()
     if (offerData && offerData[0]) {

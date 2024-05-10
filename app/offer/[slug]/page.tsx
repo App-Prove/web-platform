@@ -26,6 +26,8 @@ export default async function OfferPage({ params }: { params: { slug: string } }
         from: data[0].from,
         to: data[0].to,
         participants: data[0].participants,
+        type:data[0].type,
+        owner:data[0].owner,
     } as Offer;
 
     console.log(offer)
@@ -44,6 +46,7 @@ export default async function OfferPage({ params }: { params: { slug: string } }
                     </div>
                 </div>
             </div>
+            <p className={cn(offer.type=='security'?'text-orange':'text-blue-500')}>{offer.type=='security'?'This is a security audit. You would have to seek for data breaches':'This is a fiability audit. You would have to ensure code errors and bugs are handeled properly.'}</p>
             <p className="text-justify sm:text-pretty">{offer.description}</p>
             <div>
                 <Label>Github</Label>
@@ -71,7 +74,7 @@ export default async function OfferPage({ params }: { params: { slug: string } }
                 </Button>
             </div>
             <div className="flex self-end">
-                    {user&&
+                    {(user && user.id!=offer.owner)&&
                     <ParticipateButton user={user} offerID={offer.id} participants={offer.participants} />
                     }
             </div>

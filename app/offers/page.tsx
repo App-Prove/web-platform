@@ -30,6 +30,8 @@ export default async function OffersPage({
         from: offer.from,
         to: offer.to,
         participants: offer.participants,
+        type: offer.type,
+        owner: offer.owner,
     })))
 
     var filteredOffers = offers.filter(offer => offer.url.toLowerCase().includes(query.toLowerCase()));
