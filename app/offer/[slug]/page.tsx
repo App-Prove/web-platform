@@ -10,7 +10,18 @@ import { addDays, format, set, subDays } from "date-fns"
 import { createClient } from "@/utils/supabase/server";
 import { SquareArrowOutUpRight } from 'lucide-react';
 import Link from "next/link";
-import {ParticipateButton } from "@/components/participateButton";
+import { ParticipateButton } from "@/components/participateButton";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+import { ChatBubbleIcon } from "@radix-ui/react-icons";
+
 
 export default async function OfferPage({ params }: { params: { slug: string } }) {
     // get id from slug
@@ -26,8 +37,8 @@ export default async function OfferPage({ params }: { params: { slug: string } }
         from: data[0].from,
         to: data[0].to,
         participants: data[0].participants,
-        type:data[0].type,
-        owner:data[0].owner,
+        type: data[0].type,
+        owner: data[0].owner,
     } as Offer;
 
     console.log(offer)
@@ -46,7 +57,7 @@ export default async function OfferPage({ params }: { params: { slug: string } }
                     </div>
                 </div>
             </div>
-            <p className={cn(offer.type=='security'?'text-orange':'text-blue-500')}>{offer.type=='security'?'This is a security audit. You would have to seek for data breaches':'This is a fiability audit. You would have to ensure code errors and bugs are handeled properly.'}</p>
+            <p className={cn(offer.type == 'security' ? 'text-orange' : 'text-blue-500')}>{offer.type == 'security' ? 'This is a security audit. Auditors would have to seek for data breaches' : 'This is a fiability audit. Auditors would have to ensure code errors and bugs are handeled properly.'}</p>
             <p className="text-justify sm:text-pretty">{offer.description}</p>
             <div>
                 <Label>Github</Label>
@@ -74,9 +85,36 @@ export default async function OfferPage({ params }: { params: { slug: string } }
                 </Button>
             </div>
             <div className="flex self-end">
-                    {(user && user.id!=offer.owner)&&
+                {(user && user.id != offer.owner) &&
                     <ParticipateButton user={user} offerID={offer.id} participants={offer.participants} />
-                    }
+                }
+            </div>
+            <div>
+                {(user && user.id == offer.owner) &&
+                    <Table>
+                        <TableCaption>List of developers participating in the audit.</TableCaption>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[100px]">Number</TableHead>
+                                <TableHead>Auditor</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Chat</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {offer.participants?.map((participant, index) => (
+                                <TableRow key={participant}>
+                                    <TableCell>{index + 1}</TableCell>
+                                    <TableCell>{participant}</TableCell>
+                                    <TableCell>Waiting for review</TableCell>
+                                    <TableCell className="text-right object-right"><Link className="ml-auto" href={``}><ChatBubbleIcon className="cursor-pointer" /></Link></TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+
+                }
+
             </div>
         </div>
     );

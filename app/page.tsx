@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { Toaster, toast } from "sonner";
 import { whyte } from "./fonts";
 import {
   Accordion,
@@ -13,10 +12,11 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Separator } from "@/components/ui/separator";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Toast } from "@/components/ui/toast";
+import { toast, useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function Home() {
-  // Create a Checkout Session
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -29,13 +29,16 @@ export default function Home() {
   useEffect(() => {
     if (error) {
       console.log(error)
-      toast('You have to be logged in to access this page')
+      toast({
+        title: 'Hey there! 🚀',
+        description:'You have to be logged in to access this page, please hit sign-in button, and log through your github account!'
+      })
     }
   }, [error]);
   return (
-    <div className="min-h-full mb-24 w-full">
+    <div className="min-h-full mb-24 w-full overflow-visible">
       <Toaster />
-      <div className="flex flex-col h-screen relative overflow-hidden justify-center ">
+      <div className="flex flex-col h-screen relative overflow-visible justify-center ">
         <h1 className={cn("text-5xl font-medium", whyte.className)}>
           IS YOUR APP<br />
           <strong className="text-orange">SECURE?</strong>
@@ -44,7 +47,8 @@ export default function Home() {
           App-Prove is the <strong>best</strong> place to find <br />
           <strong>reliable</strong> auditors to certify your code
         </p>
-        <div className="flex sm:gap-x-6 gap-x-2 gap-y-2 mt-8 flex-wrap">
+
+        <div className={cn("flex sm:gap-x-6 gap-x-2 gap-y-2 mt-8 flex-wrap")}>
           <Link href="publish">
             <Button className="bg-orange">Ask feedback</Button>
           </Link>
@@ -77,8 +81,8 @@ export default function Home() {
 
             <Image src={"/share.png"} alt={"Revenue sharing"} width={1920} height={1080} className="w-full"></Image>
             <div className="flex gap-x-4 mt-4">
-            <h3 className={cn(whyte.className, "font-bold text-5xl text-orange")}>&lt;20%</h3>
-            <p className="text-muted-foreground">revenue shared for each approved* review</p>
+              <h3 className={cn(whyte.className, "font-bold text-5xl text-orange")}>&lt;20%</h3>
+              <p className="text-muted-foreground">revenue shared for each approved* review</p>
             </div>
             <p className="text-muted-foreground text-sm mt-8 text-justify">* At the end of the audit period, our team and developers who participated, ensure reviews follow our standards</p>
           </div>
@@ -147,11 +151,8 @@ export default function Home() {
                 Simply log in to our platform using a GitHub account, then all you have to do is click on the &apos;Publish&apos; button, fill out the form, and finally make the payment.
               </AccordionContent>
             </AccordionItem>
-
           </Accordion>
-
         </div>
-        {/* CTA */}
         <div className="flex flex-col justify-center items-center">
           <h2 className={cn("font-medium text-3xl", whyte.className)}>Try our platform now!</h2>
           <p className="text-center text-muted-foreground">
@@ -167,7 +168,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-      
     </div>
   );
 }

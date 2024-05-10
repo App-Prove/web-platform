@@ -32,7 +32,7 @@ export default async function RootLayout({
       <body className={inter.className}>
         <Analytics></Analytics>
         <SpeedInsights></SpeedInsights>
-        <div className="dark:bg-black mx-auto  min-h-screen flex flex-col px-6">
+        <div className="dark:bg-black mx-auto  min-h-screen flex flex-col px-6 overflow-visible">
           <div className="flex  justify-between py-6">
             <div className="flex items-center gap-6">
               <Link href="/">
@@ -52,7 +52,7 @@ export default async function RootLayout({
               <AuthButton user={user} />
             </div>
           </div>
-          <div className="flex flex-1">
+          <div className="flex flex-1 overflow-visible">
             {children}
           </div>
           <Toaster />

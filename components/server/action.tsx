@@ -5,9 +5,10 @@ import { redirect } from 'next/navigation'
 
 
 export async function logout() {
-    const supabase = createClient()
-    const { error } = await supabase.auth.signOut()
+  const supabase = createClient()
+  const { error } = await supabase.auth.signOut()
 }
+
 
 export async function login(formData: FormData) {
   const supabase = createClient()
@@ -50,12 +51,12 @@ export async function signup(formData: FormData) {
   redirect('/')
 }
 
-export async function githubLogin(redirectUrl:string|null=null) {
+export async function githubLogin(redirectUrl: string | null = null) {
   const supabase = createClient()
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'github',
     options: {
-      redirectTo: redirectUrl?redirectUrl:process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL,
+      redirectTo: redirectUrl ? redirectUrl : process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL,
     },
   })
   console.log(data, error)
