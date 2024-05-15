@@ -94,10 +94,10 @@ const FormSchema = z.object({
             code: z.ZodIssueCode.custom,
             message: "Please choose a reasonable budget",
         });
-        if (Number(value) <= 10) ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Please choose a budget above 10$",
-        });
+        // if (Number(value) <= 10) ctx.addIssue({
+        //     code: z.ZodIssueCode.custom,
+        //     message: "Please choose a budget above 10$",
+        // });
 
     }),
     date: z.custom<DateRange>((value) => {
@@ -162,7 +162,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
     };
 
     const [selectedKeywords, setSelectedKeywords] = useLocalStorage<Keyword[]>('selectedKeywords', []);
-    const [budget, setBudget] = useLocalStorage<string>('budget', "");
+    const [budget, setBudget] = useLocalStorage<string>('budget', "0");
     const [url, setUrl] = useLocalStorage<string>('url', "");
     const [description, setDescription] = useLocalStorage<string>('description', "");
     const [selectedRepository, setSelectedRepository] = useLocalStorage<Repository | undefined>('selectedRepository', undefined);
@@ -674,7 +674,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                                     prefix="$"
                                 />
                             </FormControl>
-                            <FormDescription>This is the budget you are willing to spend for the audit</FormDescription>
+                            <FormDescription>This is the budget you are willing to spend for the audit : It's currently free! You can put 0$, you won't get your payment method asked</FormDescription>
                             <FormMessage />
                         </div>
                     )}
