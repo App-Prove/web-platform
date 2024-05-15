@@ -674,7 +674,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                                     prefix="$"
                                 />
                             </FormControl>
-                            <FormDescription>This is the budget you are willing to spend for the audit : It's currently free! You can put 0$, you won't get your payment method asked</FormDescription>
+                            <FormDescription>This is the budget you are willing to spend for the audit : It&apos;s currently free! You can put 0$, you won&apos;t get your payment method asked</FormDescription>
                             <FormMessage />
                         </div>
                     )}
