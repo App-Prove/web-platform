@@ -31,7 +31,7 @@ export default function Home() {
       console.log(error)
       toast({
         title: 'Hey there! 🚀',
-        description:'You have to be logged in to access this page, please hit sign-in button, and log through your github account!'
+        description: 'You have to be logged in to access this page, please hit sign-in button, and log through your github account!'
       })
     }
   }, [error]);
@@ -79,7 +79,20 @@ export default function Home() {
           </p>
           <div className="">
 
-            <Image src={"/share.png"} alt={"Revenue sharing"} width={1920} height={1080} className="w-full"></Image>
+          <svg width="816" height="429" viewBox="0 0 816 429" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M40 398.333C40 395.545 40 394.151 40.2306 392.992C41.1775 388.232 44.8986 384.51 49.6589 383.564C50.8181 383.333 52.2121 383.333 55 383.333H113C115.788 383.333 117.182 383.333 118.341 383.564C123.101 384.51 126.823 388.232 127.769 392.992C128 394.151 128 395.545 128 398.333H40Z" fill="#FF4003" />
+            <rect x="40" y="398.333" width="88" height="15" fill="#FF4003" />
+            <rect x="40" y="413.333" width="88" height="15" fill="#FF4003" />
+            <path d="M384 19.2C384 12.4794 384 9.11905 385.308 6.55211C386.458 4.29417 388.294 2.4584 390.552 1.30792C393.119 0 396.479 0 403.2 0H452.8C459.521 0 462.881 0 465.448 1.30792C467.706 2.4584 469.542 4.29417 470.692 6.55211C472 9.11905 472 12.4794 472 19.2V125.111H384V19.2Z" fill="black" fillOpacity="0.2" />
+            <rect x="384" y="125.111" width="88" height="15" fill="#747474" />
+            <rect x="384" y="144.111" width="88" height="125.111" fill="#090909" />
+            <rect x="384" y="269.222" width="88" height="15" fill="#FF4003" />
+            <rect x="384" y="288.222" width="88" height="125.111" fill="#090909" />
+            <rect x="384" y="413.333" width="88" height="15" fill="#FF4003" />
+            <path d="M728 19.2C728 12.4794 728 9.11905 729.308 6.55211C730.458 4.29417 732.294 2.4584 734.552 1.30792C737.119 0 740.479 0 747.2 0H796.8C803.521 0 806.881 0 809.448 1.30792C811.706 2.4584 813.542 4.29417 814.692 6.55211C816 9.11905 816 12.4794 816 19.2V140.111H728V19.2Z" fill="#090909" />
+            <rect x="728" y="144.111" width="88" height="140.111" fill="#090909" />
+            <rect x="728" y="288.222" width="88" height="140.111" fill="#090909" />
+          </svg>
             <div className="flex gap-x-4 mt-4">
               <h3 className={cn(whyte.className, "font-bold text-5xl text-orange")}>&lt;20%</h3>
               <p className="text-muted-foreground">revenue shared for each approved* review</p>
@@ -94,6 +107,7 @@ export default function Home() {
             <strong className="text-orange"> security </strong>
             in 3 steps
           </h2>
+
           <Image src={'/steps.png'} width={1280} height={720} alt={"3 simple steps consisting in publishing, paying and receiving feedback"}></Image>
         </div>
         <Separator />
