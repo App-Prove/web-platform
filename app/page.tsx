@@ -50,10 +50,10 @@ export default function Home() {
 
         <div className={cn("flex sm:gap-x-6 gap-x-2 gap-y-2 mt-8 flex-wrap")}>
           <Link href="publish">
-            <Button className="bg-orange">Ask feedback</Button>
+            <Button className="bg-orange">Get free review</Button>
           </Link>
           <Link href="profile">
-            <Button variant="secondary">Become an auditor</Button>
+            <Button variant="secondary">Earn money as auditor</Button>
           </Link>
         </div>
       </div>
@@ -68,7 +68,7 @@ export default function Home() {
             <li>Lack of transparency</li>
           </ul>
           <Separator />
-          <h3 className={cn("uppercase text-3xl font-medium flex gap-2", whyte.className)}>
+          <h3 className={cn("uppercase text-3xl font-medium flex gap-2 flex-wrap", whyte.className)}>
             <strong className="text-orange"> Prove </strong>
             your
             <div>
@@ -274,10 +274,10 @@ export default function Home() {
           </p>
           <div className="flex sm:gap-x-6 gap-x-2 gap-y-2 mt-8 flex-wrap">
             <Link href="publish">
-              <Button className="bg-orange">Ask feedback</Button>
+              <Button className="bg-orange">Get free review</Button>
             </Link>
             <Link href="profile">
-              <Button variant="secondary">Become an auditor</Button>
+              <Button variant="secondary">Earn money as auditor</Button>
             </Link>
           </div>
         </div>
