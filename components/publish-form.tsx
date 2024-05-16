@@ -657,7 +657,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                     )}
                 />
                 <Separator />
-                <FormField
+                {/* <FormField
                     control={form.control}
                     name="budget"
                     render={({ field }) => (
@@ -697,7 +697,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                             <FormMessage />
                         </div>
                     )}
-                />
+                /> */}
 
                 <Button
                     className='self-end'
@@ -706,7 +706,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
                 >
                     {!processing ?
 
-                        <>Proceed payment</>
+                        <>Publish</>
                         :
                         <>
                             <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
