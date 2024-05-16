@@ -29,7 +29,11 @@ export default function Offers({offers}:{offers: Offer[]}) {
                                             <CardTitle className="self-start flex flex-wrap text-sm items-center gap-2">
                                                 {offer.url.split('/')[0]}
                                             </CardTitle>
+                                            {Number(offer.budget)==0?
+                                            <p className="self-start sm:flex-end text-muted-foreground hidden sm:block">Free</p>
+                                        :
                                             <p className="self-start sm:flex-end text-muted-foreground hidden sm:block">Estimated payout {USDollar.format(Number(offer.budget))}</p>
+                                        }
                                         </div>
                                         <div className="gap-2 flex-wrap flex">
                                             <Badge variant='secondary' className="font-normal gap-x-2 flex">
