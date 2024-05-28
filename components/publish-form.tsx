@@ -119,8 +119,9 @@ const FormSchema = z.object({
 })
 
 
-export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
+export default function PublishForm() {
     const [open, setOpen] = React.useState(false)
+    const [keywords, setKeywords] = React.useState<Keyword[]>([])
     const [commandOpen, setCommandOpen] = React.useState(false)
     const [processing, setProcessing] = React.useState(false)
     const [selected, setSelected] = React.useState<Keyword[]>([]);
@@ -198,6 +199,16 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
             return
         }
         setRepositories(data.map((project: Repository) => project as Repository))
+
+        // Load keywords
+        const { data: keywordList } = await supabase.from('keywords').select('*')
+        const keywords: Keyword[] = keywordList?.map((keyword) => {
+            return {
+                value: keyword.label.toLowerCase(),
+                label: keyword.label,
+            }
+        }) || [];
+        setKeywords(keywords)
     }, []);
 
     const toastError = useCallback(() => {
@@ -234,7 +245,7 @@ export default function PublishForm({ keywords }: { keywords: Keyword[] }) {
             return
         }
         setCustomRepositories(data.map((project: Repository) => project as Repository))
-    }, [searchValue]);
+    }, []);
 
     let USDollar = new Intl.NumberFormat('en-US', {
         style: 'currency',

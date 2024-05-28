@@ -23,14 +23,6 @@ export default function Loading() {
             <Label>Keyword</Label>
             <Skeleton className="w-full h-12" />
             <Separator></Separator>
-            <Label>Budget</Label>
-            <Skeleton className="w-full h-12" />
-            <Separator></Separator>
-            <Label>Short description</Label>
-            <Skeleton className="w-full h-24" />
-            <Separator></Separator>
-            <Label>Auditors</Label>
-            <Skeleton className="w-full h-12" />
         </div>
     )
 }

@@ -32,7 +32,7 @@ export function ParticipateButton({ user, participants, offerID }: { user: User,
         }
         setParticipating(true)
             toast('Participation registered')
-    }, []) // Add an empty array as the second argument
+    }, [participants]) // Add an empty array as the second argument
     const cancelParticipation = useCallback(async () => {
         // Client side
         const supabase = createClient()
@@ -47,7 +47,6 @@ export function ParticipateButton({ user, participants, offerID }: { user: User,
         if (index > -1) {
             participants.splice(index, 1)
         }
-        console.log(participants)
         const { data: result, error } = await supabase.from('offers').update({ participants: participants }).eq('id', offerID).select()
         if (error) {
             console.log(error)
@@ -58,7 +57,7 @@ export function ParticipateButton({ user, participants, offerID }: { user: User,
         toast('Cancelled participation')
         setParticipating(false)
     }
-        , []) // Add an empty array as the second argument
+        , [offerID,participants]) // Add an empty array as the second argument
     return (
         <>
             <Toaster></Toaster>
