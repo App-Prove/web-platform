@@ -114,6 +114,8 @@ type Offer = {
     to: string,
     type: string,
     owner:string,
+    lines_count: number,
+    files_count: number,
 }
 
 type AuditType = {

@@ -1,50 +1,53 @@
 import OffersSearch from "@/components/offers-search";
-import Offers from "@/components/offers";
+import Offer from "@/components/offer";
 import OffersSkeleton from "@/components/offers-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createClient } from "@/utils/supabase/server";
 import { Suspense } from "react";
+import { formatOffers } from "@/utils/supabase/format";
+import OffersPagniation from "@/components/offers-pagination";
+
 
 export default async function OffersPage({
-    searchParams,
-  }: {
-    searchParams?: {
-      query?: string;
-      page?: string;
-    };
-  }) {
-    const query = searchParams?.query || '';
-    const currentPage = Number(searchParams?.page) || 1;
-    const offers: Offer[] = [];
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+  };
+}) {
+  const query = searchParams?.query || '';
+  const currentPage = Number(searchParams?.page) || 1;
 
-    // get offers from db here
-    const supabase = createClient();
-    const { data, error } = await supabase.from('offers').select('*').eq('payment_status', 'complete');
-    // combine offers from db and offers from the array
-    offers.push(...(data as any[])?.map(offer => ({
-        id: offer.id,
-        url: offer.url,
-        badges: offer.keywords.split(','),
-        description: offer.description,
-        budget: offer.budget,
-        from: offer.from,
-        to: offer.to,
-        participants: offer.participants,
-        type: offer.type,
-        owner: offer.owner,
-    })))
+  //TODO: prevent offer from being fetched each time the page is rendered
+  //TODO: put offers in context
+  // get offers from db here
+  const supabase = createClient();
+  const { data, error } = await supabase.from('offers').select('*').eq('payment_status', 'complete');
+  // combine offers from db and offers from the array
+  const offers: Offer[] = formatOffers(data);
 
-    var filteredOffers = offers.filter(offer => offer.url.toLowerCase().includes(query.toLowerCase()));
+  const numberOfOffer = 10
+  var filteredOffers = offers.filter(offer => offer.description.toLowerCase().includes(query.toLowerCase()) || offer.url.toLowerCase().includes(query.toLowerCase()));
 
-    return (
-        <div className="flex-1 flex flex-col gap-4">
-            <OffersSearch></OffersSearch>
-            <Suspense key={query + currentPage} fallback={
-                <OffersSkeleton/>
+  console.log(currentPage)
+  //TODO: Add all logic in here
+  return (
+    <div className="flex-1 flex flex-col gap-4">
+      <OffersSearch></OffersSearch>
+      <div className="flex-1 flex flex-col gap-4">
+        {
+          filteredOffers.map((offer, index) => {
+              if(index >= (currentPage - 1) * numberOfOffer && index < currentPage * numberOfOffer){
+              return <Offer offer={offer} key={index}></Offer>
             }
-            >
-            <Offers offers={filteredOffers}></Offers>
-      </Suspense>
-        </div>
-    );
+          }
+          )}
+      </div>
+      <div className="mb-4">
+      <OffersPagniation page={currentPage} numberOfOffer={numberOfOffer} filteredOffers={filteredOffers} ></OffersPagniation>
+      </div>
+
+    </div>
+  );
 }
