@@ -16,6 +16,12 @@ import { toast, useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { Input } from "@/components/ui/input";
 import { set } from "date-fns";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
 
 export default function Home() {
   const [error, setError] = useState<string | null>(null);
@@ -62,10 +68,21 @@ export default function Home() {
 
             className="flex gap-2 w-full flex-col sm:flex-row"
           >
-            <Input
-              placeholder="Enter your project URL"
-              className={cn("transition-all", highlight && "ring-orange ring-2 animate-pulse")}
-            />
+            <Popover>
+              <PopoverTrigger className="w-full">
+                <Input
+                  placeholder="Enter your project URL"
+                  className={cn("transition-all", highlight && "ring-orange ring-2 animate-pulse")}
+                />
+              </PopoverTrigger>
+              <PopoverContent className="text-pretty">
+                <h1 className="font-bold">How to use?</h1>
+                <p>
+                  Submit your project url and wait for feedback. Our batch of independant developers are going to seek for code improvement regarding security and reliability. You&apos;ll receive a pull request with relevant changes.
+                </p>
+              </PopoverContent>
+            </Popover>
+
             <Button type="submit" className={cn(typing && "bg-orange")}>
               Publish
             </Button>
@@ -94,14 +111,14 @@ export default function Home() {
           <h3 className={cn("uppercase text-3xl font-medium flex gap-2 flex-wrap justify-center", whyte.className)}>
             <strong className="text-orange"> Prove </strong>your
             <div>
-               App
+              App
             </div>
             <div className="[text-wrap:balance] bg-clip-text text-transparent">
               <span className="text-orange inline-flex flex-col h-[calc(theme(fontSize.3xl)*theme(lineHeight.tight))] overflow-hidden">
                 <ul className="block animate-text-slide-2 text-left leading-tight [&_li]:block">
                   <li><strong>security</strong></li>
                   <li><strong className="text-blue-500"> reliability</strong></li>
-              
+
                   <li aria-hidden="true"><strong>security</strong></li>
                 </ul>
               </span>
