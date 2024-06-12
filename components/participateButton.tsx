@@ -9,7 +9,7 @@ import { toast } from "sonner"
 import { Toaster } from "./ui/sonner"
 
 export function ParticipateButton({ user, participants, offerID }: { user: User, participants: string[], offerID: number }) {
-    const [participating, setParticipating] = useState(participants?.includes(user?.id))
+    const [participating, setParticipating] = useState(participants?.includes(user.user_metadata.full_name))
     const participate = useCallback(async () => {
         const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
@@ -20,10 +20,10 @@ export function ParticipateButton({ user, participants, offerID }: { user: User,
             return
         }
         if (participants) {
-            participants.push(user?.id)
+            participants.push(user.user_metadata.full_name)
         }
         else {
-            participants = [user?.id]
+            participants = [user.user_metadata.full_name]
         }
         const { data: result, error } = await supabase.from('offers').update({ participants: participants }).eq('id', offerID).select()
         if (error) {
@@ -43,7 +43,7 @@ export function ParticipateButton({ user, participants, offerID }: { user: User,
             toast('User not found please log in')
             return
         }
-        const index = participants.indexOf(user?.id)
+        const index = participants.indexOf(user.user_metadata.full_name)
         if (index > -1) {
             participants.splice(index, 1)
         }

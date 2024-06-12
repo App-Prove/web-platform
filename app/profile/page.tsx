@@ -23,11 +23,11 @@ export default async function PrivatePage() {
     const keywords = [{ value: 'python', label: 'python' }, { value: 'javascript', label: 'javascript' }] as Keyword[];
     return (
         <div className='w-full'>
-            <p>Hello {user.user_metadata.name}</p>
+            <p>{user.user_metadata.name}</p>
             <p>
                 Here you can set up your profile
             </p>
-            <ProfileSettings keywords={keywords}/>
+            <ProfileSettings keywords={keywords} />
 
         </div>
     )

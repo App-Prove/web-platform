@@ -195,6 +195,7 @@ export default function PublishForm() {
             return
         }
         if (data.error) {
+            console.log(data.error)
             setError(data.error)
             return
         }

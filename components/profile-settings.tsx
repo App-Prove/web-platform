@@ -105,7 +105,7 @@ export default function ProfileSettings({keywords}: {keywords: Keyword[]}){
                                                                     setInputValue("")
                                                                     setSelected(prev => [...prev, keyword])
                                                                 }}
-                                                                className={"cursor-pointer"}
+                                                                className={"cursor-pointer px-2"}
                                                             >
                                                                 {keyword.label}
                                                             </CommandItem>

@@ -23,17 +23,16 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = createClient();
-  const { data, error } = await supabase.auth.getUser();
-  const user = data?.user;
-  const darkMode = false
+  const supabase = createClient()
+  const { data } = await supabase.auth.getUser()
+  const user = data?.user
   return (
     <html lang="en">
       <body className={inter.className}>
         <Analytics></Analytics>
         <SpeedInsights></SpeedInsights>
         <div className="dark:bg-black mx-auto  min-h-screen flex flex-col px-6 overflow-visible">
-          <div className="flex  justify-between py-6">
+          <div className="flex justify-between py-6 ">
             <div className="flex items-center gap-6">
               <Link href="/">
                 <svg className="dark:fill-white fill-black cursor-pointer group" width="40" height="44" viewBox="0 0 40 44" xmlns="http://www.w3.org/2000/svg">
@@ -78,7 +77,6 @@ export default async function RootLayout({
           </footer>
         </div>
       </body>
-
     </html>
   );
 }
