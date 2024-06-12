@@ -44,13 +44,19 @@ export default function Home() {
   }, [error]);
 
   const [highlight, setHighlight] = useState<boolean>(false);
+  const [openPopover, setOpenPopover] = useState<boolean>(false);
   const [typing, setTyping] = useState<boolean>(false);
-  const autoHighlighting = useCallback(() => {
-    setTimeout(() => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // Your code here
       setHighlight(true);
-    }, 2000)
-  }, [highlight])
-  autoHighlighting();
+      setOpenPopover(true);
+      console.log('highlighting');
+    }, 2000); // Delay of 2 seconds
+
+    // Clear timeout if the component is unmounted
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <div className="min-h-full mb-24 w-full overflow-visible">
       <Toaster />
@@ -68,15 +74,19 @@ export default function Home() {
 
             className="flex gap-2 w-full flex-col sm:flex-row"
           >
-            <Popover open={highlight}>
-              <PopoverTrigger  className="w-full">
+            <Popover open={openPopover}>
+              <PopoverTrigger className="w-full">
                 <Input
+                  onFocus={()=>setOpenPopover(true)}
                   placeholder="Enter your project URL"
                   className={cn("transition-all", highlight && "ring-orange ring-2 animate-pulse")}
                 />
               </PopoverTrigger>
               <PopoverContent className="text-pretty">
-                <h1 className="font-bold">How to use?</h1>
+                <div className="flex items-center justify-between">
+                  <h1 className="font-bold">How to use?</h1>
+                  <Button variant={'ghost'} onClick={() => setOpenPopover(false)}>X</Button>
+                </div>
                 <p>
                   Submit your project url and wait for feedback. Our batch of independant developers are going to seek for code improvement regarding security and reliability. You&apos;ll receive a pull request with relevant changes.
                 </p>
