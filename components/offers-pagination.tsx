@@ -43,7 +43,7 @@ export default function OffersPagniation({ page, numberOfOffer, filteredOffers }
                     } 
                 else if(i == 2 || i == (Number((filteredOffers.length / numberOfOffer).toPrecision(1)) - 3)){
                         return (
-                            <PaginationItem>
+                            <PaginationItem key={i}>
                                 <PaginationEllipsis />
                             </PaginationItem>
                         )
