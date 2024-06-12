@@ -48,7 +48,7 @@ export default function Home() {
   const autoHighlighting = useCallback(() => {
     setTimeout(() => {
       setHighlight(true);
-    }, 1000)
+    }, 2000)
   }, [highlight])
   autoHighlighting();
   return (
@@ -68,8 +68,8 @@ export default function Home() {
 
             className="flex gap-2 w-full flex-col sm:flex-row"
           >
-            <Popover>
-              <PopoverTrigger className="w-full">
+            <Popover open={highlight}>
+              <PopoverTrigger  className="w-full">
                 <Input
                   placeholder="Enter your project URL"
                   className={cn("transition-all", highlight && "ring-orange ring-2 animate-pulse")}
