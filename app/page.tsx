@@ -14,14 +14,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { toast, useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import { Input } from "@/components/ui/input";
-import { set } from "date-fns";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-
 
 export default function Home() {
   const [error, setError] = useState<string | null>(null);
@@ -69,40 +61,13 @@ export default function Home() {
           App-Prove enhances code <strong>security</strong> and <strong>reliability</strong> with audits conducted by <strong>independent</strong> developers and advanced algorithms
         </p>
 
-        <div className={cn("flex sm:gap-x-6 gap-x-2 gap-y-2 mt-8 flex-wrap")}>
-          <form action=" "
-
-            className="flex gap-2 w-full flex-col sm:flex-row"
-          >
-            <Popover open={openPopover}>
-              <PopoverTrigger className="w-full">
-                <Input
-                  onFocus={()=>setOpenPopover(true)}
-                  placeholder="Enter your project URL"
-                  className={cn("transition-all", highlight && "ring-orange ring-2 animate-pulse")}
-                />
-              </PopoverTrigger>
-              <PopoverContent className="text-pretty">
-                <div className="flex items-center justify-between">
-                  <h1 className="font-bold">How to use?</h1>
-                  <Button variant={'ghost'} onClick={() => setOpenPopover(false)}>X</Button>
-                </div>
-                <p>
-                  Submit your project url and wait for feedback. Our batch of independant developers are going to seek for code improvement regarding security and reliability. You&apos;ll receive a pull request with relevant changes.
-                </p>
-              </PopoverContent>
-            </Popover>
-
-            <Button type="submit" className={cn(typing && "bg-orange")}>
-              Publish
-            </Button>
-          </form>
-          {/* <Link href="publish">
-            <Button className="bg-orange">Get free review</Button>
+        <div className={cn("flex sm:gap-x-6 gap-x-2 gap-y-2 mt-8 flex-wrap justify-center")}>
+          <Link href="publish">
+            <Button className="bg-orange">Publish your project</Button>
           </Link>
           <Link href="profile">
             <Button variant="secondary">Earn money as auditor</Button>
-          </Link> */}
+          </Link>
         </div>
       </div>
       <div className="flex flex-col gap-12 text-center">
@@ -222,8 +187,8 @@ export default function Home() {
             <br />
             Furthermore, the platform is completely transparent regarding how money is shared among parties.
           </p>
-          <div className="">
-            <div className="flex overflow-hidden">
+          <div className="flex justify-center flex-col text-center">
+            <div className="flex overflow-hidden justify-center">
               <svg width="816" height="429" viewBox="0 0 816 429" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M40 398.333C40 395.545 40 394.151 40.2306 392.992C41.1775 388.232 44.8986 384.51 49.6589 383.564C50.8181 383.333 52.2121 383.333 55 383.333H113C115.788 383.333 117.182 383.333 118.341 383.564C123.101 384.51 126.823 388.232 127.769 392.992C128 394.151 128 395.545 128 398.333H40Z" fill="#FF4003" />
                 <rect x="40" y="398.333" width="88" height="15" fill="#FF4003" />
