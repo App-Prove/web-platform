@@ -14,7 +14,7 @@ import {
     BreadcrumbEllipsis,
 } from "@/components/ui/breadcrumb"
 import Link from 'next/link'
-import { CheckoutForm, Return } from '@/components/checkout'
+import { CheckoutForm, Return } from '@/components/Publish/Checkout'
 
 export default async function PrivatePage() {
 

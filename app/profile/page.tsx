@@ -1,14 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
-import { Label } from '@radix-ui/react-dropdown-menu'
-import { CommandShortcut } from '@/components/ui/command'
-import { CommandList, CommandEmpty, CommandGroup, CommandItem } from 'cmdk'
-import { Command, Badge, X } from 'lucide-react'
-import { toast } from 'sonner'
-import { publishNewKeyword } from '../publish/actions'
 import React, { useRef } from 'react'
-import ProfileSettings from '@/components/profile-settings'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import ProfileSettings from '@/components/Profile/ProfileSettings'
 
 export default async function PrivatePage() {
 
