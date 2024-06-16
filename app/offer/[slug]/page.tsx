@@ -24,7 +24,6 @@ import { ChatBubbleIcon } from "@radix-ui/react-icons";
 import { User } from "@supabase/supabase-js";
 import { formatOffers } from "@/utils/supabase/format";
 
-
 export default async function OfferPage({ params }: { params: { slug: string } }) {
     // get id from slug
     const id = params.slug
