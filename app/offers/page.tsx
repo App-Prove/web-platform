@@ -1,11 +1,8 @@
-import OffersSearch from "@/components/offers-search";
-import Offer from "@/components/offer";
-import OffersSkeleton from "@/components/offers-skeleton";
-import { Skeleton } from "@/components/ui/skeleton";
+import OffersSearch from "@/components/Offers/OffersSearch";
+import Offer from "@/components/Offers/Offer";
 import { createClient } from "@/utils/supabase/server";
-import { Suspense } from "react";
 import { formatOffers } from "@/utils/supabase/format";
-import OffersPagniation from "@/components/offers-pagination";
+import OffersPagniation from "@/components/Offers/OffersPagination";
 
 
 export default async function OffersPage({

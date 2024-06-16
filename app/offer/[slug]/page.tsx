@@ -10,7 +10,7 @@ import { addDays, format, set, subDays } from "date-fns"
 import { createClient } from "@/utils/supabase/server";
 import { SquareArrowOutUpRight } from 'lucide-react';
 import Link from "next/link";
-import { ParticipateButton } from "@/components/participateButton";
+import { ParticipateButton } from "@/components/ParticipateButton";
 import {
     Table,
     TableBody,

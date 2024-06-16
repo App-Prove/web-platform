@@ -48,7 +48,7 @@ import { Command as CommandPrimitive } from "cmdk"
 import { useCallback, useEffect, useRef, useState } from "react"
 import CurrencyInput from 'react-currency-input-field'
 import { Slider } from "@/components/ui/slider"
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 
 const FormSchema = z.object({
     url: z.string().superRefine((value, ctx) => {
