@@ -53,7 +53,7 @@ export default async function RootLayout({
           <Toaster />
           <footer className="border-t-2 border-t-accent flex gap-6 w-full justify-between items-center py-4 text-sm">
             <Link href={"/"}>
-              <div className="flex items-center ">
+              <div className="flex items-center gap-x-2">
                 <Logo></Logo>
                 <p>App-Prove</p>
               </div>

@@ -21,6 +21,7 @@ export default async function OffersPage({
   // get offers from db here
   const supabase = createClient();
   const { data, error } = await supabase.from('offers').select('*').eq('payment_status', 'complete');
+  if (error) return
   // combine offers from db and offers from the array
   const offers: Offer[] = formatOffers(data);
 
