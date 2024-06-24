@@ -26,7 +26,7 @@ export default function AuthButton({ user }: { user: any }) {
                         disabled={loading}
                         onClick={() => {
                             setLoading(true)
-                            githubLogin('/auth/callback')
+                            githubLogin()
                         }}>
                         {!loading ?
                             <>

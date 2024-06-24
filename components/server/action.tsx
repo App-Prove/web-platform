@@ -56,7 +56,7 @@ export async function githubLogin(redirectUrl: string | null = null) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'github',
     options: {
-      redirectTo: redirectUrl ? `${process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL}/auth/callback/?next=${redirectUrl}` : process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL,
+      redirectTo: redirectUrl ? `${process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL}${redirectUrl}` : `${process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL}auth/callback`,
     },
   })
 
