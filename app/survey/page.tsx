@@ -1,34 +1,27 @@
-"use client"
+"use server"
+import SurveyAuthButton from "@/components/Survey/SurveyAuthButton"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Slider } from "@/components/ui/slider"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
-import { toast } from "@/components/ui/use-toast"
+import { createClient } from "@/utils/supabase/server"
 import Link from "next/link"
-import { createClient } from "@/utils/supabase/clients"
-import AuthButton from "@/components/AuthButton"
+import { redirect, useSearchParams } from "next/navigation"
+import React from "react"
 
 export default async function SurveyPage() {
-
     const supabase = createClient()
     const { data } = await supabase.auth.getUser()
     const user = data?.user
 
+    if (!user) {
+        await supabase.auth.signInWithOAuth({
+            provider: 'github',
+            options: {
+                redirectTo: `http://localhost:3000/survey`,
+            },
+        })
+    }
+
     return (
-        <div className="flex flex-col gap-y-8">
+        <div className="flex flex-col gap-y-8 overflow-hidden">
             <h1 className="text-xl">Welcome to App-Prove survey</h1>
             <p className="text-pretty">
                 Thank you for taking the time to participate in our Developer Survey.
@@ -45,13 +38,8 @@ export default async function SurveyPage() {
                     We appreciate your participation and look forward to your valuable insights.
                 </p>
             </div>
-            {user?
-            <Link href={"survey/1"} className="flex self-end">
-                <Button className="flex self-end">Start survey</Button>
-            </Link>
-            :
-            <Button onClick={() => toast({ title: "Please sign in to continue", description:"" ,variant: "destructive", action:<AuthButton user={user}></AuthButton>})}>Start survey</Button>
-        }
+            <SurveyAuthButton user={user}></SurveyAuthButton>
+
         </div>
     )
 }
