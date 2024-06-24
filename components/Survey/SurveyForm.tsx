@@ -144,18 +144,18 @@ export default function SurveyForm() {
 
     // 2. Define a submit handler.
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("YEY")
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
-        toast({
-            title: "You submitted the following values:",
-            description: (
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                    <code className="text-white">{JSON.stringify(values)}</code>
-                </pre>
-            ),
-        })
+        // console.log("YEY")
+        // // Do something with the form values.
+        // // ✅ This will be type-safe and validated.
+        // console.log(values)
+        // toast({
+        //     title: "You submitted the following values:",
+        //     description: (
+        //         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+        //             <code className="text-white">{JSON.stringify(values)}</code>
+        //         </pre>
+        //     ),
+        // })
         // Push to DB with custom id which correspond to session
         // Redirect to next page
         // Using server action
@@ -193,7 +193,7 @@ export default function SurveyForm() {
                 router.push('/survey/error')
             }
         }
-        router.push('/survey/error')
+        router.push('/survey/thank-you')
     }
     return (
         <Form {...form}>
