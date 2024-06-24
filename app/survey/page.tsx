@@ -38,7 +38,7 @@ export default async function SurveyPage() {
             </p>
             <div>
                 <p className="text-sm text-muted-foreground">
-                    By answering these questions, you'll contribute to improving the security, reliability, and overall quality of applications across the community.
+                    By answering these questions, you&apos;ll contribute to improving the security, reliability, and overall quality of applications across the community.
                 </p>
                 <p className="text-sm text-muted-foreground">
                     Your input is crucial in shaping the future of our services and making sure we address the real challenges you face in your development work.
