@@ -48,7 +48,7 @@ import { Command as CommandPrimitive } from "cmdk"
 import { useCallback, useEffect, useRef, useState } from "react"
 import CurrencyInput from 'react-currency-input-field'
 import { Slider } from "@/components/ui/slider"
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
 
 const FormSchema = z.object({
     url: z.string().superRefine((value, ctx) => {
@@ -120,16 +120,9 @@ const FormSchema = z.object({
 
 
 export default function PublishForm() {
-    const [open, setOpen] = React.useState(false)
-    const [keywords, setKeywords] = React.useState<Keyword[]>([])
     const [commandOpen, setCommandOpen] = React.useState(false)
     const [processing, setProcessing] = React.useState(false)
-    const [selected, setSelected] = React.useState<Keyword[]>([]);
-    const [inputValue, setInputValue] = React.useState("");
     const [error, setError] = React.useState<string | undefined>();
-    const selectables = keywords.filter(keyword => !selected.includes(keyword));
-    const inputRef = React.useRef<HTMLInputElement>(null);
-    const inputValueRef = useRef<string | undefined>();
     const [repositories, setRepositories] = React.useState<Repository[]>([])
     const [customRepositories, setCustomRepositories] = React.useState<Repository[]>([])
     const [searchTimeout, setSearchTimeout] = React.useState<NodeJS.Timeout>()
@@ -195,20 +188,12 @@ export default function PublishForm() {
             return
         }
         if (data.error) {
+            console.log(data.error)
             setError(data.error)
             return
         }
         setRepositories(data.map((project: Repository) => project as Repository))
 
-        // Load keywords
-        const { data: keywordList } = await supabase.from('keywords').select('*')
-        const keywords: Keyword[] = keywordList?.map((keyword) => {
-            return {
-                value: keyword.label.toLowerCase(),
-                label: keyword.label,
-            }
-        }) || [];
-        setKeywords(keywords)
     }, []);
 
     const toastError = useCallback(() => {
@@ -236,29 +221,23 @@ export default function PublishForm() {
         const data = await response.json()
         console.log(data)
         if (data.error) {
+            setCustomRepositories([])
             setError(data.error)
             return
         }
-        if (data.message === 'Not Found') return setError('No repositories found for this user.')
         if (data.message) {
+            setCustomRepositories([])
             setError(data.message)
             return
         }
         setCustomRepositories(data.map((project: Repository) => project as Repository))
     }, []);
 
-    let USDollar = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    });
-
-    function saveState(data: { url: string; description: string; budget: string; date: DateRange; keywords: Keyword[]; auditors: number }) {
+    function saveState(data: { url: string; description: string; budget: string; date: DateRange; }) {
         setUrl(data.url)
         setDescription(data.description)
         setBudget(data.budget)
         setDate(data.date)
-        setSelectedKeywords(data.keywords)
-        setAuditors(data.auditors)
     }
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -327,7 +306,7 @@ export default function PublishForm() {
                             <Button type={'reset'} variant={form.getValues('url') ? 'outline' : 'default'} onClick={() => setCommandOpen(true)}>{form.getValues('url') ? field.value : 'Choose a repository'}</Button>
                             <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
                                 <CommandInput
-                                    placeholder="Search framework..."
+                                    placeholder="Start typing to search..."
                                     className="h-9 w-[200px]"
                                     onValueChange={
                                         (e) => {
@@ -343,7 +322,7 @@ export default function PublishForm() {
                                 />
                                 <CommandEmpty>No framework found. Press <CommandShortcut>spacebar</CommandShortcut></CommandEmpty>
                                 <CommandList>
-                                    <CommandGroup heading={searchValue ? searchValue + ' organisation' : 'Start typing to search'}>
+                                    <CommandGroup heading={searchValue ? searchValue + ' organisation' : ''}>
                                         {customRepositories.map((repository) => (
                                             <CommandItem
                                                 value={repository.full_name}
@@ -437,7 +416,6 @@ export default function PublishForm() {
                                         <FormLabel className="font-normal">
                                             Security
                                         </FormLabel>
-                                        <FormDescription>Auditors are going to seek for data breaches</FormDescription>
                                     </FormItem>
                                     <FormItem className="flex items-center space-x-3 space-y-0">
                                         <FormControl>
@@ -446,8 +424,8 @@ export default function PublishForm() {
                                         <FormLabel className="font-normal">
                                             Fiability
                                         </FormLabel>
-                                        <FormDescription>Auditors are going to seek for bugs and errors</FormDescription>
                                     </FormItem>
+                                    <FormDescription>Auditors are going to seek for SQL injections or bugs and errors</FormDescription>
                                 </RadioGroup>
                             </FormControl>
                             <FormMessage />
@@ -507,209 +485,6 @@ export default function PublishForm() {
 
                     )}
                 />
-                <Separator />
-                <FormField
-                    control={form.control}
-                    name="keywords"
-                    render={({ field }) => (
-                        <div className="grid w-full gap-1.5">
-                            <FormLabel>Keyword</FormLabel>
-                            <FormItem>
-                                <FormControl>
-                                    <Command onKeyDown={async (e) => {
-                                        const input = inputRef.current
-                                        if (input) {
-                                            if (e.key === "Delete" || e.key === "Backspace") {
-                                                // If we want to delete the last keyword
-                                                if (input.value === "") {
-                                                    // Remove the last keyword from selected
-                                                    setSelected(prev => {
-                                                        const newSelected = [...prev];
-                                                        newSelected.pop();
-                                                        return newSelected;
-                                                    })
-                                                    // Remove the last keyword from the form
-                                                    if (field.value && field.value.length > 0) {
-                                                        form.setValue("keywords", field.value.slice(0, -1));
-                                                    }
-                                                }
-                                            }
-                                            // This is not a default behaviour of the <input /> field
-                                            if (e.key === "Escape") {
-                                                input.blur();
-                                            }
-                                            // If we want to add a new keyword
-                                            if (e.key === "Spacebar" || e.key === " ") {
-                                                if (inputValue.trim() === "") {
-                                                    return;
-                                                }
-                                                // Remove the space from the input value
-                                                setInputValue(inputValue.trim());
-                                                inputValueRef.current = inputValue.trim();
-                                                // Server action to publish new keyword
-                                                const { data, error } = await publishNewKeyword(inputValueRef.current)
-                                                if (error) {
-                                                    toast({
-                                                        title: "Error",
-                                                        description: "An error occured while adding the keyword " + error.message,
-                                                    })
-                                                    return
-                                                }
-                                                toast({
-                                                    title: "Keyword added",
-                                                    description: "The keyword has been added to the list",
-                                                })
-                                                const newKeyword = { value: inputValueRef.current?.toLowerCase(), label: inputValueRef.current }
-                                                // Add it to the list of possibilities
-                                                keywords.push(newKeyword)
-                                                // Add it to the list of selected keywords
-                                                setSelected(prev => [...prev, newKeyword])
-                                                form.setValue("keywords", [...field.value, newKeyword])
-                                                setInputValue("")
-                                                // Don't take the space into consideration
-                                                e.preventDefault();
-                                            }
-                                        }
-                                        // What happens if there is nothing in selectables?
-                                        console.log('selectables', selectables)
-                                    }
-                                    }
-                                        className="overflow-visible bg-transparent">
-                                        <div
-                                            className="group border border-input px-3 py-2 text-sm ring-offset-background rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
-                                        >
-                                            <div className="flex gap-1 flex-wrap">
-                                                {
-                                                    // This is the list of selected keywords
-                                                    // Displays a badge for each keyword
-                                                    // Can't be undefined
-                                                    field.value.map((keyword) => {
-                                                        return (
-                                                            <Badge key={keyword.value} variant="secondary">
-                                                                {keyword.label}
-                                                                <button
-                                                                    className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                                                    onKeyDown={(e) => {
-                                                                        if (e.key === "Enter") {
-                                                                            setSelected(prev => prev.filter(s => s.value !== keyword.value));
-                                                                            form.setValue("keywords", field.value.filter(f => f.value !== keyword.value));
-                                                                        }
-                                                                    }}
-                                                                    onMouseDown={(e) => {
-                                                                        e.preventDefault();
-                                                                        e.stopPropagation();
-                                                                    }}
-                                                                    onClick={() => {
-                                                                        setSelected(prev => prev.filter(s => s.value !== keyword.value));
-                                                                        form.setValue("keywords", field.value.filter(f => f.value !== keyword.value));
-                                                                    }
-                                                                    }
-                                                                >
-                                                                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                                                                </button>
-                                                            </Badge>
-                                                        )
-                                                    })}
-                                                {/* Avoid having the "Search" Icon */}
-                                                <CommandPrimitive.Input
-                                                    ref={inputRef}
-                                                    value={inputValue}
-                                                    onValueChange={setInputValue}
-                                                    onBlur={() => setOpen(false)}
-                                                    onFocus={() => setOpen(true)}
-                                                    placeholder="Select keywords..."
-                                                    className="ml-2 bg-transparent outline-none placeholder:text-muted-foreground flex-1 text-base"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="relative mt-2">
-                                            {open ?
-                                                <div className="absolute w-full z-10 top-0 rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-                                                    <CommandList>
-                                                        <CommandEmpty>No results found. Press <CommandShortcut>spacebar</CommandShortcut> to add new</CommandEmpty>
-                                                        {
-                                                            selectables.length > 0 ?
-                                                                <CommandGroup className="h-full overflow-auto">
-                                                                    {
-                                                                        // This is the list of keywords that can be selected
-                                                                        selectables.map((keyword) => {
-                                                                            return (
-                                                                                <CommandItem
-                                                                                    key={keyword.value}
-                                                                                    onMouseDown={(e) => {
-                                                                                        e.preventDefault();
-                                                                                        e.stopPropagation();
-                                                                                    }}
-                                                                                    onSelect={(value) => {
-                                                                                        setInputValue("")
-                                                                                        setSelected(prev => [...prev, keyword])
-                                                                                        form.setValue("keywords", [...field.value, keyword])
-                                                                                    }}
-                                                                                    className={"cursor-pointer"}
-                                                                                >
-                                                                                    {keyword.label}
-                                                                                </CommandItem>
-                                                                            );
-                                                                        })}
-                                                                </CommandGroup>
-                                                                :
-                                                                null
-                                                        }
-                                                    </CommandList>
-                                                </div>
-                                                : null}
-                                        </div>
-                                    </Command >
-                                </FormControl>
-                            </FormItem>
-                            <FormDescription>Choose keywords which define your project best</FormDescription>
-                            <FormMessage />
-                        </div>
-                    )}
-                />
-                <Separator />
-                {/* <FormField
-                    control={form.control}
-                    name="budget"
-                    render={({ field }) => (
-                        <div className="grid w-full gap-1.5">
-                            <FormLabel>Budget</FormLabel>
-                            <FormControl>
-                                <CurrencyInput
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50k text-base"
-                                    id="budget"
-                                    value={field.value ?? ''}
-                                    placeholder="Define your budget"
-                                    decimalsLimit={2}
-                                    onValueChange={(value, name, values) => { console.log(value); form.setValue('budget', value ?? ''); setBudget(value ?? '') }}
-                                    prefix="$"
-                                />
-                            </FormControl>
-                            <FormDescription>This is the budget you are willing to spend for the audit : It&apos;s currently free! You can put 0$, you won&apos;t get your payment method asked</FormDescription>
-                            <FormMessage />
-                        </div>
-                    )}
-                />
-                <Separator />
-                <FormField
-                    control={form.control}
-                    name="auditors"
-                    render={({ field }) => (
-                        <div className="grid w-full gap-1.5">
-                            <FormLabel>Auditors : {field.value}</FormLabel>
-                            <FormControl>
-                                <Slider value={[field.value]} min={1} max={10} step={1} onValueChange={(e) => {
-                                    form.setValue('auditors', e[0])
-                                    setAuditors(e[0])
-                                }
-                                } />
-                            </FormControl>
-                            <FormDescription>This is the number of auditors you are looking for. Based on your budget each auditor will get paid {USDollar.format((Number(form.getValues('budget')) * 0.8 / form.getValues('auditors')))}</FormDescription>
-                            <FormMessage />
-                        </div>
-                    )}
-                /> */}
-
                 <Button
                     className='self-end'
                     type="submit"

@@ -1,11 +1,7 @@
 import * as React from "react"
-
 import { redirect } from 'next/navigation'
-import PublishForm from "@/components/publish-form"
+import PublishForm from "@/components/Publish/Form"
 import { createClient } from "@/utils/supabase/server"
-import { CheckoutForm } from "@/components/checkout"
-
-
 
 export default async function PrivatePage() {
     const supabase = createClient()
@@ -13,7 +9,6 @@ export default async function PrivatePage() {
     if (error || !data?.user) {
         redirect('/?error=unauthorized')
     }
-
     return (
         <div className='h-full w-full mx-auto flex flex-col gap-4 mb-16 overflow-visible'>
             <PublishForm></PublishForm>

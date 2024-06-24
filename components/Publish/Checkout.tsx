@@ -6,7 +6,7 @@ import {
   EmbeddedCheckout
 } from '@stripe/react-stripe-js';
 import Link from "next/link";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.

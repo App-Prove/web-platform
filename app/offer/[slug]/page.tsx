@@ -10,7 +10,7 @@ import { addDays, format, set, subDays } from "date-fns"
 import { createClient } from "@/utils/supabase/server";
 import { SquareArrowOutUpRight } from 'lucide-react';
 import Link from "next/link";
-import { ParticipateButton } from "@/components/participateButton";
+import { ParticipateButton } from "@/components/ParticipateButton";
 import {
     Table,
     TableBody,
@@ -21,27 +21,15 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { ChatBubbleIcon } from "@radix-ui/react-icons";
-
+import { User } from "@supabase/supabase-js";
+import { formatOffers } from "@/utils/supabase/format";
 
 export default async function OfferPage({ params }: { params: { slug: string } }) {
     // get id from slug
     const id = params.slug
     const supabase = createClient();
     const { data, error } = await supabase.from('offers').select('*').eq('id', id);
-    const offer: Offer = data && data[0] && {
-        id: data[0].id,
-        url: data[0].url,
-        badges: data[0].keywords.split(','),
-        description: data[0].description,
-        budget: data[0].budget,
-        from: data[0].from,
-        to: data[0].to,
-        participants: data[0].participants,
-        type: data[0].type,
-        owner: data[0].owner,
-    } as Offer;
-
-    console.log(offer)
+    const offer: Offer = formatOffers(data)[0]; 
     const { data: { user } } = await supabase.auth.getUser()
     // Check if user id is in the list of participants
     return (
@@ -83,6 +71,13 @@ export default async function OfferPage({ params }: { params: { slug: string } }
                         {format(offer.to, "LLL dd, y")}
                     </>
                 </Button>
+                {(user && user.id != offer.owner && offer.participants.includes(user.id)) &&
+                    <form action="">
+                        <Input
+                            placeholder="Put your pull request url"></Input>
+                        <Button>Submit</Button>
+                    </form>
+                }
             </div>
             <div className="flex self-end">
                 {(user && user.id != offer.owner) &&
@@ -107,7 +102,7 @@ export default async function OfferPage({ params }: { params: { slug: string } }
                                     <TableCell>{index + 1}</TableCell>
                                     <TableCell>{participant}</TableCell>
                                     <TableCell>Waiting for review</TableCell>
-                                    <TableCell className="text-right object-right"><Link className="ml-auto" href={``}><ChatBubbleIcon className="cursor-pointer" /></Link></TableCell>
+                                    <TableCell className="text-right object-right"><Link className="ml-auto" href="/chat"><ChatBubbleIcon className="cursor-pointer" /></Link></TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

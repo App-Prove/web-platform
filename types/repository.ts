@@ -1,25 +1,3 @@
-type Keyword = Record<"value" | "label", string>;
-type Owner = {
-    login: string;
-    id: number;
-    node_id: string;
-    avatar_url: string;
-    gravatar_id: string;
-    url: string;
-    html_url: string;
-    followers_url: string;
-    following_url: string;
-    gists_url: string;
-    starred_url: string;
-    subscriptions_url: string;
-    organizations_url: string;
-    repos_url: string;
-    events_url: string;
-    received_events_url: string;
-    type: string;
-    site_admin: boolean;
-};
-
 type Repository = {
     id: number;
     node_id: string;
@@ -100,23 +78,4 @@ type Repository = {
     open_issues: number;
     watchers: number;
     default_branch: string;
-};
-
-
-type Offer = {
-    participants: string[];
-    id: number,
-    url: string,
-    badges: string[],
-    description: string,
-    budget: string,
-    from: string,
-    to: string,
-    type: string,
-    owner:string,
-}
-
-type AuditType = {
-    label: string;
-    value: string;
 };

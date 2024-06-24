@@ -2,8 +2,8 @@
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { CommandList, CommandEmpty, CommandGroup, CommandItem, CommandInput } from "cmdk";
 import React, { useRef } from "react";
-import { Command, CommandShortcut } from "./ui/command";
-import { Badge } from "./ui/badge";
+import { Command, CommandShortcut } from "../ui/command";
+import { Badge } from "../ui/badge";
 import { X } from "lucide-react";
 
 export default function ProfileSettings({keywords}: {keywords: Keyword[]}){
@@ -105,7 +105,7 @@ export default function ProfileSettings({keywords}: {keywords: Keyword[]}){
                                                                     setInputValue("")
                                                                     setSelected(prev => [...prev, keyword])
                                                                 }}
-                                                                className={"cursor-pointer"}
+                                                                className={"cursor-pointer px-2"}
                                                             >
                                                                 {keyword.label}
                                                             </CommandItem>
