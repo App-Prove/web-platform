@@ -30,7 +30,7 @@ export default async function RootLayout({
       <body className={inter.className}>
         <Analytics></Analytics>
         <SpeedInsights></SpeedInsights>
-        <div className="dark:bg-black mx-auto  min-h-screen flex flex-col px-6 overflow-visible">
+        <div className="dark:bg-black mx-auto  min-h-screen flex flex-col px-6 sm:px-24 overflow-visible">
           <div className="flex justify-between py-6 ">
             <div className="flex items-center gap-6">
               <Link href="/">
