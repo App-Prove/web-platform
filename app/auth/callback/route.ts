@@ -13,6 +13,7 @@ export async function GET(request: Request) {
 
   console.log('code', code)
   if (code) {
+    try{
     const cookieStore = cookies()
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -34,6 +35,10 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`)
+    }
+    }
+    catch(e){
+      console.log(e)
     }
   }
 
