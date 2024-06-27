@@ -6,6 +6,8 @@ import { redirect, useSearchParams } from "next/navigation"
 import { User } from "@supabase/supabase-js"
 import { createClient } from "@/utils/supabase/clients"
 import { Github } from "lucide-react"
+import React from "react"
+import { ReloadIcon } from "@radix-ui/react-icons"
 
 export default function SurveyAuthButton({ user }: { user: null | User }) {
     // Check if there is a code in the URL
@@ -16,6 +18,7 @@ export default function SurveyAuthButton({ user }: { user: null | User }) {
         // and then redirect to start page
         redirect(`/auth/callback?code=${code}&next=/survey/start/`)
     }
+    const [authenticating, setAuthenticating] = React.useState(false)
 
     return (
         <>
@@ -27,6 +30,7 @@ export default function SurveyAuthButton({ user }: { user: null | User }) {
                     :
                     <div className="flex flex-col gap-y-4 w-fit self-end">
                         <Button onClick={async () => {
+                            setAuthenticating(true)
                             const supabase = createClient();
                             await supabase.auth.signInWithOAuth({
                                 provider: 'github',
@@ -34,8 +38,19 @@ export default function SurveyAuthButton({ user }: { user: null | User }) {
                                     redirectTo: `${process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL}survey/`,
                                 },
                             })
-                        }}>Use your <span className="flex mx-2 items-center"> <Github />Github</span> account to answer our survey</Button>
-                                
+                        }}>
+                        {!authenticating?
+                            <>
+                            Use your <span className="flex mx-2 items-center"> <Github />Github</span> account to answer
+                            </>
+                    :
+                            <>
+                                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                                <p className="block">Please wait</p>
+                            </>
+                    }
+                            </Button>
+
                     </div>
             }
         </>

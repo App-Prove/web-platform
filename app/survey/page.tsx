@@ -21,7 +21,7 @@ export default async function SurveyPage() {
     }
 
     return (
-        <div className="flex flex-col gap-y-8 overflow-hidden">
+        <div className="flex-1 flex flex-col gap-y-8 overflow-hidden">
             <h1 className="text-xl">Welcome to App-Prove survey</h1>
             <p className="text-pretty">
                 Thank you for taking the time to participate in our Developer Survey.
