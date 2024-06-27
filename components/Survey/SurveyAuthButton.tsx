@@ -14,7 +14,7 @@ export default function SurveyAuthButton({ user }: { user: null | User }) {
     if (code) {
         // If there is a code, we call auth/callback to exchange it for a session
         // and then redirect to start page
-        redirect(`/auth/callback?code=${code}&next=/survey/start`)
+        redirect(`/auth/callback?code=${code}&next=/survey/start/`)
     }
 
     return (
@@ -31,7 +31,7 @@ export default function SurveyAuthButton({ user }: { user: null | User }) {
                             await supabase.auth.signInWithOAuth({
                                 provider: 'github',
                                 options: {
-                                    redirectTo: `${process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL}survey`,
+                                    redirectTo: `${process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL}survey/`,
                                 },
                             })
                         }}>Use your <span className="flex mx-2 items-center"> <Github />Github</span> account to answer our survey</Button>
