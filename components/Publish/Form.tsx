@@ -155,7 +155,7 @@ export default function PublishForm() {
         return [storedValue, setValue];
     };
 
-    const [selectedKeywords, setSelectedKeywords] = useLocalStorage<Keyword[]>('selectedKeywords', []);
+    const [selectedKeywords, setSelectedKeywords] = useLocalStorage<Keyword[]>('selectedKeywords', [{value:"beta",label:"Beta"} as Keyword]);
     const [budget, setBudget] = useLocalStorage<string>('budget', "0");
     const [url, setUrl] = useLocalStorage<string>('url', "");
     const [description, setDescription] = useLocalStorage<string>('description', "");
