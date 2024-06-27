@@ -41,9 +41,9 @@ export default function Home() {
   return (
     <div className="min-h-full mb-24 w-full overflow-visible">
       <Toaster />
-      <div className="flex flex-col h-svh relative overflow-visible justify-center ">
-          <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-            <Link href="survey" className="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+      <div className="flex flex-col h-[80vh] sm:h-[100svh] relative overflow-visible justify-center ">
+          <div className="mx-auto flex mb-4 sm:mb-8 sm:flex sm:justify-center">
+            <Link href="survey" className="relative rounded-full px-3 py-1 text-xs sm:text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
               We are leading a <span className="text-orange underline">survey</span> to better understand your needs.{' '}
             </Link>
           </div>
