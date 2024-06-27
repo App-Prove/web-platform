@@ -20,8 +20,11 @@ import {
 import { toast } from "@/components/ui/use-toast"
 import { createClient } from "@/utils/supabase/clients"
 import { useRouter } from 'next/navigation'
+import React from "react"
+import { ReloadIcon } from "@radix-ui/react-icons"
 
 export default function SurveyForm() {
+    const [Submitting, setSubmitting] = React.useState(false)
     const router = useRouter()
     type Question =
         | { question: string; type: 'boolean' }
@@ -49,7 +52,8 @@ export default function SurveyForm() {
         },
         {
             question: "How often do you make major changes (git commits) that are deployed to production?",
-            type: "scale"
+            type: "multiple_choice",
+            options: ["Daily", "Weekly", "Monthly", "Every 6 months", "Yearly"]
         },
         {
             question: "Is security a concern for you when developing applications?",
@@ -66,7 +70,7 @@ export default function SurveyForm() {
         {
             question: "Do you prefer having a human review your code or an automated algorithm check it?",
             type: "multiple_choice",
-            options: ["Human", "Automated"]
+            options: ["Human", "Automated", "Both"]
         },
         {
             question: "How many developers do you think should review code before it is deployed?",
@@ -74,12 +78,13 @@ export default function SurveyForm() {
             options: ["1", "2-5", "5 or more"]
         },
         {
-            question: "Would it bother you if you didn’t know who verified your app?",
+            question: "Do you want to know who reviewed your code?",
             type: "boolean"
         },
         {
-            question: "What is the maximum amount you are willing to spend to improve the security and reliability of your code?",
-            type: "number"
+            question: "What is a reasonable amount you are willing to spend to improve the security and reliability of your code?",
+            type: "multiple_choice",
+            options: ["500$", "2000$", "10 000$+", "I don't know"]
         },
         {
             question: "Are you willing to review code during your free time for free?",
@@ -144,6 +149,7 @@ export default function SurveyForm() {
 
     // 2. Define a submit handler.
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        setSubmitting(true)
         // console.log("YEY")
         // // Do something with the form values.
         // // ✅ This will be type-safe and validated.
@@ -303,7 +309,18 @@ export default function SurveyForm() {
                         )
                     })
                 }
-                <Button type="submit">Continue</Button>
+                <Button className="flex self-end" type="submit">
+                    {
+                        !Submitting ?
+                            "Submit my answers"
+                            :
+                            <>
+                                <ReloadIcon className="sm:mr-2 h-4 w-4 animate-spin" />
+                                <p className="hidden sm:block">Please wait</p>
+                            </>
+
+                    }
+                </Button>
             </form>
         </Form>
     )
