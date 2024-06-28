@@ -11,15 +11,6 @@ export default async function SurveyPage() {
     const { data } = await supabase.auth.getUser()
     const user = data?.user
 
-    if (!user) {
-        await supabase.auth.signInWithOAuth({
-            provider: 'github',
-            options: {
-                redirectTo: `http://localhost:3000/survey`,
-            },
-        })
-    }
-
     return (
         <div className="flex-1 flex flex-col gap-y-8 overflow-hidden">
             <h1 className="text-xl">Welcome to App-Prove survey</h1>

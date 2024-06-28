@@ -61,6 +61,7 @@ export async function githubLogin(redirectUrl: string | null = null) {
     url = url.startsWith('http') ? url : `https://${url}`
     // Make sure to include a trailing `/`.
     url = url.endsWith('/') ? url : `${url}/`
+    console.log(url)
     return url
   }
 
@@ -68,7 +69,7 @@ export async function githubLogin(redirectUrl: string | null = null) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'github',
     options: {
-      redirectTo: redirectUrl ? `${getURL}${redirectUrl}` : `${getURL}auth/callback/`,
+      redirectTo: redirectUrl ? `${getURL()}${redirectUrl}` : `${getURL()}auth/callback/`,
     },
   })
 
