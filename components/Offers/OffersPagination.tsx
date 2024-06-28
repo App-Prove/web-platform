@@ -18,18 +18,20 @@ export default function OffersPagniation({ page, numberOfOffer, filteredOffers }
         <Pagination>
             <PaginationContent>
                 <PaginationItem>
-                    <PaginationPrevious onClick={(e) => {
-                                    if(page == 1) return;
-                                    const params = new URLSearchParams(searchParams);
-                                    params.set('page', (page - 1).toString());
-                                    replace(`${pathname}?${params.toString()}`);
-                                }}  />
+                    <PaginationPrevious 
+                    className={page == 1 ? "text-muted-foreground" : ""} 
+                    onClick={(e) => {
+                        if (page == 1) return;
+                        const params = new URLSearchParams(searchParams);
+                        params.set('page', (page - 1).toString());
+                        replace(`${pathname}?${params.toString()}`);
+                    }} />
                 </PaginationItem>
                 {Array.from({ length: Number((filteredOffers.length / numberOfOffer).toPrecision(1)) }).map((_, i) => {
                     // Display only two previous numbers and two last numbers
                     // depending on the current page
                     // with ellipsis in between
-                        if(i < 2 || i > (Number((filteredOffers.length / numberOfOffer).toPrecision(1)) - 3) || (i >= page - 2 && i <= page + 2)){
+                    if (i < 2 || i > (Number((filteredOffers.length / numberOfOffer).toPrecision(1)) - 3) || (i >= page - 2 && i <= page + 2)) {
                         return (
                             <PaginationItem key={i}>
                                 <PaginationLink onClick={(e) => {
@@ -40,22 +42,22 @@ export default function OffersPagniation({ page, numberOfOffer, filteredOffers }
                                 >{i + 1}</PaginationLink>
                             </PaginationItem>
                         )
-                    } 
-                else if(i == 2 || i == (Number((filteredOffers.length / numberOfOffer).toPrecision(1)) - 3)){
+                    }
+                    else if (i == 2 || i == (Number((filteredOffers.length / numberOfOffer).toPrecision(1)) - 3)) {
                         return (
                             <PaginationItem key={i}>
                                 <PaginationEllipsis />
                             </PaginationItem>
                         )
-                }
+                    }
                 })}
                 <PaginationItem>
-                    <PaginationNext onClick={(e) => {
-                        if(page >= Number((filteredOffers.length / numberOfOffer).toPrecision(1))) return;
-                                    const params = new URLSearchParams(searchParams);
-                                    params.set('page', (page + 1).toString());
-                                    replace(`${pathname}?${params.toString()}`);
-                                }} />
+                    <PaginationNext className={(page >= Number((filteredOffers.length / numberOfOffer).toPrecision(1))) ? "text-muted-foreground" : ""} onClick={(e) => {
+                        if (page >= Number((filteredOffers.length / numberOfOffer).toPrecision(1))) return;
+                        const params = new URLSearchParams(searchParams);
+                        params.set('page', (page + 1).toString());
+                        replace(`${pathname}?${params.toString()}`);
+                    }} />
                 </PaginationItem>
             </PaginationContent>
         </Pagination>

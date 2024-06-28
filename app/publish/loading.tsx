@@ -17,12 +17,6 @@ export default function Loading() {
             <Skeleton className="w-full h-24" />
             </div>
             <Separator></Separator>
-            <Label>Audit period</Label>
-            <Skeleton className="w-full h-12" />
-            <Separator></Separator>
-            <Label>Keyword</Label>
-            <Skeleton className="w-full h-12" />
-            <Separator></Separator>
         </div>
     )
 }

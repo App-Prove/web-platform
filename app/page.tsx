@@ -16,9 +16,12 @@ import { toast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import ReliabilityCertification from "@/components/Certifications/ReliabilityCertification";
 import SecurityCertification from "@/components/Certifications/SecurityCertification";
+import { githubLogin } from "@/components/server/action";
+import { Github } from "lucide-react";
 
 export default function Home() {
   const [error, setError] = useState<string | null>(null);
+  const [redirectPage, setRedirectPage] = useState<string | null>(null);
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const queryString = window.location.search;
@@ -32,7 +35,11 @@ export default function Home() {
       console.log(error)
       toast({
         title: 'Hey there! 🚀',
-        description: 'You have to be logged in to access this page, please hit sign-in button, and log through your github account!'
+        description: 'You have to log through your github account to access this page!',
+        action: <Button onClick={() => githubLogin()}>
+          <Github />
+          <p>Sign in</p>
+        </Button>
       })
     }
   }, [error]);
@@ -198,22 +205,34 @@ export default function Home() {
             </AccordionItem>
           </Accordion>
         </div>
-        <div className="bg-white py-24 sm:py-32">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <h2 className="text-center text-lg font-semibold leading-8 text-gray-900">
-
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl lg:max-w-none">
+            <h2 className={cn("font-medium text-3xl", whyte.className)}>
+              Part of <strong className="text-orange">well-known</strong> incubator programs
             </h2>
-            <div className="mx-auto mt-10 grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
-              <img
-                className="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
-                src="/euratechnologies.png"
-                alt="Euratechnologies"
-                width={158}
-                height={48}
-              />
+            <div className="mx-auto mt-10 grid grid-cols-1 items-start gap-x-8 gap-y-10 sm:grid-cols-2 sm:gap-x-10">
+              <Link href="https://hdf.campuscyber.fr/">
+                <img
+                  className="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
+                  src="/logo-campus-cyber.png"
+                  alt="Campus Cyber"
+                  width={158}
+                  height={48}
+                />
+              </Link>
+              <Link href="https://www.euratechnologies.com/en">
+                <img
+                  className="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
+                  src="/logo-euratechnologies.svg"
+                  alt="Euratechnologies"
+                  width={158}
+                  height={48}
+                />
+              </Link>
             </div>
           </div>
         </div>
+        <Separator />
         <div className="flex flex-col justify-center items-center">
           <h2 className={cn("font-medium text-3xl", whyte.className)}>Try our platform now!</h2>
           <p className="text-center text-muted-foreground">

@@ -419,10 +419,10 @@ export default function PublishForm() {
                                     </FormItem>
                                     <FormItem className="flex items-center space-x-3 space-y-0">
                                         <FormControl>
-                                            <RadioGroupItem value="fiability" />
+                                            <RadioGroupItem value="reliability" />
                                         </FormControl>
                                         <FormLabel className="font-normal">
-                                            Fiability
+                                            Reliability
                                         </FormLabel>
                                     </FormItem>
                                     <FormDescription>Auditors are going to seek for SQL injections or bugs and errors</FormDescription>
