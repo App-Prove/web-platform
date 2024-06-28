@@ -69,7 +69,6 @@ export async function registerOffer(data: { url: any; description: any; date: { 
     if (offerData && offerData[0]) {
         console.log('SUCCESSFUL REGISTER', data)
         analyzeGitRepo(data.url)
-        fetch(`http://localhost:8000?git_url=${data.url}`)
         return {data:offerData[0].id,error:error}
     }
     console.log('ERROR REGISTER', error)
@@ -92,7 +91,7 @@ export async function updateOffer(id: number, data: { url: any; description: any
     ).eq('id',id).select()
     if (offerData && offerData[0]) {
         console.log('SUCCESSFUL UPDATING', offerData)
-        fetch(`http://localhost:8000?git_url=${data.url}`)
+        analyzeGitRepo(data.url)
         return {data:offerData[0].id,error:error}
     }
     console.log('ERROR UPDATING', error)
