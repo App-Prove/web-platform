@@ -1,7 +1,20 @@
 'use server'
 import { redirect } from 'next/navigation'
 import { createClient } from "@/utils/supabase/server"
-
+const getURL = () => {
+    let url =
+      process?.env?.NEXT_PUBLIC_API_URL ?? // Set this to your site URL in production env.
+      'http://localhost:8000/'
+    // Make sure to include `https://` when not localhost.
+    url = url.startsWith('http') ? url : `https://${url}`
+    // Make sure to include a trailing `/`.
+    url = url.endsWith('/') ? url : `${url}/`
+    console.log(url)
+    return url
+  }
+function analyzeGitRepo(url: string) {
+    fetch(`${getURL()}?git_url=${url}`)
+}
 export async function createPayment(formData: any) {
     // const supabase = createClient();
     // const { data, error } = await supabase.from('offers').insert([
@@ -55,6 +68,8 @@ export async function registerOffer(data: { url: any; description: any; date: { 
     ]).select()
     if (offerData && offerData[0]) {
         console.log('SUCCESSFUL REGISTER', data)
+        analyzeGitRepo(data.url)
+        fetch(`http://localhost:8000?git_url=${data.url}`)
         return {data:offerData[0].id,error:error}
     }
     console.log('ERROR REGISTER', error)
@@ -77,6 +92,7 @@ export async function updateOffer(id: number, data: { url: any; description: any
     ).eq('id',id).select()
     if (offerData && offerData[0]) {
         console.log('SUCCESSFUL UPDATING', offerData)
+        fetch(`http://localhost:8000?git_url=${data.url}`)
         return {data:offerData[0].id,error:error}
     }
     console.log('ERROR UPDATING', error)
