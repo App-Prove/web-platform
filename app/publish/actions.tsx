@@ -13,7 +13,12 @@ const getURL = () => {
     return url
   }
 function analyzeGitRepo(url: string) {
+    try{
     fetch(`${getURL()}?git_url=${url}`)
+    }
+    catch(e){
+        console.log(e)
+    }
 }
 export async function createPayment(formData: any) {
     // const supabase = createClient();
