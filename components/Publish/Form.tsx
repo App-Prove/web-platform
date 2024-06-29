@@ -28,7 +28,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
-import { cn } from "@/lib/utils"
+import { cn, useLocalStorage } from "@/lib/utils"
 import { createClient } from "@/utils/supabase/clients"
 import { toast as sonner } from "sonner"
 import {
@@ -128,32 +128,6 @@ export default function PublishForm() {
     const [searchTimeout, setSearchTimeout] = React.useState<NodeJS.Timeout>()
     const [searchValue, setSearchValue] = React.useState<string>()
 
-    // Load initial state from localStorage
-    const getInitialState = <T extends unknown>(key: string, defaultValue: T): T => {
-        if (typeof window !== 'undefined') {
-            const saved = localStorage.getItem(key);
-            if (saved) {
-                if (saved === 'undefined') return defaultValue
-                return JSON.parse(saved);
-            }
-        }
-        return defaultValue;
-    };
-
-    // Save state to localStorage
-    const useLocalStorage = <T extends unknown>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] => {
-        const [storedValue, setStoredValue] = useState<T>(() => getInitialState(key, initialValue));
-
-        const setValue = (value: T | ((val: T) => T)) => {
-            const valueToStore = value instanceof Function ? value(storedValue) : value;
-            setStoredValue(valueToStore);
-            if (typeof window !== 'undefined') {
-                localStorage.setItem(key, JSON.stringify(valueToStore));
-            }
-        };
-
-        return [storedValue, setValue];
-    };
 
     const [selectedKeywords, setSelectedKeywords] = useLocalStorage<Keyword[]>('selectedKeywords', [{value:"beta",label:"Beta"} as Keyword]);
     const [budget, setBudget] = useLocalStorage<string>('budget', "0");
