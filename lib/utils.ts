@@ -1,35 +1,31 @@
-"use client"
 import { type ClassValue, clsx } from "clsx"
-import { useState } from "react";
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Load initial state from localStorage
-export const getInitialState = <T extends unknown>(key: string, defaultValue: T): T => {
-  if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem(key);
-    if (saved) {
-      if (saved === 'undefined') return defaultValue
-      return JSON.parse(saved);
-    }
+export const getAPIURL = () => {
+    let url =
+      process?.env?.NEXT_PUBLIC_API_URL ?? // Set this to your site URL in production env.
+      'http://localhost:8000/'
+    // Make sure to include `https://` when not localhost.
+    url = url.startsWith('http') ? url : `https://${url}`
+    // Make sure to include a trailing `/`.
+    url = url.endsWith('/') ? url : `${url}/`
+    console.log(url)
+    return url
   }
-  return defaultValue;
-};
 
-// Save state to localStorage
-export const useLocalStorage = <T extends unknown>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] => {
-  const [storedValue, setStoredValue] = useState<T>(() => getInitialState(key, initialValue));
-
-  const setValue = (value: T | ((val: T) => T)) => {
-    const valueToStore = value instanceof Function ? value(storedValue) : value;
-    setStoredValue(valueToStore);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(key, JSON.stringify(valueToStore));
-    }
-  };
-
-  return [storedValue, setValue];
-};
+export  const getWebsiteURL = () => {
+    let url =
+      process?.env?.NEXT_PUBLIC_SITE_URL ?? // Set this to your site URL in production env.
+      process?.env?.NEXT_PUBLIC_VERCEL_URL ?? // Automatically set by Vercel.
+      'http://localhost:3000/'
+    // Make sure to include `https://` when not localhost.
+    url = url.startsWith('http') ? url : `https://${url}`
+    // Make sure to include a trailing `/`.
+    url = url.endsWith('/') ? url : `${url}/`
+    console.log(url)
+    return url
+  }
