@@ -8,6 +8,7 @@ import { createClient } from "@/utils/supabase/clients"
 import { Github } from "lucide-react"
 import React from "react"
 import { ReloadIcon } from "@radix-ui/react-icons"
+import { getWebsiteURL } from "@/lib/utils"
 
 export default function SurveyAuthButton({ user }: { user: null | User }) {
     // Check if there is a code in the URL
@@ -35,7 +36,7 @@ export default function SurveyAuthButton({ user }: { user: null | User }) {
                             await supabase.auth.signInWithOAuth({
                                 provider: 'github',
                                 options: {
-                                    redirectTo: `${process.env.NEXT_PUBLIC_SUPABASE_REDIRECT_URL}survey/`,
+                                    redirectTo: `${getWebsiteURL()}survey/`,
                                 },
                             })
                         }}>
@@ -53,6 +54,9 @@ export default function SurveyAuthButton({ user }: { user: null | User }) {
 
                     </div>
             }
+        <Link className="self-end" href="/survey/start?anonymous=yes">
+        <Button className="self-end" variant={'link'}>Answer anonymously</Button>
+        </Link>
         </>
     )
 }

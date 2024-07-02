@@ -7,11 +7,11 @@ export default async function PrivatePage() {
     const supabase = createClient()
     const { data, error } = await supabase.auth.getUser()
     if (error || !data?.user) {
-        redirect('/?error=unauthorized')
+        // redirect('/?error=unauthorized')
     }
     return (
         <div className='h-full w-full mx-auto flex flex-col gap-4 mb-16 overflow-visible'>
-            <PublishForm></PublishForm>
+            <PublishForm user={data?.user}></PublishForm>
         </div>
     )
 }

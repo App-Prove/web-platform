@@ -1,23 +1,13 @@
 'use server'
 import { redirect } from 'next/navigation'
 import { createClient } from "@/utils/supabase/server"
-const getURL = () => {
-    let url =
-      process?.env?.NEXT_PUBLIC_API_URL ?? // Set this to your site URL in production env.
-      'http://localhost:8000/'
-    // Make sure to include `https://` when not localhost.
-    url = url.startsWith('http') ? url : `https://${url}`
-    // Make sure to include a trailing `/`.
-    url = url.endsWith('/') ? url : `${url}/`
-    console.log(url)
-    return url
-  }
+import { getAPIURL } from '@/lib/utils'
 function analyzeGitRepo(url: string) {
     try{
-    fetch(`${getURL()}?git_url=${url}`)
+    fetch(`${getAPIURL()}?git_url=${url}`)
     }
     catch(e){
-        console.log(e)
+        console.log("Error analyzing git repo")
     }
 }
 export async function createPayment(formData: any) {

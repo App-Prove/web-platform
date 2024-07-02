@@ -1,17 +1,13 @@
-"use server"
 
+'use client'
 import SurveyForm from "@/components/Survey/SurveyForm"
-import { createClient } from "@/utils/supabase/server"
-import { redirect } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 
 
 export default async function SurveyPage() {
-    const supabase = createClient()
-    const { data, error } = await supabase.auth.getUser()
-    if (error || !data?.user) {
-        // Login user if not logged in
-        redirect('/?error=unauthorized')
-    }
+    const searchParams = useSearchParams()
+    const code = searchParams.get('code')
+
 
     return (
         <SurveyForm />

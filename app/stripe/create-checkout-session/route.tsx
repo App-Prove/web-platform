@@ -1,5 +1,6 @@
 // This is your test secret API key.
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+import { getWebsiteURL } from '@/lib/utils';
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server'
 
@@ -8,7 +9,7 @@ export async function POST(request: Request) {
   const { data, error } = await supabase.auth.refreshSession();
   const { user } = data;
   if (error || !user) {
-    return NextResponse.redirect('/login');
+    // return NextResponse.redirect('/login');
   }
   // Get id from post data
   const { id } = await request.json();
@@ -33,7 +34,7 @@ export async function POST(request: Request) {
       id: id
     },
     mode: 'payment',
-    return_url: `${process.env.YOUR_DOMAIN}/publish/payment/processed?session_id={CHECKOUT_SESSION_ID}`,
+    return_url: `${getWebsiteURL()}/publish/payment/processed?session_id={CHECKOUT_SESSION_ID}`,
   });
   return NextResponse.json({
     clientSecret: session.client_secret

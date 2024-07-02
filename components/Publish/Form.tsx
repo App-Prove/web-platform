@@ -4,7 +4,6 @@ import { CalendarIcon, CaretSortIcon, ReloadIcon } from "@radix-ui/react-icons"
 import { format, set, subDays } from "date-fns"
 import * as React from "react"
 import { DateRange } from "react-day-picker"
-import { Calendar } from "@/components/ui/calendar"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { CheckIcon } from "@radix-ui/react-icons"
 import { useForm } from "react-hook-form"
@@ -19,17 +18,11 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import { Label } from "@/components/ui/label"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
 import { cn } from "@/lib/utils"
-import { createClient } from "@/utils/supabase/clients"
+import { useLocalStorage } from "@/lib/localStorage"
 import { toast as sonner } from "sonner"
 import {
     Command,
@@ -41,14 +34,13 @@ import {
     CommandList,
     CommandShortcut,
 } from "@/components/ui/command"
-import { X } from "lucide-react"
 import { createPayment, publishNewKeyword, registerOffer, updateOffer } from "@/app/publish/actions"
-import { Badge } from "@/components/ui/badge"
 import { Command as CommandPrimitive } from "cmdk"
 import { useCallback, useEffect, useRef, useState } from "react"
-import CurrencyInput from 'react-currency-input-field'
-import { Slider } from "@/components/ui/slider"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
+import { User } from "@supabase/supabase-js"
+import { githubLogin } from "../server/action"
+import { redirect, useSearchParams } from "next/navigation"
 
 const FormSchema = z.object({
     url: z.string().superRefine((value, ctx) => {
@@ -119,7 +111,7 @@ const FormSchema = z.object({
 })
 
 
-export default function PublishForm() {
+export default function PublishForm({ user }: { user: null | User }) {
     const [commandOpen, setCommandOpen] = React.useState(false)
     const [processing, setProcessing] = React.useState(false)
     const [error, setError] = React.useState<string | undefined>();
@@ -128,40 +120,14 @@ export default function PublishForm() {
     const [searchTimeout, setSearchTimeout] = React.useState<NodeJS.Timeout>()
     const [searchValue, setSearchValue] = React.useState<string>()
 
-    // Load initial state from localStorage
-    const getInitialState = <T extends unknown>(key: string, defaultValue: T): T => {
-        if (typeof window !== 'undefined') {
-            const saved = localStorage.getItem(key);
-            if (saved) {
-                if (saved === 'undefined') return defaultValue
-                return JSON.parse(saved);
-            }
-        }
-        return defaultValue;
-    };
 
-    // Save state to localStorage
-    const useLocalStorage = <T extends unknown>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] => {
-        const [storedValue, setStoredValue] = useState<T>(() => getInitialState(key, initialValue));
-
-        const setValue = (value: T | ((val: T) => T)) => {
-            const valueToStore = value instanceof Function ? value(storedValue) : value;
-            setStoredValue(valueToStore);
-            if (typeof window !== 'undefined') {
-                localStorage.setItem(key, JSON.stringify(valueToStore));
-            }
-        };
-
-        return [storedValue, setValue];
-    };
-
-    const [selectedKeywords, setSelectedKeywords] = useLocalStorage<Keyword[]>('selectedKeywords', [{value:"beta",label:"Beta"} as Keyword]);
-    const [budget, setBudget] = useLocalStorage<string>('budget', "0");
+    const [selectedKeywords, setSelectedKeywords] = useLocalStorage<Keyword[]>('selectedKeywords', [{ value: "beta", label: "Beta" } as Keyword]);
+    const [budget, setBudget] = useLocalStorage<string>('budget', "500");
     const [url, setUrl] = useLocalStorage<string>('url', "");
     const [description, setDescription] = useLocalStorage<string>('description', "");
     const [selectedRepository, setSelectedRepository] = useLocalStorage<Repository | undefined>('selectedRepository', undefined);
     const [type, setType] = useLocalStorage<string>('type', '');
-    const [date, setDate] = useLocalStorage<DateRange>('date', { from: undefined, to: undefined });
+    const [date, setDate] = useLocalStorage<DateRange>('date', { from: new Date(), to: new Date() });
     const [auditors, setAuditors] = useLocalStorage<number>('auditors', 1)
     const [id, setId] = useLocalStorage<number>('id', 0)
 
@@ -179,9 +145,11 @@ export default function PublishForm() {
     })
 
     const loadGithubProjects = useCallback(async () => {
-        const supabase = createClient()
-        const { data: userData, error } = await supabase.auth.getUser()
-        const response = await fetch(`https://api.github.com/users/${userData.user?.user_metadata.user_name}/repos`)
+        // const supabase = createClient()
+        // const { data: userData, error } = await supabase.auth.getUser()
+        console.log(user)
+        if(user==null) return
+        const response = await fetch(`https://api.github.com/users/${user?.user_metadata.user_name}/repos`)
         const data = await response.json()
         if (data.message) {
             setError(data.message)
@@ -195,6 +163,19 @@ export default function PublishForm() {
         setRepositories(data.map((project: Repository) => project as Repository))
 
     }, []);
+    // Check if there is a code in the URL
+    const searchParams = useSearchParams()
+    const checkAuth = useCallback(() => {
+        const code = searchParams.get('code')
+        if (code) {
+            // If there is a code, we call auth/callback to exchange it for a session
+            // and then redirect to start page
+            redirect(`/auth/callback?code=${code}&next=/publish`)
+        }
+    }, [])
+    useEffect(() => {
+        checkAuth()
+    }, [checkAuth])
 
     const toastError = useCallback(() => {
         if (error) {
@@ -244,6 +225,7 @@ export default function PublishForm() {
         setProcessing(true)
         // save all data in states
         saveState(data)
+        console.log(data)
         // Check if there is db entry (id in localStorage)
         console.log('ID before', localStorage.getItem('id'))
         if (Number(localStorage.getItem('id')) !== 0) {
@@ -320,7 +302,10 @@ export default function PublishForm() {
                                         }
                                     }
                                 />
-                                <CommandEmpty>No framework found. Press <CommandShortcut>spacebar</CommandShortcut></CommandEmpty>
+                                <CommandEmpty>No repository found. <br />{user == null ? <Button
+                                    onClick={() => {
+                                        githubLogin("publish")
+                                    }}>Connect your Github account</Button> : ""}</CommandEmpty>
                                 <CommandList>
                                     <CommandGroup heading={searchValue ? searchValue + ' organisation' : ''}>
                                         {customRepositories.map((repository) => (
@@ -347,7 +332,7 @@ export default function PublishForm() {
                                             </CommandItem>
                                         ))}
                                     </CommandGroup>
-                                    <CommandGroup heading='My repositories'>
+                                    <CommandGroup heading={repositories.length > 0 ? 'My repositories' : ""}>
                                         {repositories.map((repository) => (
                                             <CommandItem
                                                 value={repository.full_name}
@@ -430,59 +415,6 @@ export default function PublishForm() {
                             </FormControl>
                             <FormMessage />
                         </FormItem>
-                    )}
-                />
-                <Separator />
-                <FormField
-                    control={form.control}
-                    name="date"
-                    render={({ field }) => (
-                        <div className="grid w-full gap-1.5">
-                            <Label htmlFor="date">Auditing period</Label>
-                            <FormControl>
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            id="date"
-                                            variant={"outline"}
-                                            className={cn(
-                                                "text-base w-[300px] justify-start text-left font-normal",
-                                                !field.value && "text-muted-foreground"
-                                            )}
-                                        >
-                                            <CalendarIcon className="mr-2 h-4 w-4" />
-                                            {field.value?.from ? (
-                                                field.value.to ? (
-                                                    <>
-                                                        {format(field.value.from, "LLL dd, y")} -{" "}
-                                                        {format(field.value.to, "LLL dd, y")}
-                                                    </>
-                                                ) : (
-                                                    format(field.value.from, "LLL dd, y")
-                                                )
-                                            ) : (
-                                                <span
-                                                    className="text-muted-foreground text-base"
-                                                >Pick a date</span>
-                                            )}
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
-                                        <Calendar
-                                            initialFocus
-                                            mode="range"
-                                            defaultMonth={field.value?.from}
-                                            selected={field.value}
-                                            onSelect={field.onChange}
-                                            numberOfMonths={1}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                            </FormControl>
-                            <FormDescription>This is the period you would like the audit to take place</FormDescription>
-                            <FormMessage />
-                        </div>
-
                     )}
                 />
                 <Button
