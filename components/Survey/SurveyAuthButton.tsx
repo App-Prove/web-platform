@@ -54,6 +54,9 @@ export default function SurveyAuthButton({ user }: { user: null | User }) {
 
                     </div>
             }
+        <Link className="self-end" href="/survey/start?anonymous=yes">
+        <Button className="self-end" variant={'link'}>Answer anonymously</Button>
+        </Link>
         </>
     )
 }

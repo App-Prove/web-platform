@@ -19,11 +19,15 @@ import {
 } from "@/components/ui/form"
 import { toast } from "@/components/ui/use-toast"
 import { createClient } from "@/utils/supabase/clients"
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React from "react"
 import { ReloadIcon } from "@radix-ui/react-icons"
+import { sub } from "date-fns"
 
 export default function SurveyForm() {
+    const searchParams = useSearchParams()
+    const anonymous = searchParams.get('anonymous')
+    const isAnonymous = anonymous === "yes"
     const [Submitting, setSubmitting] = React.useState(false)
     const router = useRouter()
     type Question =
@@ -149,6 +153,7 @@ export default function SurveyForm() {
 
     // 2. Define a submit handler.
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        if(Submitting) return
         setSubmitting(true)
         // console.log("YEY")
         // // Do something with the form values.
@@ -165,6 +170,38 @@ export default function SurveyForm() {
         // Push to DB with custom id which correspond to session
         // Redirect to next page
         // Using server action
+
+        // Get parameters from URL
+        // If anonymous
+        if (isAnonymous) {
+            console.log("anonymous")
+            
+            const supabase = createClient()
+            const { data, error } = await supabase.from('survey').insert({
+                "question0": values.question0,
+                "question1": values.question1,
+                "question2": values.question2,
+                "question3": values.question3,
+                "question4": values.question4,
+                "question5": values.question5,
+                "question6": values.question6,
+                "question7": values.question7,
+                "question8": values.question8,
+                "question9": values.question9,
+                "question10": values.question10,
+                "question11": values.question11,
+                "question12": values.question12,
+                "question13": values.question13,
+                "question14": values.question14,
+            }).select()
+            console.log(data)
+            console.log(error)
+            router.push('/survey/thank-you')
+            return
+        }
+
+
+
         const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
         const payload = {

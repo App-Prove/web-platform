@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useLocalStorage } from "@/lib/utils"
+import { useLocalStorage } from "@/lib/localStorage"
 import { useEffect, useState } from "react";
 export default function CookieBanner() {
   const [cookieConsent, setCookieConsent] = useLocalStorage("cookies_consent",false);
