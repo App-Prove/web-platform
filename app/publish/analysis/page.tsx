@@ -1,3 +1,5 @@
+import WebSocketComponent from "@/components/analysisUpdate";
+
 export default function AnalysisPage(){
     // Identify number of files
 
@@ -9,8 +11,9 @@ export default function AnalysisPage(){
 
     
     return(
-        <div>
+        <div className="w-full flex flex-col gap-2">
             <h1>Analysis Page</h1>
+            <WebSocketComponent></WebSocketComponent>
         </div>
     )
 }

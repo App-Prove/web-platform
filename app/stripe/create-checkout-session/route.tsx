@@ -13,6 +13,8 @@ export async function POST(request: Request) {
   }
   // Get id from post data
   const { id } = await request.json();
+  // Identify promo code
+  const promoCode = true
   // Get offer data from id
   const { data: offerData, error: offerError } = await supabase.from('offers').select('*').eq('id',id);
   // Get budget from id of the offer
@@ -21,20 +23,25 @@ export async function POST(request: Request) {
     customer_email: user?.email,
     line_items: [
       {
-        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-        price_data: {
-          currency: 'usd',
-          product: process.env.STRIPE_PRODUCT_ID,
-          unit_amount_decimal: (Number(offerData?.[0]?.budget) ?? 0) * 100, //because in decimal
-        },
+        price: process.env.STRIPE_PRICE_ID,
         quantity: 1,
-      },
+      }
+      // {
+      //   // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+      //   price_data: {
+      //     currency: 'usd',
+      //     product: process.env.STRIPE_PRODUCT_ID,
+      //     // unit_amount_decimal: (Number(offerData?.[0]?.budget) ?? 0) * 100, //because in decimal
+      //   },
+      //   quantity: 1,
+      // },
     ],
     metadata: {
       id: id
     },
-    mode: 'payment',
+    mode: 'subscription',
     return_url: `${getWebsiteURL()}/publish/payment/processed?session_id={CHECKOUT_SESSION_ID}`,
+    ...(offerData?.[0]?.promoCode ? { discounts: [{ coupon: 'BxMjKCEr' }] } : {}),
   });
   return NextResponse.json({
     clientSecret: session.client_secret

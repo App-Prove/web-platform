@@ -10,7 +10,7 @@ function analyzeGitRepo(url: string) {
         console.log("Error analyzing git repo")
     }
 }
-export async function createPayment(formData: any) {
+export async function createPayment() {
     // const supabase = createClient();
     // const { data, error } = await supabase.from('offers').insert([
     //     // convert all entries to string
@@ -45,17 +45,13 @@ export async function publishNewKeyword(keyword: string) {
     return { data, error }
 }
 
-export async function registerOffer(data: { url: any; description: any; date: { from: any; to: any; }; budget: any; keywords: { label: string; }[]; type: string; }) {
+export async function registerOffer(data: { url: any; description: any; type: string; }) {
     const supabase = createClient()
     const {data:userData,error:userError} = await supabase.auth.getUser()
     const { data: offerData, error } = await supabase.from('offers').insert([
         {
             url: data.url,
             description: data.description,
-            from: data.date.from,
-            to: data.date.to,
-            budget: data.budget,
-            keywords: data.keywords.map((keyword: { label: string; }) => (keyword.label)).join(','), // convert array to string
             payment_status: 'pending',
             type: data.type,
             owner: userData.user?.id,
@@ -67,28 +63,5 @@ export async function registerOffer(data: { url: any; description: any; date: { 
         return {data:offerData[0].id,error:error}
     }
     console.log('ERROR REGISTER', error)
-    return {data:null,error:error}
-}
-export async function updateOffer(id: number, data: { url: any; description: any; date: { from: any; to: any; }; budget: any; keywords: { label: string; }[]; type:string;}) {
-    const supabase = createClient()
-    const {data:userData,error:userError} = await supabase.auth.getUser()
-    const { data: offerData, error } = await supabase.from('offers').update(
-        {
-            url: data.url,
-            description: data.description,
-            from: data.date.from,
-            to: data.date.to,
-            budget: data.budget,
-            keywords: data.keywords.map((keyword: { label: string; }) => (keyword.label)).join(','), // convert array to string
-            type: data.type,
-            owner: userData.user?.id,
-        }
-    ).eq('id',id).select()
-    if (offerData && offerData[0]) {
-        console.log('SUCCESSFUL UPDATING', offerData)
-        analyzeGitRepo(data.url)
-        return {data:offerData[0].id,error:error}
-    }
-    console.log('ERROR UPDATING', error)
     return {data:null,error:error}
 }
