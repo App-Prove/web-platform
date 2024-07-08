@@ -39,8 +39,8 @@ export default async function OfferPage({ params }: { params: { slug: string } }
                 <div className="flex flex-col">
                     <h4 className="font-semibold">{offer.url.split('/')[0]}</h4>
                     <div className="flex gap-2 items-center">
-                        {offer.badges.map((badge) => (
-                            <Badge className='font-normal' variant='secondary' key={badge}>{badge}</Badge>
+                        {offer.keywords?.map((keyword) => (
+                            <Badge className='font-normal' variant='secondary' key={keyword}>{keyword}</Badge>
                         ))}
                     </div>
                 </div>
@@ -56,22 +56,7 @@ export default async function OfferPage({ params }: { params: { slug: string } }
                 </Link>
             </div>
             <div className="flex flex-col gap-2">
-                <Label>Audit period</Label>
-                <Button
-                    disabled
-                    id="date"
-                    variant={"outline"}
-                    className={cn(
-                        "text-base w-[300px] justify-start text-left font-normal",
-                    )}
-                >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    <>
-                        {format(offer.from, "LLL dd, y")} -{" "}
-                        {format(offer.to, "LLL dd, y")}
-                    </>
-                </Button>
-                {(user && user.id != offer.owner && offer.participants.includes(user.id)) &&
+                {(user && user.id != offer.owner && offer.participants?.includes(user.id)) &&
                     <form action="">
                         <Input
                             placeholder="Put your pull request url"></Input>
@@ -107,9 +92,7 @@ export default async function OfferPage({ params }: { params: { slug: string } }
                             ))}
                         </TableBody>
                     </Table>
-
                 }
-
             </div>
         </div>
     );

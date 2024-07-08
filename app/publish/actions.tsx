@@ -30,6 +30,7 @@ export async function createPayment() {
 
     // if (data) {
         // Create payment intent
+
         redirect(`/publish/payment`)
     // }
     // redirect(`/publish/error`)

@@ -4,11 +4,8 @@ export function formatOffers(data: any) : Offer[]{
         return {
             id: offer.id,
             url: offer.url,
-            badges: offer.keywords.split(','),
+            keywords: offer.keywords?.split(','),
             description: offer.description,
-            budget: offer.budget,
-            from: offer.from,
-            to: offer.to,
             participants: offer.participants,
             type: offer.type,
             owner: offer.owner,

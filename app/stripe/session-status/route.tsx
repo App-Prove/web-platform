@@ -10,15 +10,24 @@ export async function GET(request: Request) {
   const session = await stripe.checkout.sessions.retrieve(session_id);
   console.log(session)
   if (session.status === 'complete') {
+    console.log('Payment complete')
+    console.log(session.metadata.id)
     // update the payment status in the database
     const supabase = createClient();
-    const { data, error } = await supabase.from('offers').update({
-      payment_status: 'complete'
-    }).eq('id', session.metadata.id).select();
+    const { data: test, error: testError } = await supabase.from('offers').select().eq('id', Number(session.metadata.id));
+    console.log(test, testError)
+    const { data, error } = await supabase
+      .from('offers')
+      .update({
+        payment_status: 'complete'
+      })
+      .eq('id', Number(session.metadata.id))
+      .select();
     //TODO handle error
+    console.log(data, error)
   }
   return NextResponse.json({
-    id: session.metadata.id??'',
+    id: session.metadata.id ?? '',
     status: session.status,
     customer_email: session.customer_details.email
   });

@@ -1,3 +1,4 @@
+'use server'
 import OffersSearch from "@/components/Offers/OffersSearch";
 import Offer from "@/components/Offers/Offer";
 import { createClient } from "@/utils/supabase/server";
@@ -28,7 +29,6 @@ export default async function OffersPage({
   const numberOfOffer = 10
   var filteredOffers = offers.filter(offer => offer.description.toLowerCase().includes(query.toLowerCase()) || offer.url.toLowerCase().includes(query.toLowerCase()));
 
-  console.log(currentPage)
   //TODO: Add all logic in here
   return (
     <div className="flex-1 flex flex-col gap-4">

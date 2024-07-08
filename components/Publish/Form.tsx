@@ -20,10 +20,9 @@ import {
 } from "@/components/ui/form"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/use-toast"
 import { cn } from "@/lib/utils"
 import { useLocalStorage } from "@/lib/localStorage"
-import { toast as sonner } from "sonner"
+import { toast as sonner, toast } from "sonner"
 import {
     Command,
     CommandDialog,
@@ -41,6 +40,7 @@ import { User } from "@supabase/supabase-js"
 import { githubLogin } from "../server/action"
 import { redirect, useRouter, useSearchParams } from "next/navigation"
 import { register } from "module"
+import { Toaster } from "../ui/sonner"
 
 const FormSchema = z.object({
     url: z.string().superRefine((value, ctx) => {
@@ -84,6 +84,7 @@ export default function PublishForm({ user }: { user: null | User }) {
     const [connecting, setConnecting] = React.useState(false)
 
 
+    const [affiliate, setAffiliate] = useLocalStorage<string>('affiliate', '')
     const [id, setId] = useLocalStorage<number>('id', 0)
     const [url, setUrl] = useLocalStorage<string>('url', '')
 
@@ -96,6 +97,9 @@ export default function PublishForm({ user }: { user: null | User }) {
     // Check if there is a code in the URL
     const searchParams = useSearchParams()
     useEffect(() => {
+        const affiliateCode = searchParams.get('affiliate')
+        setError(searchParams.get('error')??undefined)
+        if (affiliateCode) setAffiliate(affiliateCode);
         const code = searchParams.get('code')
         if (code) {
             // If there is a code, we call auth/callback to exchange it for a session
@@ -104,15 +108,16 @@ export default function PublishForm({ user }: { user: null | User }) {
         }
     }, [])
 
-    useEffect(() => {
+    const toastError = useCallback(() => {
         if (error) {
-            toast({
-                title: "Error",
-                description: error,
-            })
+            toast.error(error)
         }
+    }
+        , [error])
 
-    }, [error])
+    useEffect(() => {
+        toastError()
+    }, [toastError])
 
     const fetchRepositories = useCallback(async () => {
         if (user == null) return
@@ -154,22 +159,21 @@ export default function PublishForm({ user }: { user: null | User }) {
 
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
-        console.log(data)
         setProcessing(true)
         setUrl(data.url)
         const registeringOffer = async () => {
             const { data: loadId, error } = await registerOffer({
                 ...data,
             });
+            loadId && setId(loadId)
             router.push(`/publish/analysis`)
             // createPayment(data)
         }
         registeringOffer()
-        console.log('ID after creation', id);
     }
 
     function onError(errors: any) {
-        console.log(errors)
+        toast.error("Please fill in the form correctly")
     }
 
     return (
@@ -215,7 +219,7 @@ export default function PublishForm({ user }: { user: null | User }) {
                                                 key={repository.full_name}
                                                 onSelect={() => {
                                                     form.setValue("url", repository.full_name)
-                                                    form.setValue("description", repository.description)
+                                                    repository.description && form.setValue("description", repository.description)
                                                     setCommandOpen(false)
                                                 }}
                                             >
@@ -238,7 +242,7 @@ export default function PublishForm({ user }: { user: null | User }) {
                                                 key={repository.full_name}
                                                 onSelect={() => {
                                                     form.setValue("url", repository.full_name)
-                                                    form.setValue("description", repository.description)
+                                                    repository.description && form.setValue("description", repository.description)
                                                     setCommandOpen(false)
                                                 }}
                                             >
