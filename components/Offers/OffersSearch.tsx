@@ -9,7 +9,6 @@ export default function OffersSearch() {
     const { replace } = useRouter();
     const searchParams = useSearchParams();
     const handleSearch = useDebouncedCallback((term: string) =>{
-        console.log(term);
         const params = new URLSearchParams(searchParams);
         if (term) {
             params.set('query', term);

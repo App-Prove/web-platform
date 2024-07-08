@@ -180,7 +180,7 @@ export default function Home() {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-5">
-              <AccordionTrigger>How do App-Prove make money ?</AccordionTrigger>
+              <AccordionTrigger>How does App-Prove make money ?</AccordionTrigger>
               <AccordionContent>
                 Upon completion of the audit offer, a portion of the money is paid to App-Prove as a commission, and the rest of the money is divided fairly among all auditors.
               </AccordionContent>

@@ -25,14 +25,6 @@ export default function Offer({ offer }: { offer: Offer }) {
                                     <CardTitle className="self-start flex flex-wrap text-sm items-center gap-2">
                                         {offer.url.split('/')[0]}
                                     </CardTitle>
-                                    <p className="self-start sm:flex-end text-muted-foreground hidden sm:block">
-                                        {Number(offer.budget) == 0 ?
-                                            "Free"
-
-                                            :
-                                            "Estimated payout" + USDollar.format(Number(offer.budget))
-                                        }
-                                    </p>
                                 </div>
                                 <div className="gap-2 flex-wrap flex">
                                     <Badge variant='secondary' className="font-normal gap-x-2 flex">
@@ -43,8 +35,8 @@ export default function Offer({ offer }: { offer: Offer }) {
                                     </Badge>
 
                                     <Badge onClick={(e) => { e.stopPropagation() }} className={cn(' z-50 cursor-pointer font-normal hidden sm:block', offer.type == 'security' ? 'bg-orange text-white' : 'bg-blue-500 text-white')} variant='outline' key={offer.type}>{offer.type}</Badge>
-                                    {offer.badges.map(badge => (
-                                        <Badge className='font-normal hidden sm:block' variant='secondary' key={badge}>{badge}</Badge>
+                                    {offer.keywords?.map(keyword => (
+                                        <Badge className='font-normal hidden sm:block' variant='secondary' key={keyword}>{keyword}</Badge>
                                     ))}
 
                                     <div className="flex items-center gap-2">
@@ -74,17 +66,11 @@ export default function Offer({ offer }: { offer: Offer }) {
                     <div className="flex gap-2 pb-2 sm:hidden">
                         <Badge onClick={(e) => { e.stopPropagation() }} className={cn('z-50 cursor-pointer font-normal sm:hidden', offer.type == 'security' ? 'bg-orange text-white' : 'bg-blue-500 text-white')} variant='secondary' key={offer.type}>{offer.type}</Badge>
 
-                        {offer.badges.map(badge => (
-                            <Badge className='font-normal sm:hidden' variant='secondary' key={badge}>{badge}</Badge>
+                        {offer.keywords?.map(keyword => (
+                            <Badge className='font-normal sm:hidden' variant='secondary' key={keyword}>{keyword}</Badge>
                         ))}
                     </div>
                     {offer.description}
-                    <p className="self-end text-muted-foreground block sm:hidden text-xs">
-                        {Number(offer.budget) == 0 ?
-                            "Free" :
-                            "Estimated payout" + USDollar.format(Number(offer.budget))
-                        }
-                    </p>
                 </CardContent>
             </Card>
         </Link>

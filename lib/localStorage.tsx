@@ -19,6 +19,7 @@ export const useLocalStorage = <T extends unknown>(key: string, initialValue: T)
     const valueToStore = value instanceof Function ? value(storedValue) : value;
     setStoredValue(valueToStore);
     if (typeof window !== 'undefined') {
+      sessionStorage.setItem(key, JSON.stringify(valueToStore));
       localStorage.setItem(key, JSON.stringify(valueToStore));
     }
   };

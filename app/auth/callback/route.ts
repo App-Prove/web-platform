@@ -10,9 +10,7 @@ export async function GET(request: Request) {
 
   // Debug
   console.log('searchParams', searchParams)
-  console.log('origin', origin)
-  console.log('next', next)
-  console.log('code', code)
+  
   if (code) {
     try {
       const cookieStore = cookies()
@@ -35,6 +33,7 @@ export async function GET(request: Request) {
       )
       const { error } = await supabase.auth.exchangeCodeForSession(code)
       if (!error) {
+        revalidatePath(`/${next}`,'layout') // Update cached posts
         return NextResponse.redirect(`${origin}${next}`)
       }
     }

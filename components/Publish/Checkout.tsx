@@ -7,6 +7,7 @@ import {
 } from '@stripe/react-stripe-js';
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { useSearchParams } from "next/navigation";
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
@@ -14,18 +15,24 @@ import { Button } from "../ui/button";
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY ?? '');
 
 export const CheckoutForm = () => {
+  var id = 0;
+  var affiliate = '';
+  if (typeof window !== 'undefined') {
+    id = Number(localStorage.getItem('id')) ?? 0;
+    affiliate = localStorage.getItem('affiliate')?.replace(/"/g, "") ?? '';
+  };
   const fetchClientSecret = useCallback(async () => {
     // Get the id from localStorage
-    const id = localStorage.getItem('id');
     // Create a Checkout Session
     const res = await fetch(`/stripe/create-checkout-session`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ id: id })
+      body: JSON.stringify({ id: id, affiliate: affiliate })
     });
     const data = await res.json();
+    if (data.error) return null
     return data.clientSecret;
   }, []);
 
@@ -33,12 +40,18 @@ export const CheckoutForm = () => {
 
   return (
     <div id="checkout">
+      {options?
       <EmbeddedCheckoutProvider
         stripe={stripePromise}
         options={options}
       >
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
+      :
+      <>
+      <p>ERROR</p>
+      </>
+      }
     </div>
   )
 }
