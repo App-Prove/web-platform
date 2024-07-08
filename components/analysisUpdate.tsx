@@ -11,6 +11,9 @@ import error from '@/public/lottie/error.json';
 import analyzing from '@/public/lottie/analyzing.json';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { createPayment } from '@/app/publish/actions';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Terminal } from 'lucide-react';
+
 
 type RepositoryScanData = {
     numberOfFiles: number;
@@ -237,16 +240,41 @@ export default function WebSocketComponent() {
                         if (step.data?.length === 0) {
                             return <p>No issues found</p>
                         }
-                        return <div>
+                        return <div className='flex flex-col gap-2'>
                             {step.data?.map((file) => (
-                                <div key={`inDepthAnalysis-${file.path}`}>
-                                    <p>{file.path}</p>
+                                <div key={`inDepthAnalysis-${file.path}`} className='flex gap-2 flex-col'>
+                                    {
+                                        file.issues.length === 0 &&
+                                        <Alert>
+                                            <Terminal className="h-4 w-4" />
+                                            <AlertTitle>{file.path}</AlertTitle>
+                                            <AlertDescription>
+                                                Our algorithm didn&apos;t find any issues in this file. We recommend getting a second opinion from a human.
+                                            </AlertDescription>
+                                        </Alert>
+
+                                    }
                                     {
                                         file.issues.map((issue, index) => (
                                             <div key={`inDepthAnalysis-${file.path}-issue-${index}`}>
-                                                <p>Line:{issue.lineNumber}</p>
-                                                <p>Comment: {issue.comment}</p>
-                                                <p>Suggestion: {issue.suggestion}</p>
+                                                <Alert>
+                                                    <Terminal className="h-4 w-4" />
+                                                    <AlertTitle>{file.path} at line {issue.lineNumber}</AlertTitle>
+                                                    <AlertDescription className='flex flex-col gap-2'>
+                                                        <div className='flex gap-x-2 items-center w-fit'>
+                                                            <Lottie
+                                                            options={{ ...defaultOptions, animationData: error, loop: true }}
+                                                            height={24}
+                                                            width={24}
+                                                        />{issue.comment}</div>
+                                                        <div className='flex gap-x-2 items-center w-fit'>
+                                                            <Lottie
+                                                            options={{ ...defaultOptions, animationData: valid, loop: false }}
+                                                            height={24}
+                                                            width={24}
+                                                        />{issue.suggestion}</div>
+                                                    </AlertDescription>
+                                                </Alert>
                                             </div>
                                         ))
                                     }
