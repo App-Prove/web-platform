@@ -55,7 +55,7 @@ export default async function RootLayout({
             <Link href={"/"}>
               <div className="flex items-center gap-x-2">
                 <Logo></Logo>
-                <p>App-Prove</p>
+                <p className="hidden sm:block">App-Prove</p>
               </div>
             </Link>
             <div className="flex gap-4">

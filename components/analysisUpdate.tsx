@@ -225,7 +225,10 @@ export default function WebSocketComponent() {
                         </ul>
                     case 'relativeFiles':
                         return <div>{step.data?.relativeFiles.map((file, index) => (
-                            <p key={`relativeFiles-${file.path}`}>{file.path} {file.language}</p>
+                            <div key={`relativeFiles-${file.path}`} className='flex flex-col gap-2'>
+                            <p>Path: {file.path}</p>
+                            <p>Language: {file.language}</p>
+                            </div>
                         ))}</div>
                     case 'sensitiveFiles':
                         // Check if there are no sensitive files
@@ -233,7 +236,10 @@ export default function WebSocketComponent() {
                             return <p>No sensitive files found</p>
                         }
                         return <div>{step.data?.sensitiveFiles.map((file) => (
-                            <p key={`sensitiveFiles-${file.path}`}>{file.path} {file.language}</p>
+                            <div key={`sensitiveFiles-${file.path}`} className='flex flex-col gap-2'>
+                            <p>Path: {file.path}</p>
+                            <p>Language: {file.language}</p>
+                            </div>
                         ))}</div>
                     case 'inDepthAnalysis':
                         // Check if empty array
@@ -257,22 +263,34 @@ export default function WebSocketComponent() {
                                     {
                                         file.issues.map((issue, index) => (
                                             <div key={`inDepthAnalysis-${file.path}-issue-${index}`}>
-                                                <Alert>
+                                                <Alert className='w-full overflow-hidden'>
                                                     <Terminal className="h-4 w-4" />
                                                     <AlertTitle>{file.path} at line {issue.lineNumber}</AlertTitle>
                                                     <AlertDescription className='flex flex-col gap-2'>
-                                                        <div className='flex gap-x-2 items-center w-fit'>
-                                                            <Lottie
-                                                            options={{ ...defaultOptions, animationData: error, loop: true }}
-                                                            height={24}
-                                                            width={24}
-                                                        />{issue.comment}</div>
-                                                        <div className='flex gap-x-2 items-center w-fit'>
-                                                            <Lottie
-                                                            options={{ ...defaultOptions, animationData: valid, loop: false }}
-                                                            height={24}
-                                                            width={24}
-                                                        />{issue.suggestion}</div>
+                                                        <div className='flex gap-x-2 items-center w-full'>
+                                                            <div>
+                                                                <Lottie
+                                                                    options={{ ...defaultOptions, animationData: error, loop: true }}
+                                                                    height={24}
+                                                                    width={24}
+                                                                />
+                                                            </div>
+                                                            <p className='text-xs sm:text-sm'>
+                                                                {issue.comment}
+                                                            </p>
+                                                        </div>
+                                                        <div className='flex gap-x-2 items-center w-full'>
+                                                            <div>
+                                                                <Lottie
+                                                                    options={{ ...defaultOptions, animationData: valid, loop: false }}
+                                                                    height={24}
+                                                                    width={24}
+                                                                />
+                                                            </div>
+                                                            <p className='text-xs sm:text-sm text-pretty'>
+                                                                {issue.suggestion}
+                                                            </p>
+                                                        </div>
                                                     </AlertDescription>
                                                 </Alert>
                                             </div>
@@ -292,15 +310,16 @@ export default function WebSocketComponent() {
     }
 
     return (
-        <div className='flex flex-col gap-4 w-full items-start mb-8'>
+        <div className='flex flex-col gap-4 w-full items-start mb-8 overflow-hidden min-h-96'>
             {steps.map((step, index) => (
                 <div key={index} className='flex flex-col sm:flex-row gap-2 w-full justify-center'>
                     <Card className='w-full'>
                         <CardHeader>
-
-                            <div className='flex gap-x-2 w-fit justify-center'>
+                            <div className='flex gap-x-2 w-full'>
+                                <div className='justify-center flex items-center'>
                                 {renderStepType(step)}
-                                <p className='flex w-fit'>{step.message}</p>
+                                </div>
+                                <p className='flex flex-wrap w-full'>{step.message}</p>
                             </div>
                         </CardHeader>
                         {(step.status == 'success' && step.data) &&
@@ -311,12 +330,11 @@ export default function WebSocketComponent() {
                     </Card>
                 </div>
             ))}
-            <div className='self-end flex flex-col gap-2 w-fit'>
-
+            <div className='flex flex-col gap-2 w-full h-full justify-between'>
                 {!finished &&
-                    <Button onClick={() => startAnalysis(ws)}>Start analysis</Button>
+                    <Button onClick={() => startAnalysis(ws)} className='self-start' variant={'secondary'}>Start analysis</Button>
                 }
-                <Button onClick={() => createPayment()}>Go to payment</Button>
+                <Button onClick={() => createPayment()} className='self-end'>Go to payment</Button>
             </div>
             <Toaster></Toaster>
         </div >
