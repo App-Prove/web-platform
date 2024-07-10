@@ -15,8 +15,18 @@ import { Github } from 'lucide-react';
 import React from "react";
 import { ReloadIcon } from "@radix-ui/react-icons"
 import { githubLogin } from "./server/action";
+import { redirect, usePathname, useSearchParams } from "next/navigation";
 
 export default function AuthButton({ user }: { user: any }) {
+    // Check if there is a code in the URL
+    const searchParams = useSearchParams()
+    const pathname = usePathname()
+    const code = searchParams.get('code')
+    if (code) {
+        // If there is a code, we call auth/callback to exchange it for a session
+        // and then redirect to start page
+        redirect(`/auth/callback?code=${code}&next=${pathname}/`)
+    }
     const [loading, setLoading] = React.useState(false)
     return (
         <>
@@ -26,7 +36,7 @@ export default function AuthButton({ user }: { user: any }) {
                         disabled={loading}
                         onClick={() => {
                             setLoading(true)
-                            githubLogin()
+                            githubLogin(pathname)
                         }}>
                         {!loading ?
                             <>

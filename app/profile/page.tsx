@@ -1,3 +1,4 @@
+'use server'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import React, { useRef } from 'react'
@@ -12,7 +13,6 @@ export default async function PrivatePage() {
         redirect('/?error=unauthorized')
     }
     const user = data.user
-    console.log(user)
     const keywords = [{ value: 'python', label: 'python' }, { value: 'javascript', label: 'javascript' }] as Keyword[];
     return (
         <div className='w-full'>
@@ -21,7 +21,6 @@ export default async function PrivatePage() {
                 Here you can set up your profile
             </p>
             <ProfileSettings keywords={keywords} />
-
         </div>
     )
 }
