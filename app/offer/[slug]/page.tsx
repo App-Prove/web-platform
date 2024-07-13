@@ -10,7 +10,7 @@ import { addDays, format, set, subDays } from "date-fns"
 import { createClient } from "@/utils/supabase/server";
 import { SquareArrowOutUpRight } from 'lucide-react';
 import Link from "next/link";
-import { ParticipateButton } from "@/components/ParticipateButton";
+import { ParticipationForm } from "@/components/ParticipationForm";
 import {
     Table,
     TableBody,
@@ -28,10 +28,33 @@ export default async function OfferPage({ params }: { params: { slug: string } }
     // get id from slug
     const id = params.slug
     const supabase = createClient();
-    const { data, error } = await supabase.from('offers').select('*').eq('id', id);
-    const offer: Offer = formatOffers(data)[0]; 
     const { data: { user } } = await supabase.auth.getUser()
-    // Check if user id is in the list of participants
+
+    const { data, error } = await supabase
+    .from('offers')
+    .select('*')
+    .eq('id', id);
+
+    if (error) {
+        console.error(error);
+        return <div>Unable to find offer</div>
+    }
+    
+    if (!data) {
+        return <div>Loading...</div>
+    }
+
+    if (data.length == 0) {
+        return <div>Offer not found</div>
+    }
+
+    const { data: participatingData, error:participatingError} = await supabase
+    .from('participants')
+    .select('*')
+    .eq('offer_id', id)
+    .eq('participant_id', user?.id)
+    const participating = participatingData?.length! > 0 
+    const offer: Offer = formatOffers(data)[0];
     return (
         <div className="flex flex-col gap-4 flex-1">
             <div className="flex gap-4 align-top">
@@ -49,26 +72,34 @@ export default async function OfferPage({ params }: { params: { slug: string } }
             <p className="text-justify sm:text-pretty">{offer.description}</p>
             <div>
                 <Label>Github</Label>
-                <Link className="flex cursor-pointer items-center" href={'https://github.com/' + offer.url.toLowerCase()}>
-                    <Input disabled placeholder={'github.com/'} className="w-[120px] bg-muted text-muted-foreground rounded-r-none border-r-0"></Input>
-                    <Input disabled placeholder={offer.url.toLowerCase()} className="text-muted-foreground rounded-l-none pr-12"></Input>
+                <Link className="flex cursor-pointer items-center" href={'https://github.com/' + offer.url.toLowerCase()} target="_blank">
+                    <div tabIndex={-1}
+                        className={cn(
+                            "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50k text-base",
+                            "w-[120px] bg-muted text-muted-foreground rounded-r-none border-r-0"
+                        )}
+                    >
+                        <p>
+                            github.com/
+                        </p>
+                    </div>
+                    <div
+                        className={cn(
+                            "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50k text-base",
+                            "text-muted-foreground rounded-l-none pr-12"
+                        )}
+                    >
+                        <p>
+                            {offer.url.toLowerCase()}
+                        </p>
+                    </div>
                     <SquareArrowOutUpRight className="-translate-x-10" />
                 </Link>
-            </div>
-            <div className="flex flex-col gap-2">
-                {(user && user.id != offer.owner && offer.participants?.includes(user.id)) &&
-                    <form action="">
-                        <Input
-                            placeholder="Put your pull request url"></Input>
-                        <Button>Submit</Button>
-                    </form>
-                }
-            </div>
-            <div className="flex self-end">
-                {(user && user.id != offer.owner) &&
-                    <ParticipateButton user={user} offerID={offer.id} participants={offer.participants} />
-                }
-            </div>
+            </div >
+            
+            {(user && user.id != offer.owner) &&
+                <ParticipationForm user={user} offerID={offer.id} participating={participating} prURL={participatingData && participatingData[0]?.pr_url} />
+            }
             <div>
                 {(user && user.id == offer.owner) &&
                     <Table>
@@ -82,7 +113,7 @@ export default async function OfferPage({ params }: { params: { slug: string } }
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {offer.participants?.map((participant, index) => (
+                            {participatingData?.map((participant, index) => (
                                 <TableRow key={participant}>
                                     <TableCell>{index + 1}</TableCell>
                                     <TableCell>{participant}</TableCell>
@@ -94,6 +125,6 @@ export default async function OfferPage({ params }: { params: { slug: string } }
                     </Table>
                 }
             </div>
-        </div>
+        </div >
     );
 }
