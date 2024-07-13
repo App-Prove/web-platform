@@ -6,7 +6,6 @@ export function formatOffers(data: any) : Offer[]{
             url: offer.url,
             keywords: offer.keywords?.split(','),
             description: offer.description,
-            participants: offer.participants,
             type: offer.type,
             owner: offer.owner,
             lines_count: offer.lines_count,

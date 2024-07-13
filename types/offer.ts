@@ -1,5 +1,4 @@
 type Offer = {
-    participants: string[];
     id: number,
     url: string,
     keywords: string[],
