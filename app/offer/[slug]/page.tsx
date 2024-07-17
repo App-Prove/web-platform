@@ -31,15 +31,15 @@ export default async function OfferPage({ params }: { params: { slug: string } }
     const { data: { user } } = await supabase.auth.getUser()
 
     const { data, error } = await supabase
-    .from('offers')
-    .select('*')
-    .eq('id', id);
+        .from('offers')
+        .select('*')
+        .eq('id', id);
 
     if (error) {
         console.error(error);
         return <div>Unable to find offer</div>
     }
-    
+
     if (!data) {
         return <div>Loading...</div>
     }
@@ -48,12 +48,12 @@ export default async function OfferPage({ params }: { params: { slug: string } }
         return <div>Offer not found</div>
     }
 
-    const { data: participatingData, error:participatingError} = await supabase
-    .from('participants')
-    .select('*')
-    .eq('offer_id', id)
-    .eq('participant_id', user?.id)
-    const participating = participatingData?.length! > 0 
+    const { data: participatingData, error: participatingError } = await supabase
+        .from('participants')
+        .select('*')
+        .eq('offer_id', id)
+        .eq('participant_id', user?.id)
+    const participating = participatingData?.length! > 0
     const offer: Offer = formatOffers(data)[0];
     return (
         <div className="flex flex-col gap-4 flex-1">
@@ -70,33 +70,23 @@ export default async function OfferPage({ params }: { params: { slug: string } }
             </div>
             <p className={cn(offer.type == 'security' ? 'text-orange' : 'text-blue-500')}>{offer.type == 'security' ? 'This is a security audit. Auditors would have to seek for data breaches' : 'This is a fiability audit. Auditors would have to ensure code errors and bugs are handeled properly.'}</p>
             <p className="text-justify sm:text-pretty">{offer.description}</p>
-            <div>
+            <div className="w-full">
                 <Label>Github</Label>
-                <Link className="flex cursor-pointer items-center" href={'https://github.com/' + offer.url.toLowerCase()} target="_blank">
-                    <div tabIndex={-1}
-                        className={cn(
-                            "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50k text-base",
-                            "w-[120px] bg-muted text-muted-foreground rounded-r-none border-r-0"
-                        )}
-                    >
-                        <p>
-                            github.com/
-                        </p>
-                    </div>
-                    <div
-                        className={cn(
-                            "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50k text-base",
-                            "text-muted-foreground rounded-l-none pr-12"
-                        )}
-                    >
-                        <p>
-                            {offer.url.toLowerCase()}
-                        </p>
-                    </div>
-                    <SquareArrowOutUpRight className="-translate-x-10" />
+                <Link
+                    className={cn(
+                        "flex flex-row w-full  items-center rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50k text-base",
+                        "bg-muted text-muted-foreground ",
+                        "w-full flex flex-row cursor-pointer items-center"
+                    )}
+                    href={'https://github.com/' + offer.url.toLowerCase()} target="_blank">
+                    <p className="flex-wrap flex-1">
+                        github.com/
+                        {offer.url.toLowerCase()}
+                    </p>
+                    <SquareArrowOutUpRight className="flex-shrink-0" />
                 </Link>
             </div >
-            
+
             {(user && user.id != offer.owner) &&
                 <ParticipationForm user={user} offerID={offer.id} participating={participating} prURL={participatingData && participatingData[0]?.pr_url} />
             }

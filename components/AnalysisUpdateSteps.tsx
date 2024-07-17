@@ -13,70 +13,8 @@ import { Card, CardContent, CardHeader } from './ui/card';
 import { createPayment } from '@/app/publish/actions';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Terminal } from 'lucide-react';
+import { AnalyzingAnimation, ErrorAnimation, PendingAnimation, SuccessAnimation } from './LottieAnimations';
 
-
-type RepositoryScanData = {
-    numberOfFiles: number;
-    totalLineCount: number;
-    commonLanguages: string[];
-};
-
-type RelativeFilesData = {
-    relativeFiles: {
-        path: string;
-        language: string;
-    }[]
-};
-
-type SensitiveFilesData = {
-    sensitiveFiles: {
-        path: string;
-        language: string;
-    }[]; // Contains file paths
-};
-
-type InDepthAnalysisData = {
-    issues: {
-        lineNumber: number;
-        comment: string;
-        suggestion: string;
-        path: string;
-    }[];
-    path: string;
-}[];
-
-
-type Step = {
-    status: "pending" | "analyzing" | "error";
-    message: string;
-} | {
-    status: "success";
-    message: string;
-    type: "repositoryScan";
-    data: RepositoryScanData;
-} | {
-    status: "success";
-    message: string;
-    type: "relativeFiles";
-    data: RelativeFilesData;
-} | {
-    status: "success";
-    message: string;
-    type: "sensitiveFiles";
-    data: SensitiveFilesData;
-}
-    | {
-        status: "success";
-        message: string;
-        type: "inDepthAnalysis";
-        data: InDepthAnalysisData;
-    }
-// type Step = {
-//     status?: "pending" | "success" | "analyzing" | "error";
-//     message?: string;
-//     type?: StepType;
-//     data?: StepData;
-// }
 
 // Function to parse the data field if it's a string
 function parseStepData(step: Step): Step {
@@ -98,7 +36,7 @@ function parseStepData(step: Step): Step {
 }
 
 
-export default function WebSocketComponent() {
+export default function AnalysisUpdateSteps() {
     const [message, setMessage] = useState('');
     const [steps, setSteps] = useState<Step[]>([]);
     const [repositoryURL, setRepositoryURL] = useState('');
@@ -173,9 +111,6 @@ export default function WebSocketComponent() {
     }, []);
 
 
-
-
-
     const defaultOptions = {
         autoplay: true,
         rendererSettings: {
@@ -185,29 +120,13 @@ export default function WebSocketComponent() {
     function renderStepType(step: Step) {
         switch (step.status) {
             case 'error':
-                return <Lottie
-                    options={{ ...defaultOptions, animationData: error, loop: true }}
-                    height={24}
-                    width={24}
-                />
+                return <ErrorAnimation></ErrorAnimation>
             case 'success':
-                return <Lottie
-                    options={{ ...defaultOptions, animationData: valid, loop: false }}
-                    height={24}
-                    width={24}
-                />
+                return <SuccessAnimation></SuccessAnimation>
             case 'pending':
-                return <div className='flex gap-x-1 items-center'>
-                    <span className='w-2 h-2 rounded-full bg-orange animate-pulse'></span>
-                    <span className='w-2 h-2 rounded-full bg-orange animate-pulse'></span>
-                    <span className='w-2 h-2 rounded-full bg-orange animate-pulse'></span>
-                </div>
+                return <PendingAnimation></PendingAnimation>
             case 'analyzing':
-                return <Lottie
-                    options={{ ...defaultOptions, animationData: analyzing, loop: true }}
-                    height={24}
-                    width={24}
-                />
+                return <AnalyzingAnimation></AnalyzingAnimation>
             default:
                 return <div>Unidentified step</div>;
         }

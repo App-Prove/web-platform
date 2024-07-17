@@ -21,7 +21,7 @@ import { Github } from "lucide-react";
 
 export default function Home() {
   const [error, setError] = useState<string | null>(null);
-  const [redirectPage, setRedirectPage] = useState<string | null>(null);
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const queryString = window.location.search;
