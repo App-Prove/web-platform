@@ -1,4 +1,4 @@
-import WebSocketComponent from "@/components/analysisUpdate";
+import AnalysisUpdateSteps from "@/components/AnalysisUpdateSteps";
 
 export default function AnalysisPage(){
     // Identify number of files
@@ -13,7 +13,7 @@ export default function AnalysisPage(){
     return(
         <div className="w-full flex flex-col gap-2">
             <h1>Analysis Page</h1>
-            <WebSocketComponent></WebSocketComponent>
+            <AnalysisUpdateSteps></AnalysisUpdateSteps>
         </div>
     )
 }
