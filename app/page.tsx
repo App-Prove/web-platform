@@ -106,49 +106,6 @@ export default function Home() {
           </div>
         </div>
         <Separator />
-        <div className="flex flex-col gap-2">
-          <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>Audit platform with full <strong className="text-orange">transparency</strong></h2>
-          <p className={cn("text-muted-foreground text-pretty")} >
-            A platform prioritizing exchange with experts tailored to your needs through the publication of your personalized offer.
-            <br />
-            <br />
-            Furthermore, the platform is completely transparent regarding how money is shared among parties.
-          </p>
-          <div className="flex justify-center flex-col text-center">
-            <div className="flex overflow-hidden justify-center">
-              <svg width="816" height="429" viewBox="0 0 816 429" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M40 398.333C40 395.545 40 394.151 40.2306 392.992C41.1775 388.232 44.8986 384.51 49.6589 383.564C50.8181 383.333 52.2121 383.333 55 383.333H113C115.788 383.333 117.182 383.333 118.341 383.564C123.101 384.51 126.823 388.232 127.769 392.992C128 394.151 128 395.545 128 398.333H40Z" fill="#FF4003" />
-                <rect x="40" y="398.333" width="88" height="15" fill="#FF4003" />
-                <rect x="40" y="413.333" width="88" height="15" fill="#FF4003" />
-                <path d="M384 19.2C384 12.4794 384 9.11905 385.308 6.55211C386.458 4.29417 388.294 2.4584 390.552 1.30792C393.119 0 396.479 0 403.2 0H452.8C459.521 0 462.881 0 465.448 1.30792C467.706 2.4584 469.542 4.29417 470.692 6.55211C472 9.11905 472 12.4794 472 19.2V125.111H384V19.2Z" fill="black" fillOpacity="0.2" />
-                <rect x="384" y="125.111" width="88" height="15" fill="#747474" />
-                <rect x="384" y="144.111" width="88" height="125.111" fill="#090909" />
-                <rect x="384" y="269.222" width="88" height="15" fill="#FF4003" />
-                <rect x="384" y="288.222" width="88" height="125.111" fill="#090909" />
-                <rect x="384" y="413.333" width="88" height="15" fill="#FF4003" />
-                <path d="M728 19.2C728 12.4794 728 9.11905 729.308 6.55211C730.458 4.29417 732.294 2.4584 734.552 1.30792C737.119 0 740.479 0 747.2 0H796.8C803.521 0 806.881 0 809.448 1.30792C811.706 2.4584 813.542 4.29417 814.692 6.55211C816 9.11905 816 12.4794 816 19.2V140.111H728V19.2Z" fill="#090909" />
-                <rect x="728" y="144.111" width="88" height="140.111" fill="#090909" />
-                <rect x="728" y="288.222" width="88" height="140.111" fill="#090909" />
-              </svg>
-            </div>
-            <div className="flex gap-x-4 mt-4">
-              <h3 className={cn(whyte.className, "font-bold text-5xl text-orange")}>&lt;20%</h3>
-              <p className="text-muted-foreground">revenue shared for each approved* review</p>
-            </div>
-            <p className="text-muted-foreground text-sm mt-8 text-justify">* At the end of the audit period, our team and developers who participated, ensure reviews follow our standards</p>
-          </div>
-        </div>
-        <Separator />
-        <div className="flex flex-col gap-2">
-          <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>
-            Ensure your code
-            <strong className="text-orange"> security </strong>
-            in 3 steps
-          </h2>
-
-          <Image src={'/steps.png'} width={1280} height={720} alt={"3 simple steps consisting in publishing, paying and receiving feedback"}></Image>
-        </div>
-        <Separator />
         <div className="flex flex-col gap-2 text-left">
           <h2 className={cn("uppercase text-3xl font-medium text-center", whyte.className)}>
             Questions &
@@ -162,45 +119,62 @@ export default function Home() {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
-              <AccordionTrigger>How does App-Prove work ?</AccordionTrigger>
-              <AccordionContent>
-                Developers can submit their code to the platform, where auditors thoroughly examine it for any potential weaknesses. This ensures that the code meets high standards of security and reliability.
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="item-3">
               <AccordionTrigger>Why is App-Prove important ?</AccordionTrigger>
               <AccordionContent>
                 App-Prove helps developers ensure the integrity of their code by providing access to skilled auditors who can identify and address vulnerabilities. This is crucial for maintaining the security of software systems and protecting against cyber threats.
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="item-4">
-              <AccordionTrigger>How much does it cost ?</AccordionTrigger>
+            <AccordionItem value="item-3">
+              <AccordionTrigger>How does App-Prove work ?</AccordionTrigger>
               <AccordionContent>
-                If you want to publish an offer, you choose how much it costs for your audit. If you want to audit, it costs you absolutely nothing, it is the opposite: you can earn money!
+                Developers can submit their open-source code from GitHub to our platform, where auditors thoroughly examine it for any potential weaknesses. This ensures that the code meets high standards of security and reliability. At the end of the audit, the app creator will be able to obtain a certificate depending on the type of audit chosen at the creation of the offer.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-4">
+              <AccordionTrigger>What types of audits are available?</AccordionTrigger>
+              <AccordionContent>
+                Currently, 2 types of audits are available.
+                The first one is the security audit which allows to check if it has no data breach.
+                The second one is the reliability audit which allows to check if there are no bugs in the code.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-5">
-              <AccordionTrigger>How does App-Prove make money ?</AccordionTrigger>
-              <AccordionContent>
-                Upon completion of the audit offer, a portion of the money is paid to App-Prove as a commission, and the rest of the money is divided fairly among all auditors.
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="item-6">
               <AccordionTrigger>What is an auditor ?</AccordionTrigger>
               <AccordionContent>
                 An auditor is a person responsible for checking and verifying your code and/or program.
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="item-7">
+            <AccordionItem value="item-6">
               <AccordionTrigger>Who can publish an offer ?</AccordionTrigger>
               <AccordionContent>
                 Whether you are a freelancer, a self-employed individual, or part of a company, you can publish an offer by completing a form to provide the details of your offer.
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="item-8">
+            <AccordionItem value="item-7">
               <AccordionTrigger>How to publish an offer ?</AccordionTrigger>
               <AccordionContent>
-                Simply log in to our platform using a GitHub account, then all you have to do is click on the &apos;Publish&apos; button, fill out the form, and finally make the payment.
+                Simply log in to our platform using a GitHub account, then all you have to do is click on the &apos;Publish&apos; button, fill out the form.
+                Then you will have an interface that will make a pre-analysis of your code to give you a first assessment and finally you make the payment.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-8">
+              <AccordionTrigger>How to audit an offer ?</AccordionTrigger>
+              <AccordionContent>
+                Simply log in to our platform using a GitHub account, then you have to click on the &apos;Offers&apos; button and click on the offer you are interested in, after that you need to click on the &apos;Participate&apos; button.
+                Then you can audit code by forking the repository, making your changes, and then submitting a pull request to the main project. Our algorithms will then analyze your pull request, check your code, and provide feedback. We'll then see if you meet the criteria to be eligible for a payout.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-9">
+              <AccordionTrigger>How much does it cost ?</AccordionTrigger>
+              <AccordionContent>
+                If you want to publish an offer, you need to pay an annual subscription of 500$ to have access to an audit and 3 proofreading.
+                If you want to audit, it costs you absolutely nothing, it is the opposite: you can earn money !
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-10">
+              <AccordionTrigger>How does App-Prove make money ?</AccordionTrigger>
+              <AccordionContent>
+              Some of the subscription money will be distributed to auditors, and App-Prove will recover the remaining money in order to sustain platform development.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
