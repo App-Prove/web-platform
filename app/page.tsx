@@ -161,7 +161,7 @@ export default function Home() {
               <AccordionTrigger>How to audit an offer ?</AccordionTrigger>
               <AccordionContent>
                 Simply log in to our platform using a GitHub account, then you have to click on the &apos;Offers&apos; button and click on the offer you are interested in, after that you need to click on the &apos;Participate&apos; button.
-                Then you can audit code by forking the repository, making your changes, and then submitting a pull request to the main project. Our algorithms will then analyze your pull request, check your code, and provide feedback. We'll then see if you meet the criteria to be eligible for a payout.
+                Then you can audit code by forking the repository, making your changes, and then submitting a pull request to the main project. Our algorithms will then analyze your pull request, check your code, and provide feedback. We&apos;ll then see if you meet the criteria to be eligible for a payout.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-9">
