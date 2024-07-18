@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useState } from "react"
+import { use, useCallback, useEffect, useState } from "react"
 import { Button } from "./ui/button"
 import { createClient } from "@/utils/supabase/clients"
 import { User } from "@supabase/supabase-js"
@@ -21,7 +21,12 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { set } from "date-fns"
 import { ReloadIcon } from "@radix-ui/react-icons"
-import { SuccessAnimation } from "./LottieAnimations"
+import { LoadingAnimation, SuccessAnimation } from "./LottieAnimations"
+import { Loader2Icon } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
+import { cn } from "@/lib/utils"
+import { revalidatePath } from "next/cache"
+import path from "path"
 
 const FormSchema = z.object({
     prURL: z.string().url({
@@ -33,8 +38,10 @@ export function ParticipationForm({ user, participating, offerID, prURL }: { use
     const [PRURLValidated, setPRURLValidated] = useState(false)
     const [validatingPRURL, setValidatingPRURL] = useState(false)
     const [participationRegistered, setParticipationRegistered] = useState(participating)
+    const [canceled, setCanceled] = useState(false) 
     const [submittingPR, setSubmittingPR] = useState(false)
     const [registeringParticipation, setRegisteringParticipation] = useState(false)
+    const [submittedPR, setSubmittedPR] = useState(false)
     const [cancelingParticipation, setCancelingParticipation] = useState(false)
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -44,6 +51,7 @@ export function ParticipationForm({ user, participating, offerID, prURL }: { use
     })
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
+        setCanceled(false)
         setValidatingPRURL(true)
         setSubmittingPR(true)
         const supabase = createClient()
@@ -65,10 +73,13 @@ export function ParticipationForm({ user, participating, offerID, prURL }: { use
             toast('Error submitting PR URL')
             return
         }
+        //TODO: Start websocket and listen for PR URL validation
+
         setValidatingPRURL(false)
         setPRURLValidated(true)
         toast('PR URL submitted')
         setSubmittingPR(false)
+        setSubmittedPR(true)
     }
     const participate = useCallback(async () => {
         setRegisteringParticipation(true)
@@ -117,7 +128,17 @@ export function ParticipationForm({ user, participating, offerID, prURL }: { use
             setParticipationRegistered(false)
             toast('Cancelled participation')
             setCancelingParticipation(false)
+            
+
+            setCanceled(true)
+            form.setValue('prURL','')
         }, [participationRegistered])
+    const prURLValue = form.watch('prURL')
+    
+    useEffect(() => {
+        setPRURLValidated(false)
+    }, [prURLValue])
+
     return (
         <div className="flex flex-col gap-4">
             {
@@ -128,14 +149,27 @@ export function ParticipationForm({ user, participating, offerID, prURL }: { use
                             control={form.control}
                             name="prURL"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="w-full">
                                     <FormLabel>Pull Request URL</FormLabel>
-                                    <div className="flex items-center gap-x-2">
-                                        <FormControl>
-                                            <Input placeholder="Put your pull request URL" {...field} />
-                                        </FormControl>
-                                        {validatingPRURL && <ReloadIcon className="h-4 w-4 animate-spin"></ReloadIcon>}
-                                        {PRURLValidated && <SuccessAnimation></SuccessAnimation>}
+                                    <div className="flex items-center gap-x-2 flex-col sm:flex-row gap-y-2">
+                                        <div className="relative flex items-center w-full">
+                                            <FormControl
+                                            >
+                                                <Input className={cn("w-full",
+                                                (PRURLValidated || validatingPRURL) && "pr-12"
+                                                )}
+                                                placeholder="Pull request URL" {...field} />
+                                            </FormControl>
+                                            <div className="absolute right-4">
+                                                {validatingPRURL &&
+                                                <LoadingAnimation></LoadingAnimation>
+                                                }
+                                                {(PRURLValidated && !validatingPRURL) && <SuccessAnimation></SuccessAnimation>}
+                                            </div>
+                                        </div>
+                                        <Button 
+                                         className="w-full sm:w-fit"
+                                         type="submit">{(((prURL !== null && prURL !==undefined) || submittedPR) && !canceled) ? "Update" : "Submit"}</Button>
                                     </div>
                                     <FormDescription>
                                         Put your pull request URL from github once you have submitted your PR.
@@ -144,11 +178,6 @@ export function ParticipationForm({ user, participating, offerID, prURL }: { use
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit">{!submittingPR ? prURL === null ? "Submit" : "Update your PR URL" : <>
-                            <ReloadIcon className="sm:mr-2 h-4 w-4 animate-spin" />
-                            <p className="hidden sm:block">Submitting your PR...</p>
-
-                        </>}</Button>
                     </form>
                 </Form>
             }

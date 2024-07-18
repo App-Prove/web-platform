@@ -3,6 +3,8 @@ import Lottie from 'react-lottie';
 import valid from '@/public/lottie/valid.json';
 import error from '@/public/lottie/error.json';
 import analyzing from '@/public/lottie/analyzing.json';
+import { cn } from '@/lib/utils';
+import { Loader2Icon } from 'lucide-react';
 
 const defaultOptions = {
     autoplay: true,
@@ -47,5 +49,12 @@ export function PendingAnimation() {
             <span className='w-2 h-2 rounded-full bg-orange animate-pulse'></span>
             <span className='w-2 h-2 rounded-full bg-orange animate-pulse'></span>
         </div>
+    )
+}
+
+
+export function LoadingAnimation(){
+    return (
+        <Loader2Icon className={'animate-spin'}></Loader2Icon>
     )
 }
