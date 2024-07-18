@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader } from './ui/card';
 import { createPayment } from '@/app/publish/actions';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Terminal } from 'lucide-react';
-import { AnalyzingAnimation, ErrorAnimation, PendingAnimation, SuccessAnimation } from './LottieAnimations';
+import { AnalyzingAnimation, ErrorAnimation, LoadingAnimation, PendingAnimation, SuccessAnimation } from './LottieAnimations';
 
 
 // Function to parse the data field if it's a string
@@ -111,12 +111,7 @@ export default function AnalysisUpdateSteps() {
     }, []);
 
 
-    const defaultOptions = {
-        autoplay: true,
-        rendererSettings: {
-            preserveAspectRatio: 'xMidYMid slice'
-        }
-    };
+
     function renderStepType(step: Step) {
         switch (step.status) {
             case 'error':
@@ -124,7 +119,7 @@ export default function AnalysisUpdateSteps() {
             case 'success':
                 return <SuccessAnimation></SuccessAnimation>
             case 'pending':
-                return <PendingAnimation></PendingAnimation>
+                return <LoadingAnimation></LoadingAnimation>
             case 'analyzing':
                 return <AnalyzingAnimation></AnalyzingAnimation>
             default:
@@ -138,14 +133,14 @@ export default function AnalysisUpdateSteps() {
                 switch (step.type) {
                     case 'repositoryScan':
                         return <ul>
-                            <li>Language:{step.data?.commonLanguages}</li>
+                            <li>Languages: {step.data?.mostCommonProgrammingLanguages.map((value,index) => (index===0 || index == step.data.mostCommonProgrammingLanguages.length)?`${value}`:`${value} ; `)}</li>
                             <li>Number of files {step.data?.numberOfFiles}</li>
                             <li>Accounting for {step.data?.totalLineCount} lines</li>
                         </ul>
                     case 'relativeFiles':
-                        return <div>{step.data?.relativeFiles.map((file, index) => (
+                        return <div className='flex flex-col gap-4'>{step.data?.relativeFiles.map((file, index) => (
                             <div key={`relativeFiles-${file.path}`} className='flex flex-col gap-2'>
-                            <p>Path: {file.path}</p>
+                            <p className='font-mono'>Path: {file.path}</p>
                             <p>Language: {file.language}</p>
                             </div>
                         ))}</div>
@@ -188,11 +183,7 @@ export default function AnalysisUpdateSteps() {
                                                     <AlertDescription className='flex flex-col gap-2'>
                                                         <div className='flex gap-x-2 items-center w-full'>
                                                             <div>
-                                                                <Lottie
-                                                                    options={{ ...defaultOptions, animationData: error, loop: true }}
-                                                                    height={24}
-                                                                    width={24}
-                                                                />
+                                                               <ErrorAnimation></ErrorAnimation>
                                                             </div>
                                                             <p className='text-xs sm:text-sm'>
                                                                 {issue.comment}
@@ -200,11 +191,7 @@ export default function AnalysisUpdateSteps() {
                                                         </div>
                                                         <div className='flex gap-x-2 items-center w-full'>
                                                             <div>
-                                                                <Lottie
-                                                                    options={{ ...defaultOptions, animationData: valid, loop: false }}
-                                                                    height={24}
-                                                                    width={24}
-                                                                />
+                                                                <SuccessAnimation></SuccessAnimation>
                                                             </div>
                                                             <p className='text-xs sm:text-sm text-pretty'>
                                                                 {issue.suggestion}

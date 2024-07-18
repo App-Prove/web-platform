@@ -1,7 +1,7 @@
 type RepositoryScanData = {
     numberOfFiles: number;
     totalLineCount: number;
-    commonLanguages: string[];
+    mostCommonProgrammingLanguages: string[];
 };
 
 type RelativeFilesData = {
