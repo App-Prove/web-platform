@@ -1,19 +1,17 @@
 "use client"
 import { useCallback, useEffect, useState } from 'react';
-import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { createClient } from '@/utils/supabase/clients';
 import { toast, Toaster } from 'sonner';
 import { useLocalStorage } from '@/lib/localStorage';
-import Lottie from 'react-lottie';
-import valid from '@/public/lottie/valid.json';
-import error from '@/public/lottie/error.json';
-import analyzing from '@/public/lottie/analyzing.json';
+
 import { Card, CardContent, CardHeader } from './ui/card';
 import { createPayment } from '@/app/publish/actions';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Terminal } from 'lucide-react';
 import { AnalyzingAnimation, ErrorAnimation, LoadingAnimation, PendingAnimation, SuccessAnimation } from './LottieAnimations';
+import { CodeBlock, github, atomOneDark } from "react-code-blocks";
+import Steps from './Publish/Analysis/Steps';
 
 
 // Function to parse the data field if it's a string
@@ -41,6 +39,7 @@ export default function AnalysisUpdateSteps() {
     const [steps, setSteps] = useState<Step[]>([]);
     const [repositoryURL, setRepositoryURL] = useState('');
     const [ws, setWs] = useState<WebSocket | null>(null);
+    const [auditType, setAuditType] = useLocalStorage('auditType', '');
     const [url, setUrl] = useLocalStorage('url', '');
     const [finished, setFinished] = useState(false);
 
@@ -56,6 +55,7 @@ export default function AnalysisUpdateSteps() {
                 {
                     token: token,
                     repositoryURL: url,
+                    auditType: auditType
                 })
             );
             setRepositoryURL('');
@@ -80,8 +80,8 @@ export default function AnalysisUpdateSteps() {
                 const json = JSON.parse(event.data);
                 const step = parseStepData(json);
                 const error = json.error;
-                console.log(step)
                 steps.push(step);
+                console.log(steps)
                 if (error) {
                     toast.error(error);
                     return;
@@ -112,20 +112,7 @@ export default function AnalysisUpdateSteps() {
 
 
 
-    function renderStepType(step: Step) {
-        switch (step.status) {
-            case 'error':
-                return <ErrorAnimation></ErrorAnimation>
-            case 'success':
-                return <SuccessAnimation></SuccessAnimation>
-            case 'pending':
-                return <LoadingAnimation></LoadingAnimation>
-            case 'analyzing':
-                return <AnalyzingAnimation></AnalyzingAnimation>
-            default:
-                return <div>Unidentified step</div>;
-        }
-    }
+    
 
     function renderStepData(step: Step) {
         if (step.status == 'success') {
@@ -133,15 +120,15 @@ export default function AnalysisUpdateSteps() {
                 switch (step.type) {
                     case 'repositoryScan':
                         return <ul>
-                            <li>Languages: {step.data?.mostCommonProgrammingLanguages.map((value,index) => (index===0 || index == step.data.mostCommonProgrammingLanguages.length)?`${value}`:`${value} ; `)}</li>
+                            <li>Languages: {step.data?.mostCommonProgrammingLanguages.map((value, index) => (index === 0 || index == step.data.mostCommonProgrammingLanguages.length) ? `${value}` : `${value} ; `)}</li>
                             <li>Number of files {step.data?.numberOfFiles}</li>
                             <li>Accounting for {step.data?.totalLineCount} lines</li>
                         </ul>
                     case 'relativeFiles':
                         return <div className='flex flex-col gap-4'>{step.data?.relativeFiles.map((file, index) => (
                             <div key={`relativeFiles-${file.path}`} className='flex flex-col gap-2'>
-                            <p className='font-mono'>Path: {file.path}</p>
-                            <p>Language: {file.language}</p>
+                                <p className=''>Path: {file.path}</p>
+                                <p>Language: {file.language}</p>
                             </div>
                         ))}</div>
                     case 'sensitiveFiles':
@@ -151,8 +138,8 @@ export default function AnalysisUpdateSteps() {
                         }
                         return <div>{step.data?.sensitiveFiles.map((file) => (
                             <div key={`sensitiveFiles-${file.path}`} className='flex flex-col gap-2'>
-                            <p>Path: {file.path}</p>
-                            <p>Language: {file.language}</p>
+                                <p>Path: {file.path}</p>
+                                <p>Language: {file.language}</p>
                             </div>
                         ))}</div>
                     case 'inDepthAnalysis':
@@ -181,13 +168,23 @@ export default function AnalysisUpdateSteps() {
                                                     <Terminal className="h-4 w-4" />
                                                     <AlertTitle>{file.path} at line {issue.lineNumber}</AlertTitle>
                                                     <AlertDescription className='flex flex-col gap-2'>
+                                                        <div>
+
                                                         <div className='flex gap-x-2 items-center w-full'>
                                                             <div>
-                                                               <ErrorAnimation></ErrorAnimation>
+                                                                <ErrorAnimation></ErrorAnimation>
                                                             </div>
                                                             <p className='text-xs sm:text-sm'>
                                                                 {issue.comment}
                                                             </p>
+                                                        </div>
+                                                        <CodeBlock
+                                                            text={issue.initialCode}
+                                                            language={issue.language}
+                                                            showLineNumbers={true}
+                                                            startingLineNumber={issue.lineNumber}
+                                                            theme={atomOneDark}
+                                                        />
                                                         </div>
                                                         <div className='flex gap-x-2 items-center w-full'>
                                                             <div>
@@ -197,6 +194,13 @@ export default function AnalysisUpdateSteps() {
                                                                 {issue.suggestion}
                                                             </p>
                                                         </div>
+                                                        <CodeBlock
+                                                            text={issue.solvingCode}
+                                                            language={issue.language}
+                                                            showLineNumbers={true}
+                                                            startingLineNumber={issue.lineNumber}
+                                                            theme={atomOneDark}
+                                                        />
                                                     </AlertDescription>
                                                 </Alert>
                                             </div>
@@ -217,25 +221,7 @@ export default function AnalysisUpdateSteps() {
 
     return (
         <div className='flex flex-col gap-4 w-full items-start mb-8 overflow-hidden min-h-96'>
-            {steps.map((step, index) => (
-                <div key={index} className='flex flex-col sm:flex-row gap-2 w-full justify-center'>
-                    <Card className='w-full'>
-                        <CardHeader>
-                            <div className='flex gap-x-2 w-full'>
-                                <div className='justify-center flex items-center'>
-                                {renderStepType(step)}
-                                </div>
-                                <p className='flex flex-wrap w-full'>{step.message}</p>
-                            </div>
-                        </CardHeader>
-                        {(step.status == 'success' && step.data) &&
-                            <CardContent>
-                                {renderStepData(step)}
-                            </CardContent>
-                        }
-                    </Card>
-                </div>
-            ))}
+            <Steps steps={steps}></Steps>
             <div className='flex flex-col gap-2 w-full h-full justify-between'>
                 {!finished &&
                     <Button onClick={() => startAnalysis(ws)} className='self-start' variant={'secondary'}>Start analysis</Button>
