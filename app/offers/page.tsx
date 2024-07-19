@@ -2,8 +2,8 @@
 import OffersSearch from "@/components/Offers/OffersSearch";
 import Offer from "@/components/Offers/Offer";
 import { createClient } from "@/utils/supabase/server";
-import { formatOffers } from "@/utils/supabase/format";
 import OffersPagniation from "@/components/Offers/OffersPagination";
+import { formatOffers } from "@/lib/utils";
 
 
 export default async function OffersPage({

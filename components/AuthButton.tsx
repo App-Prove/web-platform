@@ -63,10 +63,10 @@ export default function AuthButton({ user }: { user: any }) {
                         <DropdownMenuLabel>Account</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild><Link href='profile'>Profile</Link></DropdownMenuItem>
-                        <DropdownMenuItem asChild><Link href='billing'>Billing</Link></DropdownMenuItem>
+                        <DropdownMenuItem asChild><Link href={process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL??''}>Billing</Link></DropdownMenuItem>
                         <DropdownMenuLabel>My offers</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild><Link href='/'>Manage</Link></DropdownMenuItem>
+                        <DropdownMenuItem asChild><Link href='manage'>Manage</Link></DropdownMenuItem>
                         <DropdownMenuItem asChild><Link href='publish'>Publish</Link></DropdownMenuItem>
                         <DropdownMenuItem asChild><form><Button formAction={logout} variant="destructive">Sign Out</Button></form></DropdownMenuItem>
                     </DropdownMenuContent>

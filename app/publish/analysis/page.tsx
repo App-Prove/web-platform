@@ -12,7 +12,6 @@ export default function AnalysisPage(){
     
     return(
         <div className="w-full flex flex-col gap-2">
-            <h1>Analysis Page</h1>
             <AnalysisUpdateSteps></AnalysisUpdateSteps>
         </div>
     )

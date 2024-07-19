@@ -86,6 +86,7 @@ export default function PublishForm({ user }: { user: null | User }) {
 
     const [affiliate, setAffiliate] = useLocalStorage<string>('affiliate', '')
     const [id, setId] = useLocalStorage<number>('id', 0)
+    const [auditType, setAuditType] = useLocalStorage<string>('auditType', '')
     const [url, setUrl] = useLocalStorage<string>('url', '')
 
     const form = useForm<z.infer<typeof FormSchema>>({
@@ -161,6 +162,7 @@ export default function PublishForm({ user }: { user: null | User }) {
     function onSubmit(data: z.infer<typeof FormSchema>) {
         setProcessing(true)
         setUrl(data.url)
+        setAuditType(data.type)
         const registeringOffer = async () => {
             const { data: loadId, error } = await registerOffer({
                 ...data,
@@ -259,7 +261,6 @@ export default function PublishForm({ user }: { user: null | User }) {
                                         ))}
                                     </CommandGroup>
                                 </CommandList>
-
                             </CommandDialog>
                         </>
                     )} />

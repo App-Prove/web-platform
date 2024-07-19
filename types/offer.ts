@@ -1,6 +1,7 @@
 type Offer = {
     id: number,
     url: string,
+    paymentStatus: string,
     keywords: string[],
     description: string,
     type: string,

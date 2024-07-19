@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import { cn, formatOffers } from "@/lib/utils";
 import { CalendarIcon, Clipboard } from "lucide-react";
 import Image from "next/image";
 import { addDays, format, set, subDays } from "date-fns"
@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/table"
 import { ChatBubbleIcon } from "@radix-ui/react-icons";
 import { User } from "@supabase/supabase-js";
-import { formatOffers } from "@/utils/supabase/format";
 
 export default async function OfferPage({ params }: { params: { slug: string } }) {
     // get id from slug
