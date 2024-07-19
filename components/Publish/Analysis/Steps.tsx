@@ -13,7 +13,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { atomOneDark, CodeBlock } from 'react-code-blocks';
 import { Terminal } from 'lucide-react';
-import { render } from 'react-dom';
 
 function renderStepContent(step: Step) {
   if (!('type' in step)) {
