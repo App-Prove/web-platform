@@ -43,11 +43,13 @@ export default function SurveyForm() {
         },
         {
             question: "How important is it to you if a project is certified by a third party as bug-free?",
-            type: "scale"
+            type: "multiple_choice",
+            options: ["Bug is part of the game", "It bugs me", "Bugs shouldn't exist in a production app"]
         },
         {
             question: "How important is it to you if a project is certified as being protected against major attacks?",
-            type: "scale"
+            type: "multiple_choice",
+            options: ["Why would we get attacked?", "We try our best to handle major ones", "We invest a lot in security"]
         },
         {
             question: "How long have you been coding?",
@@ -286,7 +288,7 @@ export default function SurveyForm() {
                                                     <div className="flex gap-x-12 ">
                                                         <FormLabel>Not</FormLabel>
                                                         <FormControl>
-                                                            <Slider onValueChange={field.onChange} defaultValue={field.value} max={100} step={1} {...field} />
+                                                            <Slider defaultValue={field.value} max={100} step={1} {...field} />
                                                         </FormControl>
                                                         <FormLabel>Very</FormLabel>
                                                     </div>
