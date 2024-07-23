@@ -104,6 +104,11 @@ export default function SurveyForm() {
             question: "Have you ever participated in a bug bounty contest?",
             type: "boolean"
         },
+        {
+            question: "How did you find out about this survey?",
+            type: "multiple_choice",
+            options: ["Pitch day", "Forum", "Google search", "Word of mouth", "Discord", "Linkedin", "Reddit", "Other"]
+        },
     ]
     const formSchema = z.object(
         questions.reduce((acc, question, index) => {
@@ -195,6 +200,7 @@ export default function SurveyForm() {
                 "question12": values.question12,
                 "question13": values.question13,
                 "question14": values.question14,
+                "question15": values.question15,
             }).select()
             console.log(data)
             console.log(error)
@@ -223,6 +229,7 @@ export default function SurveyForm() {
             "question12": values.question12,
             "question13": values.question13,
             "question14": values.question14,
+            "question15": values.question15,
         }
 
         const { data, error } = await supabase.from('survey').insert(
