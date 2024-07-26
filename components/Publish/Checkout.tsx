@@ -17,9 +17,11 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY ?? '');
 export const CheckoutForm = () => {
   var id = 0;
   var affiliate = '';
+  var pricing = '';
   if (typeof window !== 'undefined') {
     id = Number(localStorage.getItem('id')) ?? 0;
     affiliate = localStorage.getItem('affiliate')?.replace(/"/g, "") ?? '';
+    pricing = localStorage.getItem('pricing')?.replace(/"/g, "") ?? '';
   };
   const fetchClientSecret = useCallback(async () => {
     // Get the id from localStorage
@@ -29,7 +31,7 @@ export const CheckoutForm = () => {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ id: id, affiliate: affiliate })
+      body: JSON.stringify({ id: id, affiliate: affiliate, pricing: pricing })
     });
     const data = await res.json();
     if (data.error) return null

@@ -46,7 +46,7 @@ export async function publishNewKeyword(keyword: string) {
     return { data, error }
 }
 
-export async function registerOffer(data: { url: any; description: any; type: string; }) {
+export async function registerOffer(data: { url: any; description: any; type: string; pricing: string }) {
     const supabase = createClient()
     const {data:userData,error:userError} = await supabase.auth.getUser()
     const { data: offerData, error } = await supabase.from('offers').insert([
@@ -56,6 +56,7 @@ export async function registerOffer(data: { url: any; description: any; type: st
             payment_status: 'pending',
             type: data.type,
             owner: userData.user?.id,
+            pricing:data.pricing,
         }
     ]).select()
     if (offerData && offerData[0]) {

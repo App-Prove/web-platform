@@ -18,6 +18,7 @@ import ReliabilityCertification from "@/components/Certifications/ReliabilityCer
 import SecurityCertification from "@/components/Certifications/SecurityCertification";
 import { githubLogin } from "@/components/server/action";
 import { Github } from "lucide-react";
+import PricingTiers from "@/components/PricingTiers";
 
 export default function Home() {
   const [error, setError] = useState<string | null>(null);
@@ -73,21 +74,26 @@ export default function Home() {
       </div>
       <div className="flex flex-col gap-12 text-center">
         <div className="flex flex-col gap-2">
-          <h2 className={cn("uppercase text-3xl font-medium", whyte.className)}>Help people <strong className="text-orange">trust</strong> your code</h2>
+          <h2 className={cn(" text-3xl", whyte.className)}>Help people <strong className="text-orange">trust</strong> your code</h2>
           <p className={cn("text-muted-foreground")} >Developers encounter many difficulties when it comes to having their code audited</p>
-          <ul className="flex gap-4 flex-col pl-6 self-center text-left list-disc">
-            <li>Limited existing solution</li>
+          <ul className="flex gap-4 flex-col pl-6 self-center text-center list-none font-bold text-orange">
             <li>Expensive</li>
-            <li>Audit insecurity</li>
             <li>Lack of transparency</li>
+            <li>Limited programming language support</li>
           </ul>
+        <p className="text-muted-foreground  mt-4">
+          App-Prove leverages the knowledge of <span className="font-semibold">independent developers</span> and capabilities of <span className="font-semibold">large language models</span> in cyber-security, to make code audit:
+           <br />
+           efficient, accessible and reliable.
+           </p>
         </div>
         <Separator />
         <div className="flex flex-col">
-          <h3 className={cn("uppercase text-3xl font-medium flex gap-2 flex-wrap justify-center", whyte.className)}>
-            <strong className="text-orange"> Prove </strong>your
+          <h3 className={cn("text-3xl flex gap-2 flex-wrap justify-center", whyte.className)}>
+            Earn our certifications to
+            <strong className="text-orange"> prove </strong>your
             <div>
-              App
+              app
             </div>
             <div className="[text-wrap:balance] bg-clip-text text-transparent">
               <span className="text-orange inline-flex flex-col h-[calc(theme(fontSize.3xl)*theme(lineHeight.tight))] overflow-hidden">
@@ -105,6 +111,7 @@ export default function Home() {
             <ReliabilityCertification></ReliabilityCertification>
           </div>
         </div>
+      <PricingTiers></PricingTiers>
         <Separator />
         <div className="flex flex-col gap-2 text-left">
           <h2 className={cn("uppercase text-3xl font-medium text-center", whyte.className)}>

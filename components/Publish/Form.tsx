@@ -41,6 +41,7 @@ import { githubLogin } from "../server/action"
 import { redirect, useRouter, useSearchParams } from "next/navigation"
 import { register } from "module"
 import { Toaster } from "../ui/sonner"
+import { FolderGit, Github } from "lucide-react"
 
 const FormSchema = z.object({
     url: z.string().superRefine((value, ctx) => {
@@ -85,9 +86,13 @@ export default function PublishForm({ user }: { user: null | User }) {
 
 
     const [affiliate, setAffiliate] = useLocalStorage<string>('affiliate', '')
+    const [pricing, setPricing] = useLocalStorage<string>('pricing', '')
     const [id, setId] = useLocalStorage<number>('id', 0)
     const [auditType, setAuditType] = useLocalStorage<string>('auditType', '')
     const [url, setUrl] = useLocalStorage<string>('url', '')
+
+
+
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -99,8 +104,10 @@ export default function PublishForm({ user }: { user: null | User }) {
     const searchParams = useSearchParams()
     useEffect(() => {
         const affiliateCode = searchParams.get('affiliate')
+        const pricingType = searchParams.get('pricing')
         setError(searchParams.get('error')??undefined)
         if (affiliateCode) setAffiliate(affiliateCode);
+        if (pricingType) setPricing(pricingType);
         const code = searchParams.get('code')
         if (code) {
             // If there is a code, we call auth/callback to exchange it for a session
@@ -165,6 +172,7 @@ export default function PublishForm({ user }: { user: null | User }) {
         setAuditType(data.type)
         const registeringOffer = async () => {
             const { data: loadId, error } = await registerOffer({
+                pricing: pricing,
                 ...data,
             });
             loadId && setId(loadId)
@@ -186,7 +194,8 @@ export default function PublishForm({ user }: { user: null | User }) {
                     name="url"
                     render={({ field }) => (
                         <>
-                            <Button type={'reset'} variant={field.value ? 'outline' : 'default'} onClick={() => setCommandOpen(true)}>{field.value ? field.value : 'Choose a repository'}</Button>
+                            <Button type={'reset'} variant={field.value ? 'outline' : 'default'} onClick={() => setCommandOpen(true)} className="">{field.value ? field.value : <span className="flex gap-x-2 items-center"><FolderGit />Select a repository</span>}</Button>
+
                             <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
                                 <CommandInput
                                     placeholder="Start typing to search..."
