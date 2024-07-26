@@ -147,6 +147,7 @@ export default function PublishForm({ user }: { user: null | User }) {
     }, [fetchRepositories]);
 
     const searchGithubProjects = useCallback(async (value: string) => {
+        if (user == null) return
         setSearchValue(value)
         console.log(value)
         const response = await fetch(`https://api.github.com/orgs/${value}/repos`)
@@ -199,7 +200,7 @@ export default function PublishForm({ user }: { user: null | User }) {
                             <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
                                 <CommandInput
                                     placeholder="Start typing to search..."
-                                    className="h-9 w-[200px]"
+                                    className="h-9 w-[200px] text-lg sm:text-sm"
                                     onValueChange={
                                         (e) => {
                                             // If there is 2 sec without a key press, search for the project

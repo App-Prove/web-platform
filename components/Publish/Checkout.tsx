@@ -18,7 +18,9 @@ export const CheckoutForm = () => {
   var id = 0;
   var affiliate = '';
   var pricing = '';
+  // doesn't seem to be working on mobile
   if (typeof window !== 'undefined') {
+    
     id = Number(localStorage.getItem('id')) ?? 0;
     affiliate = localStorage.getItem('affiliate')?.replace(/"/g, "") ?? '';
     pricing = localStorage.getItem('pricing')?.replace(/"/g, "") ?? '';
