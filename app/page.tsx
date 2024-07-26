@@ -64,7 +64,7 @@ export default function Home() {
         </p>
 
         <div className={cn("flex sm:gap-x-6 gap-x-2 gap-y-2 mt-8 flex-wrap justify-center")}>
-          <Link href="publish">
+          <Link href="#pricing">
             <Button className="bg-orange">Publish your project</Button>
           </Link>
           <Link href="profile">
@@ -76,25 +76,22 @@ export default function Home() {
         <div className="flex flex-col gap-2">
           <h2 className={cn(" text-3xl", whyte.className)}>Help people <strong className="text-orange">trust</strong> your code</h2>
           <p className={cn("text-muted-foreground")} >Developers encounter many difficulties when it comes to having their code audited</p>
+          <p className={cn("",whyte.className)} >App-Prove is here to:</p>
           <ul className="flex gap-4 flex-col pl-6 self-center text-center list-none font-bold text-orange">
-            <li>Expensive</li>
-            <li>Lack of transparency</li>
-            <li>Limited programming language support</li>
+            <li>offer affordable code audits</li>
+            <li>make the audit process clear</li>
+            <li>support all programming languages</li>
           </ul>
-        <p className="text-muted-foreground  mt-4">
-          App-Prove leverages the knowledge of <span className="font-semibold">independent developers</span> and capabilities of <span className="font-semibold">large language models</span> in cyber-security, to make code audit:
-           <br />
-           efficient, accessible and reliable.
-           </p>
+
         </div>
         <Separator />
         <div className="flex flex-col">
-          <h3 className={cn("text-3xl flex gap-2 flex-wrap justify-center", whyte.className)}>
-            Earn our certifications to
+          <h3 className={cn("text-3xl gap-2 flex-wrap justify-center flex", whyte.className)}>
+            Earn certifications to
             <strong className="text-orange"> prove </strong>your
-            <div>
+            <span>
               app
-            </div>
+            </span>
             <div className="[text-wrap:balance] bg-clip-text text-transparent">
               <span className="text-orange inline-flex flex-col h-[calc(theme(fontSize.3xl)*theme(lineHeight.tight))] overflow-hidden">
                 <ul className="block animate-text-slide-2 text-left leading-tight [&_li]:block">
@@ -111,7 +108,9 @@ export default function Home() {
             <ReliabilityCertification></ReliabilityCertification>
           </div>
         </div>
+      <section id='pricing'>
       <PricingTiers></PricingTiers>
+      </section>
         <Separator />
         <div className="flex flex-col gap-2 text-left">
           <h2 className={cn("uppercase text-3xl font-medium text-center", whyte.className)}>
