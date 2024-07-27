@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -16,6 +16,17 @@ import React from "react";
 import { ReloadIcon } from "@radix-ui/react-icons"
 import { githubLogin } from "./server/action";
 import { redirect, usePathname, useSearchParams } from "next/navigation";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { UserAuthForm } from "./AuthForm";
+import { cn } from "@/lib/utils";
+
 
 export default function AuthButton({ user }: { user: any }) {
     // Check if there is a code in the URL
@@ -27,30 +38,48 @@ export default function AuthButton({ user }: { user: any }) {
         // and then redirect to start page
         redirect(`/auth/callback?code=${code}&next=${pathname}/`)
     }
-    const [loading, setLoading] = React.useState(false)
     return (
         <>
             {!user ?
-                <form className="">
-                    <Button
-                        disabled={loading}
-                        onClick={() => {
-                            setLoading(true)
-                            githubLogin(pathname)
-                        }}>
-                        {!loading ?
-                            <>
-                                <Github />
-                                <p>Sign in</p>
-                            </>
-                            :
-                            <>
-                                <ReloadIcon className="sm:mr-2 h-4 w-4 animate-spin" />
-                                <p className="hidden sm:block">Please wait</p>
-                            </>
-                        }
-                    </Button>
-                </form>
+                <Dialog>
+                    <DialogTrigger asChild><Button>Sign in</Button></DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Authentication</DialogTitle>
+                        </DialogHeader>
+                        <div className="lg:p-8 text-black">
+                            <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+                                <div className="flex flex-col space-y-2 text-center">
+                                    <h1 className="text-2xl font-semibold tracking-tight">
+                                        Create an account
+                                    </h1>
+                                    <p className="text-sm text-muted-foreground">
+                                        Enter your email below to create your account
+                                    </p>
+                                </div>
+                                <UserAuthForm />
+                                <p className="px-8 text-center text-sm text-muted-foreground">
+                                    By clicking continue, you agree to our{" "}
+                                    <Link
+                                        href="/terms"
+                                        className="underline underline-offset-4 hover:text-primary"
+                                    >
+                                        Terms of Service
+                                    </Link>{" "}
+                                    and{" "}
+                                    <Link
+                                        href="/privacy"
+                                        className="underline underline-offset-4 hover:text-primary"
+                                    >
+                                        Privacy Policy
+                                    </Link>
+                                    .
+                                </p>
+                            </div>
+                        </div>
+
+                    </DialogContent>
+                </Dialog>
                 :
                 <DropdownMenu>
                     <DropdownMenuTrigger>
@@ -63,7 +92,7 @@ export default function AuthButton({ user }: { user: any }) {
                         <DropdownMenuLabel>Account</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild><Link href='profile'>Profile</Link></DropdownMenuItem>
-                        <DropdownMenuItem asChild><Link href={process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL??''}>Billing</Link></DropdownMenuItem>
+                        <DropdownMenuItem asChild><Link href={process.env.NEXT_PUBLIC_STRIPE_CUSTOMER_PORTAL ?? ''}>Billing</Link></DropdownMenuItem>
                         <DropdownMenuLabel>My offers</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild><Link href='manage'>Manage</Link></DropdownMenuItem>
