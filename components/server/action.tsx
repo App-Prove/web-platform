@@ -68,3 +68,33 @@ export async function githubLogin(redirectUrl: string | null = null) {
   }
 
 }
+
+export async function emailLogin(redirectUrl: string | null = null, email: string) {
+  const supabase = createClient()
+  const { data, error } = await supabase.auth.signInWithOtp({ email: email })
+  console.log(data)
+    console.log(error)
+  if (error) {
+    redirect('/error')
+  }
+
+  if (redirectUrl) {
+    redirect(redirectUrl)
+  }
+}
+
+export async function verifyOTP(email:string, token:string){
+  console.log('Verifying OTP')
+  const supabase = createClient()
+  const {
+    data: { session },
+    error,
+  } = await supabase.auth.verifyOtp({
+    email,
+    token,
+    type: 'email',
+  })
+  console.log(session)
+  console.log(error)
+
+}
