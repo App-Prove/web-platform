@@ -18,7 +18,7 @@ export default function ReviewingStepDetails({
     inDepthAnalysisState: InDepthAnalysisStep,
 }) {
 
-    const issueSample = inDepthAnalysisState.data[0].issues[0]
+    const issueSample = inDepthAnalysisState?.data[0]?.issues[0]
     return (
         <div className=" gap-y-2 flex flex-col w-full items-center overflow-hidden">
             <p className="text-pretty w-full">
@@ -27,7 +27,8 @@ export default function ReviewingStepDetails({
                 representing <strong className="font-mono font-bold">{repositoryScanState.data.totalLineCount}</strong>  lines of code. <br /> <br />
                 Our algorithm identified {relativeFilesState.data.relativeFiles.length} files relative to your programming language and selected {sensitiveFilesStep.data.sensitiveFiles.length} sensitive files. <br /> <br />
                 We found at least {inDepthAnalysisState.data.length} issues in your code
-                here is one:</p>
+                here is one:
+            </p>
             <Alert className='w-full overflow-hidden'>
                 <Terminal className="h-4 w-4" />
                 <AlertTitle>{issueSample.path} at line {issueSample.lineNumber}</AlertTitle>
@@ -43,19 +44,19 @@ export default function ReviewingStepDetails({
                         </div>
                     </div>
                     <div className="hidden sm:block text-left">
- {
-                issueSample.initialCode != '' &&
-                <CodeBlock
-                    wrapLongLines={true}
-                    text={issueSample.initialCode}
-                    language={issueSample.language}
-                    showLineNumbers={true}
-                    startingLineNumber={issueSample.lineNumber}
-                    theme={atomOneDark}
-                />
-            }
+                        {
+                            issueSample.initialCode != '' &&
+                            <CodeBlock
+                                wrapLongLines={true}
+                                text={issueSample.initialCode}
+                                language={issueSample.language}
+                                showLineNumbers={true}
+                                startingLineNumber={issueSample.lineNumber}
+                                theme={atomOneDark}
+                            />
+                        }
                     </div>
-                   
+
                     <div className='flex gap-x-2 items-center w-full'>
                         <div>
                             <SuccessAnimation></SuccessAnimation>
@@ -65,21 +66,22 @@ export default function ReviewingStepDetails({
                         </p>
                     </div>
                     <div className="hidden sm:block text-left">
-   {
-                        issueSample.solvingCode != '' &&
-                        <CodeBlock
-                            text={issueSample.solvingCode}
-                            language={issueSample.language}
-                            showLineNumbers={true}
-                            startingLineNumber={issueSample.lineNumber}
-                            theme={atomOneDark}
-                        />
-                    }
+                        {
+                            issueSample.solvingCode != '' &&
+                            <CodeBlock
+                                wrapLongLines={true}
+                                text={issueSample.solvingCode}
+                                language={issueSample.language}
+                                showLineNumbers={true}
+                                startingLineNumber={issueSample.lineNumber}
+                                theme={atomOneDark}
+                            />
+                        }
                     </div>
-                 
+
                 </AlertDescription>
             </Alert>
-            
+
         </div>
     )
 }
