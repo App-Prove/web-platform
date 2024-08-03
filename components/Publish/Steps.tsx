@@ -28,30 +28,6 @@ import { createPayment } from "@/app/publish/actions";
 import ReviewingStepDetails from "./ReviewingStepDetails";
 import { useLocalStorage } from "@/lib/localStorage";
 
-
-function renderStep(step: Step) {
-    if (!('type' in step)) {
-        return null;
-    }
-    try {
-        switch (step.type) {
-            case 'repositoryScan':
-                return step as RepositoryScanStep
-            case 'relativeFiles':
-                return step as RelativeFilesStep
-            case 'sensitiveFiles':
-                return step as SensitiveFilesStep
-            case 'inDepthAnalysis':
-                return step as InDepthAnalysisStep
-            default:
-                return <p>Unable to find data</p>
-        }
-    }
-    catch (e) {
-        console.error(e);
-    }
-}
-
 // Function to parse the data field if it's a string
 function parseStepData(step: Step): Step {
     if (step.status === "success" && typeof step.data === "string") {
@@ -73,7 +49,7 @@ function parseStepData(step: Step): Step {
 
 export default function Steps() {
     const [auditType, setAuditType] = useLocalStorage('auditType', '');
-     const [url, setUrl] = useLocalStorage('url', '');
+    const [url, setUrl] = useLocalStorage('url', '');
     const [api, setApi] = React.useState<CarouselApi>()
     const [steps, setSteps] = useState<Step[]>(
         [
@@ -85,8 +61,12 @@ export default function Steps() {
 
     const eventQueue = useRef<Step[]>([]);
     const isProcessing = useRef(false);
+    const [ws, setWs] = useState<WebSocket | null>(null);
+    const [finished, setFinished] = useState(false);
+    const [wsClosed, setWsClosed] = useState(false);
 
     const processQueue = useCallback(() => {
+        if (eventQueue.current.length === 0 && wsClosed) setFinished(true);
         if (isProcessing.current || eventQueue.current.length === 0) return;
 
         isProcessing.current = true;
@@ -99,7 +79,7 @@ export default function Steps() {
                 processQueue();
             }, 2500);
         }
-    }, [steps, setSteps]);
+    }, [steps, setSteps, wsClosed, setFinished, finished]);
 
     const addEventToQueue = useCallback((event: Step) => {
         eventQueue.current.push(event);
@@ -116,8 +96,6 @@ export default function Steps() {
     //     data: [{ 'issues': [{ 'language': 'Python', 'lineNumber': 56, 'initialCode': 'if __name__ == "__main__":\n    uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="info", reload=bool(os.getenv(\'DEV\',False)), reload_dirs=["app"])', 'solvingCode': '# Ensure that the code is not executed when this script is imported as a module\nif __name__ == "__main__":\n    uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="info", reload=bool(os.getenv(\'DEV\',False)), reload_dirs=["app"])', 'comment': 'The main block should be protected to avoid executing unnecessary code when the script is imported', 'suggestion': "Use the if __name__ == '__main__': condition to ensure that the code is only executed when the script is run directly" }], 'path': 'git-repo-data.git/app/main.py' }, { 'issues': [{ 'language': 'Python', 'lineNumber': 16, 'initialCode': '        assert (\n            os.getenv("OPENAI_API_KEY") is not None\n        ), "No API key detected, please setup your API key as an environement variable under the name OPENAI_API_KEY"', 'solvingCode': '        assert "OPENAI_API_KEY" in os.environ, "No API key detected, please setup your API key as an environemnt variable under the name OPENAI_API_KEY"', 'comment': "Using 'os.getenv' with assert to check for the existence of an environment variable is not the best practice.", 'suggestion': "Use 'os.environ.get' method with 'in' operator which is clearer and safer." }, { 'language': 'Python', 'lineNumber': 60, 'initialCode': '         return self.call(message=message)', 'solvingCode': '         return self.call(message=message.copy())', 'comment': "Modifying the 'message' list after returning it might lead to unexpected behavior.", 'suggestion': "Return a copy of the 'message' list to avoid any unintended modifications." }], 'path': 'git-repo-data.git/app/utils/analysis/ml.py' }, { 'issues': [{ 'language': 'Python', 'lineNumber': 61, 'initialCode': '62. // Create EventSource for SSE endpoint', 'solvingCode': "const eventSource = new EventSource('http://127.0.0.1:8000/stream/repositories/analysis/');", 'comment': "The code is referencing EventSource without importing it. EventSource is part of the browser's Web API and not available in the Python backend environment.", 'suggestion': 'Remove the reference to EventSource as it is not valid in the Python backend. If server-sent events (SSE) are required, handle it on the server-side using appropriate libraries.' }], 'path': 'git-repo-data.git/app/routers/stream/repositories.py' }, { 'issues': [{ 'language': 'Python', 'lineNumber': 184, 'initialCode': "CLONE_DIR = Path(repository_url.split('/')[-1])", 'solvingCode': "CLONE_DIR = Path('cloned_repo') / Path(repository_url.split('/')[-1])", 'comment': 'Reassigning the variable CLONE_DIR without using the Path data type and hardcoded path is risky.', 'suggestion': 'Reassign CLONE_DIR using the Path data type along with the correct path.' }], 'path': 'git-repo-data.git/app/routers/ws/repositories.py' }, { 'issues': [{ 'language': 'Python', 'lineNumber': 114, 'initialCode': 'def count_lines(file_path):', 'solvingCode': 'def count_lines(file_path: str) -> int:', 'comment': "Lack of type hint for function argument 'file_path'", 'suggestion': "Add type hint for the 'file_path' argument to improve code readability and maintainability." }, { 'language': 'Python', 'lineNumber': 127, 'initialCode': 'Repo.clone_from(repo_url, clone_dir)', 'solvingCode': 'Repo.clone_from(repo_url, clone_dir.resolve())', 'comment': "Using 'clone_dir' directly without applying path resolution", 'suggestion': "Resolve the 'clone_dir' to its absolute path before cloning the repository to avoid unexpected behavior." }, { 'language': 'Python', 'lineNumber': 144, 'initialCode': 'def count_lines(file_path):', 'solvingCode': 'def count_lines(file_path: str) -> int:', 'comment': "Lack of type hint for function argument 'file_path'", 'suggestion': "Add type hint for the 'file_path' argument to improve code readability and maintainability." }, { 'language': 'Python', 'lineNumber': 172, 'initialCode': 'if type(clone_dir) == str:', 'solvingCode': 'if isinstance(clone_dir, str):', 'comment': 'Using type() function instead of isinstance() for type comparison', 'suggestion': 'Use the isinstance() function for type comparison to check if the variable is of a certain type.' }], 'path': 'git-repo-data.git/app/utils/analysis/files_analyser.py' }]
     // } as Step)
 
-    const [ws, setWs] = useState<WebSocket | null>(null);
-    const [finished, setFinished] = useState(false);
 
     const startAnalysis = useCallback(async (websocket: any) => {
         toast.error('Starting analysis');
@@ -168,9 +146,7 @@ export default function Steps() {
         };
 
         socket.onclose = (event) => {
-            toast.error(JSON.stringify(event));
-            toast.error('Connection closed');
-            setFinished(true);
+            setWsClosed(true);
         }
 
         socket.onopen = (event) => {
@@ -182,7 +158,7 @@ export default function Steps() {
         return () => {
             socket.close();
         };
-    }, []);
+    }, [setWsClosed, wsClosed]);
 
 
     return (
@@ -191,9 +167,8 @@ export default function Steps() {
                 <CarouselContent>
                     <CarouselItem className="w-full">
                         <Card
-
                             className={cn(
-                                "basis-1 relative max-w-lg bg-gray-100 border-none sm:py-12 sm:px-8 rounded-xl flex flex-col items-center",
+                                "basis-1 relative max-w-lg bg-gray-100 border-none sm:py-12 px-2 sm:px-8 rounded-xl flex flex-col items-center",
                             )}
                         >
                             <CardContent className={cn(
@@ -226,12 +201,12 @@ export default function Steps() {
                                     <br />
                                     You will get a full report regarding found issues and independent developers are going to give you in-depth recommendation to improve your code
                                 </CardDescription>
+                                {!finished ?
+                                    <Button onClick={() => startAnalysis(ws)}>Start analysis</Button>
+                                    :
+                                    <Button onClick={() => api?.scrollNext()}>See results </Button>
+                                }
                             </CardFooter>
-                            {!finished ?
-                                <Button onClick={() => startAnalysis(ws)}>Start analysis</Button>
-                                :
-                                <Button onClick={() => api?.scrollNext()}>See results </Button>
-                            }
                         </Card>
 
                     </CarouselItem>
@@ -239,7 +214,7 @@ export default function Steps() {
                         <CarouselItem className="w-full overflow-hidden">
                             <Card
                                 className={cn(
-                                    "relative w-full max-w-lg bg-gray-100 border-none sm:py-12 sm:px-8 rounded-xl flex flex-col items-center",
+                                    "relative w-full max-w-lg bg-gray-100 border-none py-12 px-2 sm:px-8 rounded-xl flex flex-col items-center",
                                 )}
                             >
                                 <CardContent className={cn(
@@ -255,20 +230,17 @@ export default function Steps() {
                                 <CardFooter className="flex flex-col gap-y-4 w-full">
                                     <CardTitle className="font-light text-lg">Here is a first glance at our analysis</CardTitle>
                                     <Separator />
+                                    <ReviewingStepDetails
+                                        repositoryScanState={steps.filter(step => step.type === 'repositoryScan')[0] as RepositoryScanStep}
+                                        relativeFilesState={steps.filter(step => step.type === 'relativeFiles')[0] as RelativeFilesStep}
+                                        sensitiveFilesStep={steps.filter(step => step.type === 'sensitiveFiles')[0] as SensitiveFilesStep}
+                                        inDepthAnalysisState={steps.filter(step => step.type === 'inDepthAnalysis')[0] as InDepthAnalysisStep}
+                                    ></ReviewingStepDetails>
                                     <CardDescription className="text-center font-light w-full">
-                                        <ReviewingStepDetails
-                                            repositoryScanState={steps.filter(step => step.type === 'repositoryScan')[0] as RepositoryScanStep}
-                                            relativeFilesState={steps.filter(step => step.type === 'relativeFiles')[0] as RelativeFilesStep}
-                                            sensitiveFilesStep={steps.filter(step => step.type === 'sensitiveFiles')[0] as SensitiveFilesStep}
-                                            inDepthAnalysisState={steps.filter(step => step.type === 'inDepthAnalysis')[0] as InDepthAnalysisStep}
-                                        ></ReviewingStepDetails>
-
-                                        <br />
-                                        <br />
                                         You will get a full report regarding found issues and independent developers are going to give you in-depth recommendation to improve your code
                                     </CardDescription>
+                                    <Button onClick={() => createPayment()}>See more</Button>
                                 </CardFooter>
-                                <Button onClick={() => createPayment()}>See more</Button>
                             </Card>
                         </CarouselItem>
                     }
