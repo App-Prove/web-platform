@@ -2,7 +2,6 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 export default function Step({ state }: { state: Step }) {
-    if (state == undefined) return null;
     const [tempName, setTempName] = useState('');
 
     const animationSpeed = 0.1;
@@ -14,6 +13,7 @@ export default function Step({ state }: { state: Step }) {
         }
     }, [state.message, tempName]);
 
+    if (state == undefined) return null;
     return (
         <div className="flex items-center gap-x-2">
             <div className="w-12 h-12 relative flex items-center justify-center">
