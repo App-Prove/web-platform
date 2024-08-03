@@ -36,13 +36,14 @@ type InDepthAnalysisData = {
 interface BaseStep {
     stepName:"connecting" | "cloning" | "identifying" | "reviewing";
     time: Date;
-    status: "pending" | "analyzing" | "error" | "success";
+    status: "pending" | "inProgress" | "error" | "success";
     message: string;
-    step: "connecting"|"cloning"|"dentifying"|"reviewing"
+    progress?: number; 
+    type?: string;
 }
 // Define specific interfaces for each variant
-interface PendingAnalyzingErrorStep extends BaseStep {
-    status: "pending" | "analyzing" | "error";
+interface PendingErrorStep extends BaseStep {
+    status: "pending" | "inProgress" | "error";
 }
 
 interface SuccessStep extends BaseStep {
@@ -50,12 +51,12 @@ interface SuccessStep extends BaseStep {
     type: "repositoryScan" | "relativeFiles" | "sensitiveFiles" | "inDepthAnalysis";
 }
 
-interface RepositoryScan extends SuccessStep {
+interface RepositoryScanStep extends SuccessStep {
     type: "repositoryScan";
     data: RepositoryScanData;
 } 
 
-interface RelativeFiles extends SuccessStep {
+interface RelativeFilesStep extends SuccessStep {
     type: "relativeFiles";
     data: RelativeFilesData;
 }
@@ -70,4 +71,4 @@ interface InDepthAnalysisStep extends SuccessStep {
     data: InDepthAnalysisData;
 }
 
-type Step = PendingAnalyzingErrorStep | RepositoryScan | RelativeFiles | SensitiveFilesStep | InDepthAnalysisStep;
+type Step = PendingErrorStep | RepositoryScanStep | RelativeFilesStep | SensitiveFilesStep | InDepthAnalysisStep;

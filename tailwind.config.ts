@@ -234,6 +234,68 @@ const config = {
           "0%,70%,100%": { opacity: "1" },
           "20%,50%": { opacity: "0" },
         },
+        slideGradient: {
+          '0%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        },
+        slideIn: {
+          '0%': {
+            transform: 'translateX(-10%)',
+            opacity: '0',
+            filter: 'blur(10px)',
+          },
+          '100%': {
+            transform: 'translateX(0%)',
+            opacity: '1',
+            filter: 'blur(0px)',
+          },
+        },
+        slideOut: {
+          '0%': {
+            transform: 'translateX(0%)',
+            opacity: '1',
+            filter: 'blur(0px)',
+          },
+          '100%': {
+            transform: 'translateX(100%)',
+            opacity: '0',
+            filter: 'blur(10px)',
+          },
+        },
+        ring: {
+          from: {
+            transform: 'rotate(0deg)',
+          },
+          to: {
+            transform: 'rotate(360deg)',
+          },
+        },
+        fadeOut: {
+          from: {
+            opacity: '1',
+          },
+          to: {
+            opacity: '0',
+          },
+        },
+        fadeIn: {
+          from: {
+            opacity: '0',
+          },
+          to: {
+            opacity: '1',
+          },
+        },
+        draw: {
+          to: {
+            strokeDashoffset: '0'
+          }
+        },
+        borderDisappear: {
+          to:{
+            borderColor: '#DDF3ED'
+          }
+        },
       },
       animation: {
         'text-slide': 'text-slide 12.5s cubic-bezier(0.83, 0, 0.17, 1) infinite',
@@ -247,6 +309,17 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+        'slideGradient': 'slideGradient linear',
+        'slideOut': 'slideOut 1s cubic-bezier(0.83, 0, 0.17, 1) forwards',
+        'slideIn': 'slideIn 1s cubic-bezier(0.83, 0, 0.17, 1) forwards',
+        'ring': 'ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite',
+        'fadeOut': 'fadeOut 1.2s cubic-bezier(0.5, 0, 0.5, 1) forwards',
+        'fadeIn': 'fadeIn 1.2s cubic-bezier(0.5, 0, 0.5, 1) forwards',
+        'draw': 'draw 1s cubic-bezier(.75,-0.01,0,1) forwards',
+        'borderDisappear': 'borderDisappear 0.2s linear forwards',
+      },
+      backgroundSize: {
+        '200%': '400% 400%',
       },
     },
   },
