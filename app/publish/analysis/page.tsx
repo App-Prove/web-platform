@@ -1,18 +1,11 @@
-import AnalysisUpdateSteps from "@/components/AnalysisUpdateSteps";
+import Steps from "@/components/Publish/Steps";
+import { Toaster } from "@/components/ui/sonner";
 
-export default function AnalysisPage(){
-    // Identify number of files
-
-    // Identify number of lines
-
-    // Identify type of project
-
-    // Identify complexity of project
-
-    
-    return(
+export default function AnalysisPage() {
+    return (
         <div className="w-full flex flex-col gap-2">
-            <AnalysisUpdateSteps></AnalysisUpdateSteps>
+            <div className="absolute"><Toaster></Toaster></div>
+            <Steps></Steps>
         </div>
     )
 }
