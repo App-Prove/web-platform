@@ -42,7 +42,7 @@ export default function ReviewingStepDetails({
                             </p>
                         </div>
                     </div>
-                    <div className="hidden sm:block">
+                    <div className="hidden sm:block text-left">
  {
                 issueSample.initialCode != '' &&
                 <CodeBlock
@@ -64,7 +64,7 @@ export default function ReviewingStepDetails({
                             {issueSample.suggestion}
                         </p>
                     </div>
-                    <div className="hidden sm:block">
+                    <div className="hidden sm:block text-left">
    {
                         issueSample.solvingCode != '' &&
                         <CodeBlock
