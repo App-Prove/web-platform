@@ -26,6 +26,7 @@ import {
 import React from "react";
 import { createPayment } from "@/app/publish/actions";
 import ReviewingStepDetails from "./ReviewingStepDetails";
+import { useLocalStorage } from "@/lib/localStorage";
 
 
 function renderStep(step: Step) {
@@ -71,6 +72,8 @@ function parseStepData(step: Step): Step {
 }
 
 export default function Steps() {
+    const [auditType, setAuditType] = useLocalStorage('auditType', '');
+     const [url, setUrl] = useLocalStorage('url', '');
     const [api, setApi] = React.useState<CarouselApi>()
     const [steps, setSteps] = useState<Step[]>(
         [
@@ -127,8 +130,8 @@ export default function Steps() {
             websocket.send(JSON.stringify(
                 {
                     token: token,
-                    repositoryURL: 'hugodemenez/git-repo-data.git',
-                    auditType: 'security'
+                    repositoryURL: url,
+                    auditType: auditType
                 })
             );
         }
