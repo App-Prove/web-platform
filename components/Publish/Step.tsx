@@ -7,7 +7,7 @@ export default function Step({ state }: { state: Step }) {
 
     const animationSpeed = 0.1;
     // Calculate duration based on the length of the current displayed word
-    const duration = `${state.message.length* animationSpeed}s`;
+    const duration = `${Math.min(state.message.length,35)* animationSpeed}s`;
     useEffect(() => {
         if (tempName !== state.message) {
             setTimeout(() => setTempName(state.message), 2400);

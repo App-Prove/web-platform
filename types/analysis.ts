@@ -38,7 +38,8 @@ interface BaseStep {
     time: Date;
     status: "pending" | "inProgress" | "error" | "success";
     message: string;
-    progress: number;
+    progress?: number; 
+    type?: string;
 }
 // Define specific interfaces for each variant
 interface PendingErrorStep extends BaseStep {
@@ -50,12 +51,12 @@ interface SuccessStep extends BaseStep {
     type: "repositoryScan" | "relativeFiles" | "sensitiveFiles" | "inDepthAnalysis";
 }
 
-interface RepositoryScan extends SuccessStep {
+interface RepositoryScanStep extends SuccessStep {
     type: "repositoryScan";
     data: RepositoryScanData;
 } 
 
-interface RelativeFiles extends SuccessStep {
+interface RelativeFilesStep extends SuccessStep {
     type: "relativeFiles";
     data: RelativeFilesData;
 }
@@ -70,4 +71,4 @@ interface InDepthAnalysisStep extends SuccessStep {
     data: InDepthAnalysisData;
 }
 
-type Step = PendingErrorStep | RepositoryScan | RelativeFiles | SensitiveFilesStep | InDepthAnalysisStep;
+type Step = PendingErrorStep | RepositoryScanStep | RelativeFilesStep | SensitiveFilesStep | InDepthAnalysisStep;
