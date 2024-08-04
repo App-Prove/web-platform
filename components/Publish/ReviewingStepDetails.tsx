@@ -19,6 +19,7 @@ export default function ReviewingStepDetails({
 }) {
 
     const issueSample = inDepthAnalysisState?.data[0]?.issues[0]
+    if(!issueSample) return null
     return (
         <div className=" gap-y-2 flex flex-col w-full items-center overflow-hidden">
             <p className="text-pretty w-full">
