@@ -186,7 +186,7 @@ export default function Steps() {
                                 }
                             </CardContent>
                             <CardFooter className="flex flex-col gap-y-4">
-                                <CardTitle className="font-light text-lg">Analyzing your repository with care</CardTitle>
+                                <CardTitle className="font-light text-lg text-center">Analyzing your repository with care</CardTitle>
                                 <Separator />
                                 <CardDescription className="text-center font-light">
                                     Using best scored large language models in code analysis, we ensure code meets quality standards.
