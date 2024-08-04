@@ -36,12 +36,12 @@ export default async function RootLayout({
               <Link href="/">
                 <Logo></Logo>
               </Link>
-              <Link href="/offers">
+              {/* <Link href="/offers">
                 Offers
               </Link>
               <Link href="/publish">
                 Publish
-              </Link>
+              </Link> */}
             </div>
             <div className="flex gap-6 items-center">
               <AuthButton user={user} />

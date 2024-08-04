@@ -76,7 +76,7 @@ export default function Home() {
         <div className="flex flex-col gap-2">
           <h2 className={cn(" text-3xl", whyte.className)}>Help people <strong className="text-orange">trust</strong> your code</h2>
           <p className={cn("text-muted-foreground")} >Developers encounter many difficulties when it comes to having their code audited</p>
-          <p className={cn("",whyte.className)} >App-Prove is here to:</p>
+          <p className={cn("", whyte.className)} >App-Prove is here to:</p>
           <ul className="flex gap-4 flex-col pl-6 self-center text-center list-none font-bold text-orange">
             <li>offer affordable code audits</li>
             <li>make the audit process clear</li>
@@ -108,19 +108,30 @@ export default function Home() {
             <ReliabilityCertification></ReliabilityCertification>
           </div>
         </div>
-      <section id='pricing'>
-      <PricingTiers></PricingTiers>
-      </section>
+        <section id='pricing'>
+          <PricingTiers></PricingTiers>
+        </section>
         <Separator />
         <div className="flex flex-col gap-2 text-left">
           <h2 className={cn("uppercase text-3xl font-medium text-center", whyte.className)}>
             Questions &
             <strong className="text-orange"> Answers </strong>
           </h2>
-          <Accordion type="multiple">
+          <Accordion type="multiple" defaultValue={[
+            "item-1",
+            "item-2",
+            "item-3",
+            "item-4",
+            "item-5",
+            "item-6",
+            "item-7",
+            "item-8",
+            "item-9",
+            "item-10",
+          ]}>
             <AccordionItem value="item-1">
               <AccordionTrigger>What is App-Prove?</AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent >
                 App-Prove is a web platform designed for developers to find auditors who can review their code for flaws and vulnerabilities.
               </AccordionContent>
             </AccordionItem>
@@ -180,7 +191,7 @@ export default function Home() {
             <AccordionItem value="item-10">
               <AccordionTrigger>How does App-Prove make money ?</AccordionTrigger>
               <AccordionContent>
-              Some of the subscription money will be distributed to auditors, and App-Prove will recover the remaining money in order to sustain platform development.
+                Some of the subscription money will be distributed to auditors, and App-Prove will recover the remaining money in order to sustain platform development.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
