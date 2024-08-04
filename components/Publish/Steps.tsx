@@ -93,7 +93,6 @@ export default function Steps() {
 
     const startAnalysis = useCallback(async (websocket: any) => {
         setStarted(true);
-        toast.error('Starting analysis');
         if (websocket) {
             toast.info('Starting analysis');
             // Get JWT token from user
@@ -144,6 +143,7 @@ export default function Steps() {
         }
 
         socket.onopen = (event) => {
+            setWsClosed(false);
             setFinished(false);
         }
 
@@ -151,7 +151,7 @@ export default function Steps() {
         return () => {
             socket.close();
         };
-    }, [setWsClosed, wsClosed]);
+    }, [setWsClosed, wsClosed,setFinished, finished]);
 
 
     return (
