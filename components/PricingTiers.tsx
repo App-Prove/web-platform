@@ -101,7 +101,7 @@ export default function PricingTiers() {
                 <div className="lg:min-w-0 lg:flex-1">
                   <h3 className="text-lg font-semibold leading-8 tracking-tight text-orange-600">Discounted</h3>
                   <p className="mt-1 text-base leading-7 text-gray-600">
-                    Schools, students and startups can get a discounted license.
+                    Schools, students and startups can get discounted audits. We are here to help people start their audit journey.
                   </p>
                 </div>
                 <a
