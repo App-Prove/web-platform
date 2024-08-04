@@ -25,11 +25,10 @@ export default function ReviewingStep({
 
     return (
         <div className="flex items-center gap-x-2 py-2">
-            <div id="icon" className="w-12 h-12 relative flex items-center justify-center bg-white rounded-lg shadow-lg border from-gray-50 to-gray-100 bg-gradient-to-t">
-
+            <div id="icon" className="p-2 relative flex items-center justify-center bg-white rounded-lg shadow-lg border from-gray-50 to-gray-100 bg-gradient-to-t">
                 <div
                     className={cn(
-                        "w-8 h-8 absolute flex items-center justify-center rounded-full bg-[#3FB996] border-2 border-[#3EC78E] animate-borderDisappear",
+                        "w-8 h-8 flex items-center justify-center rounded-full bg-[#3FB996] border-2 border-[#3EC78E] animate-borderDisappear",
                         inDepthAnalysisState?.status == 'success' ? "" : "hidden"
                         
                     )}
@@ -66,9 +65,9 @@ export default function ReviewingStep({
                 </div>
             </div>
             <div>
-                <h2>{inDepthAnalysisState && inDepthAnalysisState.message}</h2>
-                <p className="text-muted-foreground text-sm">
-                    {inDepthAnalysisState && inDepthAnalysisState.data.length} files checked out of {relativeFilesState?.data.relativeFiles.length}
+                <h2 className="text-sm sm:text-base">{inDepthAnalysisState && inDepthAnalysisState.message}</h2>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                    {inDepthAnalysisState && inDepthAnalysisState.data.length} file{(inDepthAnalysisState && inDepthAnalysisState.data.length > 0) && 's'} identified as sensitive out of {relativeFilesState?.data.relativeFiles.length} file{(relativeFilesState && relativeFilesState.data.relativeFiles.length > 0) && 's'} relative to project.
                 </p>
             </div>
 

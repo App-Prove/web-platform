@@ -19,15 +19,15 @@ export default function ReviewingStepDetails({
 }) {
 
     const issueSample = inDepthAnalysisState?.data[0]?.issues[0]
-    if(!issueSample) return null
+    if(!issueSample || !repositoryScanState || !relativeFilesState || !sensitiveFilesStep) return null
     return (
         <div className=" gap-y-2 flex flex-col w-full items-center overflow-hidden">
             <p className="text-pretty w-full">
                 We identified your project was based on <strong className="font-mono font-bold">{repositoryScanState.data.mostCommonProgrammingLanguages}</strong>{' '}
                 with <strong className="font-mono font-bold">{repositoryScanState.data.numberOfFiles}</strong> files
                 representing <strong className="font-mono font-bold">{repositoryScanState.data.totalLineCount}</strong>  lines of code. <br /> <br />
-                Our algorithm identified {relativeFilesState.data.relativeFiles.length} files relative to your programming language and selected {sensitiveFilesStep.data.sensitiveFiles.length} sensitive files. <br /> <br />
-                We found at least {inDepthAnalysisState.data.length} issues in your code
+                Our algorithm identified <strong className="font-mono font-bold">{relativeFilesState.data.relativeFiles.length}</strong> files relative to your programming language and selected <strong className="font-mono font-bold">{sensitiveFilesStep.data.sensitiveFiles.length}</strong> sensitive files. <br /> <br />
+                We found at least <strong className="font-mono font-bold">{inDepthAnalysisState.data.length}</strong> issues in your code
                 here is one:
             </p>
             <Alert className='w-full overflow-hidden'>

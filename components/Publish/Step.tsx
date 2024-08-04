@@ -1,6 +1,7 @@
 'use client'
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { ErrorAnimation } from "../LottieAnimations";
 export default function Step({ state }: { state: Step }) {
     const [tempName, setTempName] = useState('');
 
@@ -23,6 +24,13 @@ export default function Step({ state }: { state: Step }) {
                         state.status != 'pending' && "animate-fadeOut"
                     )}>
                 </div>
+                <div id="spinner" className={cn(
+                    "absolute opacity-0 w-full h-full flex items-center justify-center",
+                    state.status == 'error' && "animate-fadeIn",
+                )}>
+                    <ErrorAnimation></ErrorAnimation>
+                </div>
+
                 <div id="spinner" className={cn(
                     "absolute opacity-0 w-full h-full flex items-center justify-center",
                     state.status == 'inProgress' && "animate-fadeIn",
