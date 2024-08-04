@@ -28,7 +28,7 @@ export default function ReviewingStepDetails({
                 representing <strong className="font-mono font-bold">{repositoryScanState.data.totalLineCount}</strong>  lines of code. <br /> <br />
                 Our algorithm identified <strong className="font-mono font-bold">{relativeFilesState.data.relativeFiles.length}</strong> files relative to your programming language and selected <strong className="font-mono font-bold">{sensitiveFilesStep.data.sensitiveFiles.length}</strong> sensitive files. <br /> <br />
                 We found at least <strong className="font-mono font-bold">{inDepthAnalysisState.data.length}</strong> issues in your code
-                here is one:
+                here is one that you can correct now in <strong className="font-mono font-bold">{issueSample.path}</strong>:
             </p>
             <Alert className='w-full overflow-hidden'>
                 <Terminal className="h-4 w-4" />
