@@ -96,7 +96,7 @@ export default function Step({ state }: { state: Step }) {
                 </div>
 
             </div>
-            <div className="flex w-full min-h-[48] relative items-center">
+            <div className="flex w-full min-h-[48] relative items-center max-w-full overflow-hidden flex-grow-0">
                 <div
                     id="initial-step"
                     className={cn(
