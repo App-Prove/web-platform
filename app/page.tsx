@@ -1,9 +1,9 @@
-'use client'
+'use server'
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { whyte } from "./fonts";
 import {
   Accordion,
@@ -19,31 +19,14 @@ import SecurityCertification from "@/components/Certifications/SecurityCertifica
 import { githubLogin } from "@/components/server/action";
 import { Github } from "lucide-react";
 import PricingTiers from "@/components/PricingTiers";
+import PublishForm from "@/components/Publish/Form";
+import { User } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/server";
 
-export default function Home() {
-  const [error, setError] = useState<string | null>(null);
+export default async function Home() {
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      setError(urlParams.get('error'));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (error) {
-      console.log(error)
-      toast({
-        title: 'Hey there! 🚀',
-        description: 'You have to log through your github account to access this page!',
-        action: <Button onClick={() => githubLogin()}>
-          <Github />
-          <p>Sign in</p>
-        </Button>
-      })
-    }
-  }, [error]);
+  const supabase = createClient()
+  const {data:{user}} = await supabase.auth.getUser()
 
 
   return (
@@ -63,13 +46,14 @@ export default function Home() {
           App-Prove enhances code <strong>security</strong> and <strong>reliability</strong> with audits conducted by <strong>independent</strong> developers and advanced algorithms
         </p>
 
-        <div className={cn("flex sm:gap-x-6 gap-x-2 gap-y-2 mt-8 flex-wrap justify-center")}>
-          <Link href="#pricing">
+        <div className={cn("sm:gap-x-6 gap-x-2 gap-y-2 mt-8 flex-wrap justify-center grid")}>
+          <PublishForm user={user}></PublishForm>
+          {/* <Link href="#pricing">
             <Button className="bg-orange">Publish your project</Button>
           </Link>
           <Link href="profile">
             <Button variant="secondary">Earn money as auditor</Button>
-          </Link>
+          </Link> */}
         </div>
       </div>
       <div className="flex flex-col gap-12 text-center">

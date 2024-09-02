@@ -274,7 +274,7 @@ export default function PublishForm({ user }: { user: null | User }) {
                             </CommandDialog>
                         </>
                     )} />
-                <Separator />
+                {/* <Separator />
                 <FormField
                     control={form.control}
                     name="description"
@@ -288,7 +288,7 @@ export default function PublishForm({ user }: { user: null | User }) {
                             <FormMessage />
                         </div>
                     )}
-                />
+                /> */}
                 <Separator />
                 <FormField
                     control={form.control}
