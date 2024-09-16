@@ -42,6 +42,7 @@ import { redirect, useRouter, useSearchParams } from "next/navigation"
 import { register } from "module"
 import { Toaster } from "../ui/sonner"
 import { FolderGit, Github } from "lucide-react"
+import { useDebouncedCallback } from 'use-debounce';
 
 const FormSchema = z.object({
     url: z.string().superRefine((value, ctx) => {
@@ -72,6 +73,12 @@ const FormSchema = z.object({
     ),
 })
 
+interface Repository {
+    full_name: string;
+    name: string;
+    description?: string;
+    // Add other properties as needed
+}
 
 export default function PublishForm({ user }: { user: null | User }) {
     const router = useRouter()
@@ -146,26 +153,86 @@ export default function PublishForm({ user }: { user: null | User }) {
         fetchRepositories()
     }, [fetchRepositories]);
 
+    const formatGithubUrl = (url: string): string => {
+        const githubRegex = /^(https?:\/\/)?(www\.)?github\.com\/([^\/]+)\/([^\/]+)\/?$/;
+        const match = url.match(githubRegex);
+        if (match) {
+            return `${match[3]}/${match[4]}`;
+        }
+        return url;
+    };
+
     const searchGithubProjects = useCallback(async (value: string) => {
-        if (user == null) return
-        setSearchValue(value)
-        console.log(value)
-        const response = await fetch(`https://api.github.com/orgs/${value}/repos`)
-        const data = await response.json()
-        console.log(data)
-        if (data.error) {
-            setCustomRepositories([])
-            setError(data.error)
-            return
+        const formattedValue = formatGithubUrl(value);
+        setSearchValue(formattedValue);
+        console.log(formattedValue);
+        
+        let searchResults: Repository[] = [];
+
+        try {
+            const fetchWithErrorHandling = async (url: string) => {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        throw new Error("API rate limit exceeded. Please try again later.");
+                    } else if (response.status === 404) {
+                        return null; // Not found, but not an error
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                }
+                return await response.json();
+            };
+
+            // Search for public repositories
+            const searchData = await fetchWithErrorHandling(`https://api.github.com/search/repositories?q=${encodeURIComponent(formattedValue)}&sort=stars&order=desc`);
+            if (searchData && searchData.items) {
+                searchResults = searchData.items.slice(0, 5) as Repository[];
+            }
+
+            // Search for organization repositories
+            const orgData = await fetchWithErrorHandling(`https://api.github.com/orgs/${formattedValue}/repos`);
+            if (Array.isArray(orgData)) {
+                searchResults = [...searchResults, ...orgData.slice(0, 3) as Repository[]];
+            }
+
+            // Search for user repositories
+            const userData = await fetchWithErrorHandling(`https://api.github.com/users/${formattedValue}/repos`);
+            if (Array.isArray(userData)) {
+                searchResults = [...searchResults, ...userData.slice(0, 3) as Repository[]];
+            }
+
+            // Remove duplicates
+            searchResults = Array.from(new Set(searchResults.map((r: Repository) => r.full_name)))
+                .map(full_name => searchResults.find((r: Repository) => r.full_name === full_name)!);
+
+            console.log(searchResults);
+            
+            if (searchResults.length === 0) {
+                setCustomRepositories([]);
+                setError("No repositories found");
+                return;
+            }
+            
+            setCustomRepositories(searchResults);
+        } catch (error) {
+            console.error("Error searching GitHub:", error);
+            setCustomRepositories([]);
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError("An unexpected error occurred while searching. Please try again.");
+            }
         }
-        if (data.message) {
-            setCustomRepositories([])
-            setError(data.message)
-            return
-        }
-        setCustomRepositories(data.map((project: Repository) => project as Repository))
     }, []);
 
+    const debouncedSearchGithubProjects = useDebouncedCallback(
+        (value: string) => {
+            console.log('searching');
+            searchGithubProjects(value);
+        },
+        500
+    );
 
     function onSubmit(data: z.infer<typeof FormSchema>) {
         setProcessing(true)
@@ -199,19 +266,12 @@ export default function PublishForm({ user }: { user: null | User }) {
 
                             <CommandDialog open={commandOpen} onOpenChange={setCommandOpen}>
                                 <CommandInput
-                                    placeholder="Start typing to search..."
+                                    placeholder="Search repositories, orgs, or users..."
                                     className="h-9 w-[200px] text-lg sm:text-sm"
-                                    onValueChange={
-                                        (e) => {
-                                            // If there is 2 sec without a key press, search for the project
-                                            if (e.includes('/')) return
-                                            if (searchTimeout) clearTimeout(searchTimeout)
-                                            setSearchTimeout(setTimeout(() => {
-                                                searchGithubProjects(e)
-                                            }
-                                                , 2000))
-                                        }
-                                    }
+                                    onValueChange={(e) => {
+                                        console.log(e);
+                                        debouncedSearchGithubProjects(e);
+                                    }}
                                 />
                                 <CommandEmpty>No repository found. <br />{user == null ? <Button
                                     onClick={() => {
@@ -224,7 +284,7 @@ export default function PublishForm({ user }: { user: null | User }) {
                                         </>
                                         : "Connect your Github account"}</Button> : ""}</CommandEmpty>
                                 <CommandList>
-                                    <CommandGroup heading={searchValue ? searchValue + ' organisation' : ''}>
+                                    <CommandGroup heading={searchValue ? `Results for "${searchValue}"` : ''}>
                                         {customRepositories.map((repository) => (
                                             <CommandItem
                                                 value={repository.full_name}
@@ -235,7 +295,7 @@ export default function PublishForm({ user }: { user: null | User }) {
                                                     setCommandOpen(false)
                                                 }}
                                             >
-                                                {repository.name}
+                                                {repository.full_name}
                                                 <CheckIcon
                                                     className={cn(
                                                         "ml-auto h-4 w-4",
@@ -274,21 +334,6 @@ export default function PublishForm({ user }: { user: null | User }) {
                             </CommandDialog>
                         </>
                     )} />
-                {/* <Separator />
-                <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                        <div className="grid w-full gap-1.5">
-                            <FormLabel>Short description</FormLabel>
-                            <FormControl >
-                                <Textarea placeholder="Give a short description of your project" id="message" {...field} />
-                            </FormControl>
-                            <FormDescription>This is a short description of the work you are looking for</FormDescription>
-                            <FormMessage />
-                        </div>
-                    )}
-                /> */}
                 <Separator />
                 <FormField
                     control={form.control}
