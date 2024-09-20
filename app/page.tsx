@@ -73,17 +73,6 @@ export default function Home() {
         </div>
       </div>
       <div className="flex flex-col gap-12 text-center">
-        <div className="flex flex-col gap-2">
-          <h2 className={cn(" text-3xl", whyte.className)}>Help people <strong className="text-orange">trust</strong> your code</h2>
-          <p className={cn("text-muted-foreground")} >Developers encounter many difficulties when it comes to having their code audited</p>
-          <p className={cn("", whyte.className)} >App-Prove is here to:</p>
-          <ul className="flex gap-4 flex-col pl-6 self-center text-center list-none font-bold text-orange">
-            <li>offer affordable code audits</li>
-            <li>make the audit process clear</li>
-            <li>support all programming languages</li>
-          </ul>
-
-        </div>
         <Separator />
         <div className="flex flex-col">
           <h3 className={cn("text-3xl gap-2 flex-wrap justify-center flex", whyte.className)}>
