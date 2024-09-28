@@ -14,7 +14,7 @@ import Logo from "@/components/Logo";
 
 export const metadata: Metadata = {
   title: "AppProve",
-  description: "Prove your app's safety.",
+  description: "Improve IT safety globally",
 };
 
 export default async function RootLayout({
