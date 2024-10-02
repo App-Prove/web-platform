@@ -92,9 +92,9 @@ export default async function Home() {
             <ReliabilityCertification></ReliabilityCertification>
           </div>
         </div>
-        <section id='pricing'>
+        {/* <section id='pricing'>
           <PricingTiers></PricingTiers>
-        </section>
+        </section> */}
         <Separator />
         <div className="flex flex-col gap-2 text-left">
           <h2 className={cn("uppercase text-3xl font-medium text-center", whyte.className)}>
