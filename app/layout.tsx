@@ -67,7 +67,7 @@ export default async function RootLayout({
               {/* <Button variant="outline">Se connecter</Button>
               <Button className="bg-primary text-white">S&apos;inscrire</Button> */}
               <Link href="#book-call">
-                <Button className="bg-primary text-white">Contactez-nous</Button>
+                <Button className=" text-white">Contactez-nous</Button>
               </Link>
               </div>
             </div>

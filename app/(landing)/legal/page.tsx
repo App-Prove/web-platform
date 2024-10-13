@@ -1,130 +1,80 @@
+import Link from 'next/link';
+
 export default function LegalPage() {
     return (
-        <div className='h-full w-full mx-auto flex flex-col gap-4 mb-16 overflow-visible'>
-            <h1>
-                Legal
-            </h1>
-            This Legal Information page outlines the terms and conditions, privacy policy, and other legal aspects of using our platform. Please read these terms carefully before using our services.
-
-            <h2 className="underline text-lg font-bold">
-                Terms and Conditions
-            </h2>
-
-            <h3>
-                1. Acceptance of Terms
-            </h3>
-            <p>
-                By accessing or using the App-Prove platform, you agree to be bound by these terms and conditions.
+        <div className='max-w-5xl mx-auto py-8 px-4'>
+            <h1 className="text-3xl font-bold mb-6">Legal Information</h1>
+            <p className="mb-6">
+                This page outlines the terms and conditions, privacy policy, and other legal aspects of using App-Prove's services. Please read these terms carefully before engaging our services.
             </p>
 
-            <h3>
-                2. Services Provided
-            </h3>
+            <section className="mb-8">
+                <h2 className="text-2xl font-semibold mb-4">Terms of Service</h2>
 
-            <p>
-                App-Prove offers a platform for auditing application code through expert reviews and AI insights. We provide certifications based on the safety of the applications.
+                <h3 className="text-xl font-medium mt-4 mb-2">1. Services Provided</h3>
+                <p>
+                    App-Prove offers cyber-security audit services, ensuring code safety in terms of bugs and security. We provide a proof of audit with detailed checkpoints, verifying standards for logical security, change safety, and infrastructure security.
+                </p>
+
+                <h3 className="text-xl font-medium mt-4 mb-2">2. Engagement Process</h3>
+                <p>
+                    Our services are initiated through direct contact. Customers engage in a call with us, during which we analyze their needs and outline the process for an in-depth security audit using our algorithms and developer workforce.
+                </p>
+
+                <h3 className="text-xl font-medium mt-4 mb-2">3. Intellectual Property</h3>
+                <p>
+                    The software we use to check for security and reliability flaws in code is open-source. However, all aspects of our audit process and methodologies remain proprietary and confidential.
+                </p>
+
+                <h3 className="text-xl font-medium mt-4 mb-2">4. Refund and Dispute Policy</h3>
+                <p>
+                    Customers may request a refund until the first meeting is conducted. After this point, no disputes or refunds will be considered.
+                </p>
+
+                <h3 className="text-xl font-medium mt-4 mb-2">5. Limitation of Liability</h3>
+                <p>
+                    While we strive for accuracy and thoroughness in our audits, App-Prove is not liable for any indirect, incidental, or consequential damages arising from the use of our services or reliance on our audit reports.
+                </p>
+
+                <h3 className="text-xl font-medium mt-4 mb-2">6. Compliance</h3>
+                <p>
+                    Our services aim to comply with GDPR, SOC 2, and HIPAA regulations. However, it is the client's responsibility to ensure their own compliance with these standards.
+                </p>
+            </section>
+
+            <section className="mb-8">
+                <h2 className="text-2xl font-semibold mb-4">Privacy Policy</h2>
+
+                <h3 className="text-xl font-medium mt-4 mb-2">1. Data Collection and Use</h3>
+                <p>
+                    We collect and process personal data necessary for providing our services, including contact information and details about your software and infrastructure. This data is used solely for the purpose of conducting security audits and communicating with clients.
+                </p>
+
+                <h3 className="text-xl font-medium mt-4 mb-2">2. Data Protection</h3>
+                <p>
+                    We implement robust security measures to protect your data from unauthorized access, alteration, disclosure, or destruction. Our practices align with GDPR, SOC 2, and HIPAA requirements for data protection.
+                </p>
+
+                <h3 className="text-xl font-medium mt-4 mb-2">3. Data Retention</h3>
+                <p>
+                    We retain personal data only for as long as necessary to provide our services and comply with legal obligations. You may request the deletion of your data at any time, subject to any overriding legal retention requirements.
+                </p>
+
+                <h3 className="text-xl font-medium mt-4 mb-2">4. Your Rights</h3>
+                <p>
+                    Under GDPR, you have the right to access, correct, or delete your personal data. You may also request a copy of your data or object to its processing. To exercise these rights, please contact us at privacy@app-prove.com.
+                </p>
+
+                <h3 className="text-xl font-medium mt-4 mb-2">5. Third-Party Disclosure</h3>
+                <p>
+                    We do not sell, trade, or otherwise transfer your personal information to outside parties. This does not include trusted third parties who assist us in operating our service, so long as they agree to keep this information confidential.
+                </p>
+            </section>
+
+            <p className="mt-8">
+                For any questions or concerns regarding our legal terms or privacy policy, please contact us at:
             </p>
-
-            <h3>
-                3. User Responsibilities
-            </h3>
-            <p>
-                Users are responsible for providing accurate information, maintaining the confidentiality of their account, and complying with all applicable laws and regulations.
-            </p>
-
-            <h3>
-                4. Payment and Subscription
-            </h3>
-            <p>
-                Our services are available through an annual subscription plan of $500/year, which includes an initial audit and three follow-up audits within the same year.
-            </p>
-
-            <h3>
-                5. Refund Policy
-            </h3>
-            <p>
-                Refunds are only available if no work has been done by our developers. If work has commenced, refunds are not possible.
-            </p>
-
-            <h3>
-                6. Intellectual Property
-            </h3>
-            <p>
-                All content on the App-Prove platform, including text, graphics, logos, and software, is the property of App-Prove and is protected by copyright laws.
-            </p>
-
-            <h3>
-                7. Limitation of Liability
-            </h3>
-
-            <p>
-                App-Prove is not liable for any indirect, incidental, or consequential damages arising from the use of our platform.
-            </p>
-
-            <h3>
-                8. Dispute Resolution
-            </h3>
-            <p>
-                In the event of a dispute, users agree to contact App-Prove first to attempt resolution informally. If the dispute cannot be resolved informally, it shall be resolved through binding arbitration under the rules of the French Arbitration Association. All disputes will be governed by the laws of France and will be settled in the courts of Paris.
-            </p>
-
-            <h3>
-                9. Termination
-            </h3>
-            <p>
-                We reserve the right to terminate or suspend your account if you violate these terms.
-            </p>
-
-            <h3>
-                10. Changes to Terms
-            </h3>
-            <p>
-                If there are any changes to the terms and conditions, users will be notified via the email provided during sign-up with a brief description of the changes.
-            </p>
-
-            <h2 className="underline text-lg font-bold">
-                Privacy Policy
-            </h2>
-
-            <h3>
-                1. Data Collection
-            </h3>
-            <p>
-                We do not use cookies or collect personal data through cookies. We collect data necessary for providing our services, such as email addresses and payment information.
-            </p>
-
-            <h3>
-                2. Use of Data
-            </h3>
-            <p>
-                Collected data is used to provide and improve our services, process payments, and communicate with users.
-            </p>
-
-            <h3>
-                3. Data Security
-            </h3>
-            <p>
-                We implement security measures to protect your data from unauthorized access and ensure the confidentiality of your information.
-            </p>
-
-            <h3>
-                4. Third-Party Services
-            </h3>
-            <p>
-                We do not share your data with third parties except as necessary to provide our services (e.g., payment processors).
-            </p>
-            <h3>
-                5. User Rights
-            </h3>
-            <p>
-                Users have the right to access, correct, or delete their personal data. Contact us at privacy@app-prove.com to exercise these rights.
-            </p>
-
-            <p>
-                Contact Information
-
-                Email: support@app-prove.com
-            </p>
+            <p>Email: <Link href="mailto:legal@app-prove.com" className="text-blue-600 hover:underline">legal@app-prove.com</Link></p>
         </div>
     )
 }
