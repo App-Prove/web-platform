@@ -46,3 +46,4 @@ export function formatOffers(data: any) : Offer[]{
         } as Offer;
     })
 }
+

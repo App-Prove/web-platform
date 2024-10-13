@@ -1,6 +1,8 @@
-export default function Logo() {
+import { cn } from "@/lib/utils";
+
+export default function Logo({className}: {className?: string}) {
     return (
-        <svg className="dark:fill-white fill-black cursor-pointer group" width="40" height="44" viewBox="0 0 40 44" xmlns="http://www.w3.org/2000/svg">
+        <svg className={cn("dark:fill-white fill-black cursor-pointer group", className)} width="40" height="44" viewBox="0 0 40 44" xmlns="http://www.w3.org/2000/svg">
             <path d="M1.33406 27.776C0.746028 26.3578 0.969754 23.9202 0.969754 23.9202C0.969754 23.9202 2.16319 26.0596 3.36824 26.9866C4.94698 28.201 20.0362 40.072 20.0362 40.072V43.1991L3.36824 30.0834C3.36824 30.0834 1.85021 29.0207 1.33406 27.776Z" />
             <path d="M38.6775 27.776C39.2656 26.3578 39.0418 23.9202 39.0418 23.9202C39.0418 23.9202 37.8484 26.0596 36.6434 26.9866C35.0646 28.201 19.9754 40.072 19.9754 40.072V43.1991L36.6434 30.0834C36.6434 30.0834 38.1614 29.0207 38.6775 27.776Z" />
             <path className="group-hover:fill-orange transition-colors" d="M1.33406 21.9468C0.746028 20.5287 0.969754 18.091 0.969754 18.091V0.906982L3.36824 2.57681V9.10433L3.46875 17.7571C3.39477 18.701 3.58076 20.8604 4.91662 21.9468L20.0362 34.2428V37.37L3.36824 24.2542C3.36824 24.2542 1.85021 23.1916 1.33406 21.9468Z" />
