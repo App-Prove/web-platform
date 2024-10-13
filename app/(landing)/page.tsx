@@ -206,7 +206,7 @@ export default function Home() {
               Qui a accès à mon code informatique ?
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground">
-              Lorsque vous partager votre codebase à App-Prove, uniquement nos algorithmes accèdent au code. Les auditeurs sont convoqués uniquement pour vérifier des parties de code. De plus, le code est réparti au sein des auditeurs, rendant ainsi toute reconstitution de la codebase impossible.
+              Lorsque vous partagez votre codebase à App-Prove, uniquement nos algorithmes accèdent au code. Les auditeurs sont convoqués uniquement pour vérifier des parties de code. De plus, le code est réparti au sein des auditeurs, rendant ainsi toute reconstitution de la codebase impossible.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-4">
