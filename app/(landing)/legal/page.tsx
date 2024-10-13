@@ -5,7 +5,7 @@ export default function LegalPage() {
         <div className='max-w-5xl mx-auto py-8 px-4'>
             <h1 className="text-3xl font-bold mb-6">Legal Information</h1>
             <p className="mb-6">
-                This page outlines the terms and conditions, privacy policy, and other legal aspects of using App-Prove's services. Please read these terms carefully before engaging our services.
+                This page outlines the terms and conditions, privacy policy, and other legal aspects of using App-Prove&apos;s services. Please read these terms carefully before engaging our services.
             </p>
 
             <section className="mb-8">
@@ -38,7 +38,7 @@ export default function LegalPage() {
 
                 <h3 className="text-xl font-medium mt-4 mb-2">6. Compliance</h3>
                 <p>
-                    Our services aim to comply with GDPR, SOC 2, and HIPAA regulations. However, it is the client's responsibility to ensure their own compliance with these standards.
+                    Our services aim to comply with GDPR, SOC 2, and HIPAA regulations. However, it is the client&apos;s responsibility to ensure their own compliance with these standards.
                 </p>
             </section>
 

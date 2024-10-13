@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
-
+import Image from 'next/image'
 const standards = [
   {
     name: 'RGPD',
@@ -89,7 +89,7 @@ export default function Compliance() {
             onClick={() => handleStandardClick(index)}
           >
             <div className="flex items-center space-x-4 w-1/3">
-              <img src={standard.icon} alt={`${standard.name} icon`} className="w-16 h-16 sm:w-20 sm:h-20" />
+              <Image src={standard.icon} alt={`${standard.name} icon`} width={80} height={80} className="w-16 h-16 sm:w-20 sm:h-20" />
               <span className="text-lg font-semibold">{standard.name}</span>
               <CheckMark />
             </div>
