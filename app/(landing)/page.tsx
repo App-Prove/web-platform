@@ -186,7 +186,7 @@ export default function Home() {
         <h2 className="text-center text-2xl font-medium">Questions & réponses</h2>
         <Accordion type="multiple" defaultValue={["item-1", "item-2"]} className="w-full grid sm:grid-cols-2 gap-8">
           <AccordionItem value="item-1">
-            <AccordionTrigger>
+            <AccordionTrigger className="text-left">
               Quelle est la différence avec un cabinet d&apos;audit ?
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground">
@@ -194,7 +194,7 @@ export default function Home() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
-            <AccordionTrigger>
+            <AccordionTrigger className="text-left">
               Qui sont les auditeurs chez App-Prove ?
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground">
@@ -202,7 +202,7 @@ export default function Home() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
-            <AccordionTrigger>
+            <AccordionTrigger className="text-left">
               Qui a accès à mon code informatique ?
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground">
@@ -210,7 +210,7 @@ export default function Home() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-4">
-            <AccordionTrigger>
+            <AccordionTrigger className="text-left">
               Combien cela coûte ?
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground">

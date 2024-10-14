@@ -85,7 +85,6 @@ export default async function RootLayout({
               </div>
             </Link>
             <div className="flex gap-4">
-              <Link href='/contact'>Contact</Link>
               <Link href='/legal'>Legal</Link>
               <Link href='/cookies'>Cookies</Link>
             </div>
