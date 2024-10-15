@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { atomOneDark, CodeBlock } from 'react-code-blocks';
 import { Terminal } from 'lucide-react';
-import { ErrorAnimation, SuccessAnimation } from "../LottieAnimations";
+import { ErrorAnimation, SuccessAnimation } from "@/components/LottieAnimations";
+import { InDepthAnalysisStep, RelativeFilesStep, SensitiveFilesStep } from "@/types/analysis";
+import { RepositoryScanStep } from "@/types/analysis";
 
 export default function ReviewingStepDetails({
     repositoryScanState,
@@ -32,7 +34,7 @@ export default function ReviewingStepDetails({
             </p>
             <Alert className='w-full overflow-hidden'>
                 <Terminal className="h-4 w-4" />
-                <AlertTitle>{issueSample.path} at line {issueSample.lineNumber}</AlertTitle>
+                <AlertTitle>{issueSample.file} at line {issueSample.lineNumber}</AlertTitle>
                 <AlertDescription className='flex flex-col gap-2'>
                     <div>
                         <div className='flex gap-x-2 items-center w-full'>

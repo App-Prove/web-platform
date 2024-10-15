@@ -1,36 +1,42 @@
-type RepositoryScanData = {
+export type RepositoryScanData = {
     numberOfFiles: number;
     totalLineCount: number;
     mostCommonProgrammingLanguages: string[];
 };
 
-type RelativeFilesData = {
+export type RelativeFilesData = {
     relativeFiles: {
         path: string;
         language: string;
     }[]
 };
 
-type SensitiveFilesData = {
+export type SensitiveFilesData = {
     sensitiveFiles: {
         path: string;
         language: string;
     }[]; // Contains file paths
 };
 
-type InDepthAnalysisData = {
-    issues: {
-        language: string;
-        lineNumber: number;
-        initialCode: string;
-        solvingCode: string;
-        comment: string;
-        suggestion: string;
-        path: string;
-    }[];
-    path: string;
-}[];
 
+export interface Issue {
+    id: number; // Added id property
+    category: "Security" | "Performance" | "Best Practices"; // Added category property
+    title: string; // Added title property
+    severity: "High" | "Medium" | "Low"; // Added severity property
+    language: string;
+    lineNumber: number; // Updated from 'line' to 'lineNumber'
+    file: string; // Updated from 'path' to 'file'
+    initialCode: string;
+    solvingCode: string;
+    comment: string;
+    suggestion: string;
+  }
+
+export type InDepthAnalysisData = {
+    issues: Issue[];
+    path: string; // Ensure this is included in the outer structure
+}[];
 
 // Define the base interface
 interface BaseStep {
@@ -42,33 +48,43 @@ interface BaseStep {
     type?: string;
 }
 // Define specific interfaces for each variant
-interface PendingErrorStep extends BaseStep {
+export interface PendingErrorStep extends BaseStep {
     status: "pending" | "inProgress" | "error";
 }
 
-interface SuccessStep extends BaseStep {
+export interface SuccessStep extends BaseStep {
     status: "success";
     type: "repositoryScan" | "relativeFiles" | "sensitiveFiles" | "inDepthAnalysis";
 }
 
-interface RepositoryScanStep extends SuccessStep {
+export interface RepositoryScanStep extends SuccessStep {
     type: "repositoryScan";
     data: RepositoryScanData;
 } 
 
-interface RelativeFilesStep extends SuccessStep {
+export interface RelativeFilesStep extends SuccessStep {
     type: "relativeFiles";
     data: RelativeFilesData;
 }
 
-interface SensitiveFilesStep extends SuccessStep {
+export interface SensitiveFilesStep extends SuccessStep {
     type: "sensitiveFiles";
     data: SensitiveFilesData;
 }
 
-interface InDepthAnalysisStep extends SuccessStep {
+export interface InDepthAnalysisStep extends SuccessStep {
     type: "inDepthAnalysis";
     data: InDepthAnalysisData;
 }
 
-type Step = PendingErrorStep | RepositoryScanStep | RelativeFilesStep | SensitiveFilesStep | InDepthAnalysisStep;
+export type StepType = PendingErrorStep | RepositoryScanStep | RelativeFilesStep | SensitiveFilesStep | InDepthAnalysisStep;
+
+export interface DashboardData {
+  totalIssues: number
+  categories: {
+    security: number
+    performance: number
+    bestPractices: number
+  }
+  issues: Issue[]
+}

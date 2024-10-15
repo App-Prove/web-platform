@@ -3,11 +3,11 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
-import { Icons } from "./icons"
-import { Label } from "./ui/label"
-import { Input } from "./ui/input"
-import { Button } from "./ui/button"
-import { emailLogin, githubLogin, verifyOTP } from "./server/action"
+import { Icons } from "@/components/icons"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { emailLogin, githubLogin, verifyOTP } from "@/components/server/action"
 import { usePathname } from "next/navigation"
 import {
   Form,
@@ -76,7 +76,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn("grid gap-6", className, " dark:text-white")} {...props}>
       <Form {...emailForm} >
         <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="w-full flex-1 flex flex-col sm:flex-row gap-2">
           <FormField
@@ -100,11 +100,11 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                         disabled={isLoading} {...field} />
                     </FormControl>
                   </div>
-                  <Button disabled={isLoading} type="submit">
+                  <Button disabled={isLoading} type="submit" className="dark:bg-orange dark:text-white  hover:dark:bg-orange/50 hover:dark:text-white">
                     {isLoading && (
                       <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                     )}
-                    Sign In with Email
+                    Sign in with Email
                   </Button>
                 </div>
                 <FormMessage />
@@ -140,7 +140,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                     </InputOTPGroup>
                   </InputOTP>
                 </FormControl>
-                <FormDescription>
+                <FormDescription className="dark:text-gray-400">
                   Please enter the one-time password sent to your mail.
                 </FormDescription>
                 <FormMessage />
@@ -160,7 +160,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isLoading} onClick={() => { setIsLoading(true); githubLogin(pathname) }}>
+      <Button variant="outline" type="button" disabled={isLoading} onClick={() => { setIsLoading(true); githubLogin(pathname) }} className="dark:bg-gray-700 dark:text-white dark:border-gray-600 hover:dark:bg-gray-600 hover:dark:text-white">
         {isLoading ? (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
         ) : (

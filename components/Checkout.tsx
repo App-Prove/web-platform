@@ -6,7 +6,7 @@ import {
   EmbeddedCheckout
 } from '@stripe/react-stripe-js';
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import { useSearchParams } from "next/navigation";
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid

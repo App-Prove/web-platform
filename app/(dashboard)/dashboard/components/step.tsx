@@ -1,13 +1,15 @@
 'use client'
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { ErrorAnimation } from "../LottieAnimations";
-export default function Step({ state }: { state: Step }) {
+import { ErrorAnimation } from "@/components/LottieAnimations";
+import { StepType } from "@/types/analysis";
+
+export default function Step({ state }: { state: StepType }) {
     const [tempName, setTempName] = useState('');
 
     const animationSpeed = 0.1;
-    // Calculate duration based on the length of the current displayed word
-    const duration = `${Math.min(state.message.length,35)* animationSpeed}s`;
+    const duration = `${Math.min(state.message.length, 35) * animationSpeed}s`;
+    
     useEffect(() => {
         if (tempName !== state.message) {
             setTimeout(() => setTempName(state.message), 2400);
@@ -15,8 +17,44 @@ export default function Step({ state }: { state: Step }) {
     }, [state.message, tempName]);
 
     if (state == undefined) return null;
+
+    const renderStepData = () => {
+        if (state.status !== 'success' || !state.data) return null;
+
+        switch (state.type) {
+            case 'repositoryScan':
+                return (
+                    <div className="mt-2 text-sm text-gray-600">
+                        <p>Files: {state.data.numberOfFiles}</p>
+                        <p>Lines: {state.data.totalLineCount}</p>
+                        <p>Languages: {state.data.mostCommonProgrammingLanguages.join(', ')}</p>
+                    </div>
+                );
+            case 'relativeFiles':
+                return (
+                    <div className="mt-2 text-sm text-gray-600">
+                        <p>Relevant files: {state.data.relativeFiles.length}</p>
+                    </div>
+                );
+            case 'sensitiveFiles':
+                return (
+                    <div className="mt-2 text-sm text-gray-600">
+                        <p>Sensitive files: {state.data.sensitiveFiles.length}</p>
+                    </div>
+                );
+            case 'inDepthAnalysis':
+                return (
+                    <div className="mt-2 text-sm text-gray-600">
+                        <p>Issues found: {state.data.reduce((acc, file) => acc + file.issues.length, 0)}</p>
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
+
     return (
-        <div className="flex items-center gap-x-2">
+        <div className="flex items-start gap-x-2">
             <div className="w-12 h-12 relative flex items-center justify-center">
                 <div
                     className={cn(
@@ -39,29 +77,19 @@ export default function Step({ state }: { state: Step }) {
                     <div
                         className="absolute w-4 h-4 border-2 rounded-full border-gray-200">
                     </div>
-                    <div
-                        style={{ borderColor: 'black transparent transparent transparent' }}
-                        className="absolute w-4 h-4 border-2 rounded-full animate-ring ">
-                    </div>
-                    <div
-                        style={{ borderColor: 'black transparent transparent transparent', animationDelay: '0.05s' }}
-                        className="absolute w-4 h-4 border-2 rounded-full animate-ring ">
-                    </div>
-                    <div
-                        style={{ borderColor: 'black transparent transparent transparent', animationDelay: '0.1s' }}
-                        className="absolute w-4 h-4 border-2 rounded-full animate-ring ">
-                    </div>
-                    <div
-                        style={{ borderColor: 'black transparent transparent transparent', animationDelay: '0.15s' }}
-                        className="absolute w-4 h-4 border-2 rounded-full animate-ring ">
-                    </div>
+                    {[0, 0.05, 0.1, 0.15].map((delay, index) => (
+                        <div
+                            key={index}
+                            style={{ borderColor: 'black transparent transparent transparent', animationDelay: `${delay}s` }}
+                            className="absolute w-4 h-4 border-2 rounded-full animate-ring">
+                        </div>
+                    ))}
                 </div>
                 <div
                     key={state.status}
                     className={cn(
                         "w-4 h-4 absolute flex items-center justify-center rounded-full bg-[#DDF3ED] border-2 border-[#3EC78E] animate-borderDisappear",
                         state.status == 'success' ? "" : "hidden"
-                        
                     )}
                     >
                     <svg width="16" height="16" viewBox="0 0 16 16" overflow="visible">
@@ -94,50 +122,52 @@ export default function Step({ state }: { state: Step }) {
                         </defs>
                     </svg>
                 </div>
-
             </div>
-            <div className="flex w-full h-[48] relative items-center">
-                <div
-                    id="initial-step"
-                    className={cn(
-                        'aboslute',
-                        tempName != state.message ? "animate-slideOut" : "",
-                    )}
-                    key={`${state.status}-slideOut`}
-                >
+            <div className="flex flex-col w-full min-h-[48px] relative">
+                <div className="flex items-center relative">
                     <div
+                        id="initial-step"
                         className={cn(
-                            state.status == 'pending' && 'text-gray-300 ',
+                            'absolute',
+                            tempName != state.message ? "animate-slideOut" : "",
                         )}
+                        key={`${state.status}-slideOut`}
                     >
-                        <p className="font-light">
-                            {tempName}
-                        </p>
+                        <div
+                            className={cn(
+                                state.status == 'pending' && 'text-gray-300',
+                            )}
+                        >
+                            <p className="font-light">
+                                {tempName}
+                            </p>
+                        </div>
+                    </div>
+                    <div
+                        id="next-step"
+                        className={cn(
+                            'absolute',
+                            tempName != state.message ? "animate-slideIn" : "hidden",
+                        )}
+                        key={`${state.status}-slideIn`}
+                    >
+                        <div
+                            key={state.message}
+                            className={cn(
+                                'text-gray-300',
+                                state.status != 'pending' ? "bg-gradient-to-r from-black via-white to-black bg-200% bg-clip-text text-transparent animate-slideGradient" : ''
+                            )}
+                            style={{
+                                animationDuration: duration,
+                            }}
+                        >
+                            <p className="font-light">
+                                {state.message}
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <div
-                    id="next-step"
-                    className={cn(
-                        'absolute',
-                        tempName != state.message ? "animate-slideIn" : "hidden",
-                    )}
-                    key={`${state.status}-slideIn`}
-                >
-                    <div
-                        key={state.message}
-                        className={cn(
-                            'text-gray-300',
-                            state.status != 'pending' ? "bg-gradient-to-r from-black via-white to-black bg-200% bg-clip-text text-transparent animate-slideGradient" : ''
-                        )}
-                        style={{
-                            animationDuration: duration,
-                        }}
-                    >
-                        <p className="font-light">
-                            {state.message}
-                        </p>
-                    </div>
-                </div>
+                {renderStepData()}
             </div>
         </div>
     )

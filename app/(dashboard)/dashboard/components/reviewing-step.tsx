@@ -1,5 +1,7 @@
 'use client'
 import { cn } from "@/lib/utils";
+import { RelativeFilesStep, InDepthAnalysisStep, SensitiveFilesStep } from "@/types/analysis";
+import { RepositoryScanStep } from "@/types/analysis";
 import { useEffect, useState } from "react";
 export default function ReviewingStep({
     repositoryScanState,
@@ -70,9 +72,6 @@ export default function ReviewingStep({
                     {inDepthAnalysisState && inDepthAnalysisState.data.length} file{(inDepthAnalysisState && inDepthAnalysisState.data.length > 0) && 's'} identified as sensitive out of {relativeFilesState?.data.relativeFiles.length} file{(relativeFilesState && relativeFilesState.data.relativeFiles.length > 0) && 's'} relative to project.
                 </p>
             </div>
-
-
-
         </div>
     )
 }
