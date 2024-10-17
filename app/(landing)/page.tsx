@@ -35,7 +35,7 @@ export default function Home() {
   return (
     <div className="min-h-full px-2 sm:px-0 mb-24 w-full flex flex-col gap-60 overflow-hidden sm:overflow-visible">
       <section className="mt-32 sm:mt-24 flex relative flex-col gap-4">
-        <h1 className="text-4xl font-medium z-10 hidden sm:block">Cabinet d&apos;audit nouvelle génération, <br />pour les entreprises innovantes</h1>
+        <h1 className="text-4xl font-medium z-10 hidden sm:block">Outil d&apos;audit cyber-sécurité nouvelle génération, <br />pour les entreprises et cabinets d&apos;audit innovants</h1>
         <h1 className="text-4xl font-semibold z-10 block sm:hidden text-center">Sécurisez votre code <strong className="text-orange">rapidement</strong></h1>
         <p className="text-lg text-muted-foreground z-10 text-center md:text-left sm:px-0 hidden sm:block">Scan de votre codebase, identification des failles de sécurité et résolutions des bugs en quelques clics.</p>
         <p className="font-medium text-muted-foreground z-10 text-center md:text-left sm:px-0 block sm:hidden">App-Prove est un cabinet d&apos;audit,<br /> spécialisé dans la cyber-sécurité, <br /> pour les entreprises innovantes.</p>
@@ -73,7 +73,7 @@ export default function Home() {
       <section className="flex flex-col gap-8 py-24" id="features">
         <div className="flex flex-col sm:flex-row sm:gap-24">
           <h2 className="text-left text-2xl font-medium w-full">Un processus d&apos;identification des failles de sécurité efficace</h2>
-          <p className="text-left text-muted-foreground text-sm">App-Prove aide les entreprises et développeurs dans leur processus d&apos;audit cyber-securité, le rendant simple, rapide et assure une sécurité maximale</p>
+          <p className="text-left text-muted-foreground text-sm">App-Prove aide les entreprises, auditeurs et développeurs dans leur processus d&apos;audit cyber-securité, le rendant simple, rapide et assure une sécurité maximale</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 h-fit sm:h-48">
           <MagicCard className="flex h-48 items-center justify-center">
@@ -102,26 +102,34 @@ export default function Home() {
         <Accordion type="multiple" defaultValue={["item-1", "item-2"]} className="w-full grid sm:grid-cols-2 gap-8">
           <AccordionItem value="item-1">
             <AccordionTrigger className="text-left">
-              Quelle est la différence avec un cabinet d&apos;audit ?
+              À qui s&apos;adresse App-Prove ?
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground">
-              App-Prove est un cabinet nouvelle génération offrant à ses auditeurs et ses clients, les outils pour rendre l&apos;audit simple, rapide et respectant les normes du secteur.
+              App-Prove est un outil d&apos;audit de cybersécurité nouvelle génération, à destination des entreprises et cabinets d&apos;audit.
+              <br />
+              En mettant l&apos;intelligence artificielle au service de l&apos;humain, nous réduisons considérablement les temps d&apos;intervention et les coûts d&apos;un audit cyber, tout en augmentant leur efficacité.
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
-            <AccordionTrigger className="text-left">
-              Qui sont les auditeurs chez App-Prove ?
-            </AccordionTrigger>
-            <AccordionContent className="text-sm text-muted-foreground">
-              App-Prove fait appel à des développeurs freelance sélectionnés pour leurs compétences en développement informatique, et formés à l&apos;audit de cyber-sécurité. Dans une démarche d&apos;ouverture de l&apos;audit à tous, nous permettons à n&apos;importe quel développeur de s&apos;inscrire sur la plateforme, et passer les tests pour être recruté par App-Prove.
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="item-3">
             <AccordionTrigger className="text-left">
               Qui a accès à mon code informatique ?
             </AccordionTrigger>
             <AccordionContent className="text-sm text-muted-foreground">
               Lorsque vous partagez votre codebase à App-Prove, uniquement nos algorithmes accèdent au code. Les auditeurs sont convoqués uniquement pour vérifier des parties de code. De plus, le code est réparti au sein des auditeurs, rendant ainsi toute reconstitution de la codebase impossible.
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-3">
+            <AccordionTrigger className="text-left">
+            Comment fonctionne App-Prove ?
+            </AccordionTrigger>
+            <AccordionContent className="text-sm text-muted-foreground">
+              App-Prove fonctionne en 4 étapes :
+              <ul>
+                <li>1. Le client connecte sa codebase (repo Git) ou télécharge un fichier .zip de son code.</li>
+                <li>2. App-Prove analyse le code et identifie les failles de sécurité en utilisant des modèles d&apos;intelligence artificielle locale entraînés sur le code par MistralAI.</li>
+                <li>3. App-Prove valide la pertinence des failles de sécurité en faisant appel à des développeurs expérimentés.</li>
+                <li>4. Les résultats sont présentés dans une interface intuitive, avec des explications claires sur les failles de sécurité et des recommandations sur la manière de les corriger.</li>
+              </ul>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-4">
