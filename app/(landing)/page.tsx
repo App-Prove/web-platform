@@ -38,7 +38,7 @@ export default function Home() {
         <h1 className="text-4xl font-medium z-10 hidden sm:block">Outil d&apos;audit cyber-sécurité nouvelle génération, <br />pour les entreprises et cabinets d&apos;audit innovants</h1>
         <h1 className="text-4xl font-semibold z-10 block sm:hidden text-center">Sécurisez votre code <strong className="text-orange">rapidement</strong></h1>
         <p className="text-lg text-muted-foreground z-10 text-center md:text-left sm:px-0 hidden sm:block">Scan de votre codebase, identification des failles de sécurité et résolutions des bugs en quelques clics.</p>
-        <p className="font-medium text-muted-foreground z-10 text-center md:text-left sm:px-0 block sm:hidden">App-Prove est un cabinet d&apos;audit,<br /> spécialisé dans la cyber-sécurité, <br /> pour les entreprises innovantes.</p>
+        <p className="font-medium text-muted-foreground z-10 text-center md:text-left sm:px-0 block sm:hidden">App-Prove est un outil à destination des cabinets d&apos;audit et des entreprises innovantes.</p>
         <div className="mt-4 z-10 flex justify-center sm:justify-start">
           <Link href="#book-call">
             <Button className="bg-primary text-white">Sécurisez maintenant</Button>
