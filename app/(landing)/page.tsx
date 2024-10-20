@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import CalendlyWidget from "./components/calendly-widget";
 import Link from "next/link";
 import { Euratechnologie, CyberCampus } from "./components/logos";
+import CalcomWidget from "./components/calcom-widget";
 
 function useMediaQuery(query: string) {
     const [matches, setMatches] = useState(false);
@@ -99,7 +100,7 @@ export default function Home() {
 
       <section className="flex flex-col gap-4 py-24" id="faq">
         <h2 className="text-center text-2xl font-medium">Questions & réponses</h2>
-        <Accordion type="multiple" defaultValue={["item-1", "item-2"]} className="w-full grid sm:grid-cols-2 gap-8">
+        <Accordion type="multiple"  className="w-full grid sm:grid-cols-2 gap-8">
           <AccordionItem value="item-1">
             <AccordionTrigger className="text-left">
               À qui s&apos;adresse App-Prove ?
@@ -151,7 +152,7 @@ export default function Home() {
 
       <section className="flex flex-col gap-4 py-24" id="book-call">
         <h2 className="text-center text-2xl font-medium">Prenez rendez-vous avec un expert</h2>
-        <CalendlyWidget />
+        <CalcomWidget />
       </section>
     </div>
   );
