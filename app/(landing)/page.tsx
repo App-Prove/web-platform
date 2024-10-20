@@ -2,7 +2,6 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import Compliance from "./components/compliance";
 import Image from "next/image";
 import Example from "./components/example";
 import { MagicCard } from "@/components/ui/magic-card";
@@ -12,6 +11,7 @@ import CalendlyWidget from "./components/calendly-widget";
 import Link from "next/link";
 import { Euratechnologie, CyberCampus } from "./components/logos";
 import CalcomWidget from "./components/calcom-widget";
+import { Compliance } from "./components/compliance";
 
 function useMediaQuery(query: string) {
     const [matches, setMatches] = useState(false);
@@ -34,13 +34,11 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-full px-2 sm:px-0 mb-24 w-full flex flex-col gap-60 overflow-hidden sm:overflow-visible">
-      <section className="mt-32 sm:mt-24 flex relative flex-col gap-4">
-        <h1 className="text-4xl font-medium z-10 hidden sm:block">Outil d&apos;audit cyber-sécurité nouvelle génération, <br />pour les entreprises et cabinets d&apos;audit innovants</h1>
-        <h1 className="text-4xl font-semibold z-10 block sm:hidden text-center">Sécurisez votre code <strong className="text-orange">rapidement</strong></h1>
-        <p className="text-lg text-muted-foreground z-10 text-center md:text-left sm:px-0 hidden sm:block">Scan de votre codebase, identification des failles de sécurité et résolutions des bugs en quelques clics.</p>
-        <p className="font-medium text-muted-foreground z-10 text-center md:text-left sm:px-0 block sm:hidden">App-Prove est un outil à destination des cabinets d&apos;audit et des entreprises innovantes.</p>
-        <div className="mt-4 z-10 flex justify-center sm:justify-start">
+    <div className="min-h-full px-2 sm:px-0 mb-24 w-full flex flex-col sm:gap-30 overflow-hidden sm:overflow-visible">
+      <section className="text-center mt-32 sm:mt-24 flex relative flex-col gap-4">
+        <h1 className="text-4xl font-medium z-10 ">N&apos;attendez plus pour sécuriser votre code</h1>
+        <p className="text-lg text-muted-foreground z-10 text-center sm:px-0">Scan de votre codebase, identification des failles de sécurité et résolutions des bugs en quelques clics.</p>
+        <div className="sm:mt-8 z-10 flex justify-center">
           <Link href="#book-call">
             <Button className="bg-primary text-white">Sécurisez maintenant</Button>
           </Link>
@@ -63,8 +61,8 @@ export default function Home() {
         </motion.div>
       </section>
 
-      <section className="flex flex-col gap-16 -mt-60" id="incubators">
-        <h2 className="text-center text-2xl font-medium">Accompagnés par des incubateurs de renommée internationale</h2>
+      <section className="flex flex-col gap-16 -mt-60 sm:mt-32 z-10" id="incubators">
+        <h2 className="text-center text-2xl font-medium">Soutenu par des incubateurs de renommée internationale</h2>
         <div className="flex w-full justify-around">
           <Euratechnologie />
           <CyberCampus />
