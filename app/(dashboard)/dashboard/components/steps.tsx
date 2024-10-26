@@ -13,23 +13,197 @@ import { Input } from "@/components/ui/input"
 import SummaryCards from "./summary-cards"
 import IssuesList from "./issues-list"
 import { Issue } from "@/types/analysis"
+import FileTree from "./file-tree"
+import { useFiles, FileTreeItem } from "../context/files-context"
+
+// Define constants for mock analysis data
+const MOCK_ANALYSIS_DATA = {
+  issues: [
+    {
+      id: 1,
+      category: "Security" as const,
+      title: "Unvalidated user input",
+      severity: "High",
+      language: "JavaScript",
+      lineNumber: 5,
+      file: "/src/controllers/userController.js",
+      initialCode: `
+const express = require('express');
+const router = express.Router();
+
+router.get('/user/:id', (req, res) => {
+  const userId = req.params.id;
+  // Potential SQL injection vulnerability
+  const query = \`SELECT * FROM users WHERE id = \${userId}\`;
+  db.query(query, (err, result) => {
+    if (err) throw err;
+    res.json(result);
+  });
+});
+
+module.exports = router;
+      `,
+      solvingCode: `
+const express = require('express');
+const router = express.Router();
+
+router.get('/user/:id', (req, res) => {
+  const userId = parseInt(req.params.id, 10);
+  if (isNaN(userId)) {
+    return res.status(400).json({ error: 'Invalid user ID' });
+  }
+  // Use parameterized query to prevent SQL injection
+  const query = 'SELECT * FROM users WHERE id = ?';
+  db.query(query, [userId], (err, result) => {
+    if (err) throw err;
+    res.json(result);
+  });
+});
+
+module.exports = router;
+      `,
+      comment: "Potential security vulnerability: Unvalidated user input leading to SQL injection",
+      suggestion: "Use parameterized queries and validate user input to prevent SQL injection attacks"
+    },
+    {
+      id: 2,
+      category: "Performance" as const,
+      title: "Inefficient loop",
+      severity: "Medium",
+      language: "JavaScript",
+      lineNumber: 2,
+      file: "/src/utils/performance.js",
+      initialCode: `
+function processLargeArray(arr) {
+  const results = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] % 2 === 0) {
+      results.push(arr[i] * 2);
+    }
+  }
+  return results;
+}
+      `,
+      solvingCode: `
+function processLargeArray(arr) {
+  return arr.filter(num => num % 2 === 0).map(num => num * 2);
+}
+      `,
+      comment: "Inefficient loop for array processing",
+      suggestion: "Use functional methods like filter and map for better performance and readability"
+    },
+    // New issue added here
+    {
+      id: 3,
+      category: "Best Practices" as const,
+      title: "Inconsistent function naming",
+      severity: "Low",
+      language: "JavaScript",
+      lineNumber: 1,
+      file: "/src/utils/performance.js",
+      initialCode: `
+function processLargeArray(arr) {
+  // ... (existing code)
+}
+
+function Process_small_array(arr) {
+  // ... (some code)
+}
+      `,
+      solvingCode: `
+function processLargeArray(arr) {
+  // ... (existing code)
+}
+
+function processSmallArray(arr) {
+  // ... (some code)
+}
+      `,
+      comment: "Inconsistent function naming convention",
+      suggestion: "Use camelCase for all function names to maintain consistency"
+    },
+  ] as Issue[]
+};
+
+const FILE_TREE: FileTreeItem = {
+  name: 'root',
+  type: 'folder',
+  children: [
+    {
+      name: 'src',
+      type: 'folder',
+      children: [
+        {
+          name: 'controllers',
+          type: 'folder',
+          children: [
+            {
+              name: 'userController.js',
+              type: 'file',
+            }
+          ]
+        },
+        {
+          name: 'utils',
+          type: 'folder',
+          children: [
+            {
+              name: 'performance.js',
+              type: 'file',
+            }
+          ]
+        },
+      ]
+    },
+  ]
+};
+
+// Function to populate file tree with issues
+function populateFileTreeWithIssues(tree: FileTreeItem, issues: Issue[]): FileTreeItem {
+  if (tree.type === 'file') {
+    const fileIssues = issues.filter(issue => issue.file.endsWith(`/${tree.name}`));
+    if (fileIssues.length > 0) {
+      return {
+        ...tree,
+        hasError: true,
+        errors: fileIssues.map(issue => ({
+          category: issue.category,
+          title: issue.title,
+          lineNumber: issue.lineNumber,
+          actualCode: issue.initialCode,
+          newCode: issue.solvingCode,
+          hint: issue.suggestion
+        }))
+      };
+    }
+  } else if (tree.type === 'folder' && tree.children) {
+    return {
+      ...tree,
+      children: tree.children.map(child => populateFileTreeWithIssues(child, issues))
+    };
+  }
+  return tree;
+}
 
 export default function Steps() {
   const [auditType] = useLocalStorage('auditType', '')
   const [url] = useLocalStorage('url', '')
+  const { setFileTree, setIsLoading } = useFiles()
   const [steps, setSteps] = useState<StepType[]>([
-    { stepName: "connecting", progress: 0, message: "Connecting", status: 'pending', time: new Date() },
-    { stepName: "cloning", progress: 0, message: "Cloning repository", status: 'pending', time: new Date() },
-    { stepName: "identifying", progress: 0, message: "Identifying relevant files", status: 'pending', time: new Date() },
-    { stepName: "reviewing", progress: 0, message: "Analyzing code", status: 'pending', time: new Date() },
+    { stepName: "connecting", progress: 0, message: "Waiting for connection", status: 'pending', time: new Date() },
+    { stepName: "cloning", progress: 0, message: "Waiting for repository cloning", status: 'pending', time: new Date() },
+    { stepName: "identifying", progress: 0, message: "Waiting for relevant files identification", status: 'pending', time: new Date() },
+    { stepName: "reviewing", progress: 0, message: "Waiting for code analysis", status: 'pending', time: new Date() },
   ])
 
-  const [analysisResults, setAnalysisResults] = useState<any>(null) // New state for analysis results
+  const [analysisResults, setAnalysisResults] = useState<any>(null)
   const [started, setStarted] = useState(false)
   const [finished, setFinished] = useState(false)
+  const [activeTab, setActiveTab] = useState('github')
 
   const simulateGitHubAnalysis = useCallback(() => {
     setStarted(true)
+    setIsLoading(true)
     let currentStep = 0
     const updateStep = (index: number, stepData: Partial<StepType>) => {
       setSteps((prevSteps: StepType[]) => prevSteps.map((step, i) => 
@@ -40,6 +214,7 @@ export default function Steps() {
     const simulateStepProgress = () => {
       if (currentStep >= steps.length) {
         setFinished(true)
+        setIsLoading(false)
         return
       }
 
@@ -61,7 +236,7 @@ export default function Steps() {
     }
 
     simulateStepProgress()
-  }, [steps.length])
+  }, [steps.length, setIsLoading])
 
   const simulateRepositoryAnalysis = useCallback(() => {
     setStarted(true)
@@ -143,93 +318,16 @@ export default function Steps() {
           message: "Code analysis completed",
           type: "inDepthAnalysis",
           data: [{
-            issues: [
-              // Security Issue
-              {
-                id: 1,
-                category: "Security",
-                title: "Unvalidated user input",
-                severity: "High",
-                language: "JavaScript",
-                lineNumber: 42,
-                file: "/src/controllers/userController.js",
-                initialCode: "const userInput = req.params.id;",
-                solvingCode: "const userInput = sanitizeInput(req.params.id);",
-                comment: "Potential security vulnerability: Unvalidated user input",
-                suggestion: "Sanitize user input before use to prevent injection attacks"
-              },
-              // Performance Issues
-              {
-                id: 2,
-                category: "Performance",
-                title: "Inefficient loop",
-                severity: "Medium",
-                language: "JavaScript",
-                lineNumber: 15,
-                file: "/src/utils/performance.js",
-                initialCode: "for (let i = 0; i < arr.length; i++) { /* ... */ }",
-                solvingCode: "arr.forEach(item => { /* ... */ });",
-                comment: "Consider using forEach for better readability.",
-                suggestion: "Use forEach instead of a traditional for loop."
-              },
-              {
-                id: 3,
-                category: "Performance",
-                title: "Redundant calculations",
-                severity: "Medium",
-                language: "JavaScript",
-                lineNumber: 30,
-                file: "/src/utils/calculations.js",
-                initialCode: "const result = expensiveFunction();",
-                solvingCode: "const memoizedResult = memoize(expensiveFunction);",
-                comment: "Cache results to avoid redundant calculations.",
-                suggestion: "Implement memoization for expensive calculations."
-              },
-              {
-                id: 4,
-                category: "Performance",
-                title: "Excessive DOM manipulation",
-                severity: "Low",
-                language: "JavaScript",
-                lineNumber: 22,
-                file: "/src/components/Component.js",
-                initialCode: "document.getElementById('myElement').innerHTML = 'Hello';",
-                solvingCode: "setState({ myElement: 'Hello' });",
-                comment: "Minimize direct DOM manipulation.",
-                suggestion: "Use React state to manage DOM updates."
-              },
-              // Best Practices Issues
-              {
-                id: 5,
-                category: "Best Practices",
-                title: "Missing prop types",
-                severity: "Low",
-                language: "JavaScript",
-                lineNumber: 10,
-                file: "/src/components/MyComponent.js",
-                initialCode: "function MyComponent(props) { /* ... */ }",
-                solvingCode: "MyComponent.propTypes = { /* ... */ };",
-                comment: "Define prop types for better type checking.",
-                suggestion: "Use PropTypes to define expected props."
-              },
-              {
-                id: 6,
-                category: "Best Practices",
-                title: "Unused variable",
-                severity: "Low",
-                language: "JavaScript",
-                lineNumber: 5,
-                file: "/src/utils/helpers.js",
-                initialCode: "const unusedVar = 'I am not used';",
-                solvingCode: "// Remove unused variable",
-                comment: "Remove variables that are not used.",
-                suggestion: "Eliminate unused variables to clean up the code."
-              }
-            ],
-            path: "/src/controllers/userController.js"
+            issues: MOCK_ANALYSIS_DATA.issues,
+            path: "/src/utils/performance.js"
           }]
         } as InDepthAnalysisStep;
-        setAnalysisResults((prev: any) => ({ ...prev, issues: inDepthAnalysisData.data[0].issues }));
+        setAnalysisResults((prev: any) => ({ ...prev, issues: MOCK_ANALYSIS_DATA.issues }));
+
+        // Populate file tree with issues and update it
+        const populatedFileTree = populateFileTreeWithIssues(FILE_TREE, MOCK_ANALYSIS_DATA.issues);
+        console.log('Populated File Tree:', JSON.stringify(populatedFileTree, null, 2));
+        setFileTree(populatedFileTree);
         return inDepthAnalysisData;
       default:
         return {}
@@ -264,7 +362,7 @@ export default function Steps() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Repository Connection</h3>
-            <Tabs defaultValue="github" className="w-full">
+            <Tabs defaultValue="github" className="w-full" onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="github">GitHub</TabsTrigger>
                 <TabsTrigger value="upload">Upload</TabsTrigger>
@@ -274,9 +372,6 @@ export default function Steps() {
                   <Input placeholder="Enter your GitHub repository URL" />
                   <Button onClick={simulateGitHubAnalysis}>Connect</Button>
                 </div>
-                {steps.slice(0, 2).map((step, index) => (
-                  <Step key={index} state={step} />
-                ))}
               </TabsContent>
               <TabsContent value="upload">
                 <div 
@@ -295,9 +390,17 @@ export default function Steps() {
           </div>
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">File Analysis</h3>
-            {steps.slice(2).map((step, index) => (
-              <Step key={index + 2} state={step} />
-            ))}
+            <div className="flex gap-4">
+              <div className="flex flex-col gap-4 w-full">
+                {activeTab === 'github'
+                  ? steps.map((step, index) => (
+                      <Step key={index} state={step} />
+                    ))
+                  : steps.slice(2).map((step, index) => (
+                      <Step key={index + 2} state={step} />
+                    ))}
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>
