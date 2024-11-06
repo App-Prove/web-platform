@@ -1,29 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { FilesContextType, FileTreeItem } from '@/types/analysis';
 
-export interface FileTreeItem {
-  name: string;
-  type: 'file' | 'folder';
-  children?: FileTreeItem[];
-  hasError?: boolean;
-  errors?: {
-    category: string;
-    title: string;
-    lineNumber: number;
-    actualCode: string;
-    newCode: string;
-    hint: string;
-  }[];
-}
-
-interface FilesContextType {
-  fileTree: FileTreeItem | null;
-  isLoading: boolean;
-  selectedFile: string | null;
-  setSelectedFile: (file: FileTreeItem | null) => void;
-  setFileTree: React.Dispatch<React.SetStateAction<FileTreeItem | null>>;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
 const FilesContext = createContext<FilesContextType | undefined>(undefined);
 
@@ -42,9 +20,9 @@ export function FilesProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   const handleSetSelectedFile = (file: FileTreeItem | null) => {
-    if (file && file.type === 'file') {
-      const slug = encodeURIComponent(file.name);
-      setSelectedFile(file.name);
+    if (file && file.type === 'file' && file.path) {
+      const slug = encodeURIComponent(file.path);
+      setSelectedFile(file.path);
       router.push(`/dashboard/diff/${slug}`);
     }
   };

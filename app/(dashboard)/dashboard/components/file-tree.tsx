@@ -1,20 +1,28 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { ChevronRight, ChevronDown, Folder, File, AlertCircle } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { useFiles, FileTreeItem } from '../context/files-context'
+import { useFiles } from '../context/files-context'
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import { FileTreeItem, Issue } from '@/types/analysis'
+
+function hasErrorInSubtree(item: FileTreeItem): boolean {
+  if (item.hasError) return true
+  if (item.children) {
+    return item.children.some(child => hasErrorInSubtree(child))
+  }
+  return false
+}
 
 const FileTreeNode: React.FC<{ item: FileTreeItem; depth: number }> = ({ item, depth }) => {
   const [isOpen, setIsOpen] = useState(false);
   const hasChildren = item.children && item.children.length > 0;
   const { setSelectedFile, selectedFile } = useFiles();
 
+  const shouldBeOpen = useMemo(() => hasErrorInSubtree(item), [item])
   useEffect(() => {
-    if (item.hasError) {
-      setIsOpen(true);
-    }
-  }, [item.hasError]);
+    setIsOpen(shouldBeOpen)
+  }, [shouldBeOpen])
 
   const handleClick = () => {
     if (hasChildren) {
@@ -79,21 +87,75 @@ const FileTreeNode: React.FC<{ item: FileTreeItem; depth: number }> = ({ item, d
   );
 };
 
-export default function FileTree() {
-  const { fileTree, isLoading } = useFiles()
+interface FileTreeProps {
+  initialFileTree?: FileTreeItem | null;
+  initialIssues?: Issue[];
+}
+
+export default function FileTree({ initialFileTree, initialIssues }: FileTreeProps) {
+  const { fileTree: contextFileTree, isLoading, setFileTree } = useFiles()
+  const [localFileTree, setLocalFileTree] = useState<FileTreeItem | null>(null)
+
+  useEffect(() => {
+    if (initialFileTree && !localFileTree) {
+      setLocalFileTree(initialFileTree)
+      setFileTree(initialFileTree)
+    } else if (contextFileTree && !localFileTree) {
+      setLocalFileTree(contextFileTree)
+    }
+  }, [initialFileTree, contextFileTree, setFileTree, localFileTree])
+
+  useEffect(() => {
+    if (initialIssues && initialIssues.length > 0 && localFileTree) {
+      const updatedFileTree = populateFileTreeWithIssues(localFileTree, initialIssues)
+      if (JSON.stringify(updatedFileTree) !== JSON.stringify(localFileTree)) {
+        setLocalFileTree(updatedFileTree)
+        setFileTree(updatedFileTree)
+      }
+    }
+  }, [initialIssues, localFileTree, setFileTree])
+
+  useEffect(() => {
+    console.log("FileTree component - localFileTree:", localFileTree)
+  }, [localFileTree])
 
   if (isLoading) return <div className="p-4 text-muted-foreground">Loading...</div>
-  if (!fileTree) return <div className="p-4 text-muted-foreground">No files found.</div>
+  if (!localFileTree) return <div className="p-4 text-muted-foreground">No files found.</div>
 
   return (
     <div className="w-full px-4">
       <div className="font-semibold mb-2">Project Files</div>
       <ScrollArea className="h-[calc(100vh-200px)] w-full border border-gray-700 rounded-md">
         <div className="p-4">
-          <FileTreeNode item={fileTree} depth={0} />
+          <FileTreeNode item={localFileTree} depth={0} />
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
     </div>
   )
+}
+
+// Helper function to populate file tree with issues
+function populateFileTreeWithIssues(tree: FileTreeItem, issues: Issue[]): FileTreeItem {
+  const updatedTree = { ...tree };
+
+  if (tree.type === 'file') {
+    const fileIssues = issues.filter(issue => issue.file === tree.path);
+    if (fileIssues.length > 0) {
+      updatedTree.hasError = true;
+      updatedTree.errors = fileIssues.map(issue => ({
+        category: issue.category,
+        title: issue.title,
+        lineNumber: issue.lineNumber,
+        actualCode: issue.initialCode,
+        newCode: issue.solvingCode,
+        hint: issue.suggestion
+      }));
+    }
+  } else if (tree.type === 'folder' && tree.children) {
+    updatedTree.children = tree.children.map(child => populateFileTreeWithIssues(child, issues));
+    updatedTree.hasError = updatedTree.children.some(child => child.hasError);
+  }
+
+  return updatedTree;
 }

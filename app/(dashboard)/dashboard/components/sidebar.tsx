@@ -11,13 +11,19 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import FileTree from "./file-tree"
+import { useAnalysis } from '../context/analysis-context'
 
 export default function AppSidebar() {
+  const { issues, fileTree } = useAnalysis();
+
+  const memoizedFileTree = React.useMemo(() => {
+    return <FileTree initialFileTree={fileTree || undefined} initialIssues={issues} />
+  }, [fileTree, issues])
+
   return (
     <Sidebar className="w-64 border-r bg-muted/40">
       <SidebarHeader className="p-4">
@@ -28,7 +34,7 @@ export default function AppSidebar() {
       <SidebarContent>
         <SidebarMenu>
           <SidebarMenuItem>
-            <FileTree />
+            {fileTree || issues.length > 0 ? memoizedFileTree : <p>No analysis data</p>}
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>

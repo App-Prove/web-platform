@@ -5,16 +5,16 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useLocalStorage } from "@/lib/localStorage"
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useState, useEffect } from "react"
 import Step from "./step"
 import { StepType, RepositoryScanStep, RelativeFilesStep, SensitiveFilesStep, InDepthAnalysisStep } from "@/types/analysis"
 import { Upload } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import SummaryCards from "./summary-cards"
 import IssuesList from "./issues-list"
-import { Issue } from "@/types/analysis"
-import FileTree from "./file-tree"
-import { useFiles, FileTreeItem } from "../context/files-context"
+import { Issue, FileTreeItem } from "@/types/analysis"
+import { useFiles } from "../context/files-context"
+import { useAnalysis } from '../context/analysis-context'
 
 // Define constants for mock analysis data
 const MOCK_ANALYSIS_DATA = {
@@ -122,6 +122,125 @@ function processSmallArray(arr) {
       comment: "Inconsistent function naming convention",
       suggestion: "Use camelCase for all function names to maintain consistency"
     },
+    {
+      id: 4,
+      category: "Security" as const,
+      title: "Hardcoded API key",
+      severity: "Critical",
+      language: "JavaScript",
+      lineNumber: 3,
+      file: "/src/config/api.js",
+      initialCode: `
+const API_KEY = 'abc123secretkey';
+
+export function fetchData(endpoint) {
+  return fetch(\`https://api.example.com/\${endpoint}?key=\${API_KEY}\`);
+}
+      `,
+      solvingCode: `
+import { config } from 'dotenv';
+config();
+
+const API_KEY = process.env.API_KEY;
+
+export function fetchData(endpoint) {
+  return fetch(\`https://api.example.com/\${endpoint}?key=\${API_KEY}\`);
+}
+      `,
+      comment: "Critical security risk: Hardcoded API key in source code",
+      suggestion: "Use environment variables to store sensitive information like API keys"
+    },
+    {
+      id: 5,
+      category: "Performance" as const,
+      title: "Unnecessary re-renders",
+      severity: "Medium",
+      language: "TypeScript",
+      lineNumber: 10,
+      file: "/src/components/UserList.tsx",
+      initialCode: `
+import React from 'react';
+
+const UserList: React.FC<{ users: User[] }> = ({ users }) => {
+  return (
+    <ul>
+      {users.map(user => (
+        <li key={user.id}>
+          {user.name} - {new Date().toLocaleTimeString()}
+        </li>
+      ))}
+    </ul>
+  );
+};
+      `,
+      solvingCode: `
+import React from 'react';
+
+const UserListItem: React.FC<{ user: User }> = React.memo(({ user }) => (
+  <li>{user.name} - {new Date().toLocaleTimeString()}</li>
+));
+
+const UserList: React.FC<{ users: User[] }> = ({ users }) => {
+  return (
+    <ul>
+      {users.map(user => (
+        <UserListItem key={user.id} user={user} />
+      ))}
+    </ul>
+  );
+};
+      `,
+      comment: "Performance issue: Unnecessary re-renders of all list items",
+      suggestion: "Use React.memo to memoize list items and prevent unnecessary re-renders"
+    },
+    {
+      id: 6,
+      category: "Best Practices" as const,
+      title: "Prop drilling",
+      severity: "Low",
+      language: "TypeScript",
+      lineNumber: 1,
+      file: "/src/components/DeepNestedComponent.tsx",
+      initialCode: `
+const GrandParent = ({ user }) => (
+  <Parent user={user} />
+);
+
+const Parent = ({ user }) => (
+  <Child user={user} />
+);
+
+const Child = ({ user }) => (
+  <GrandChild user={user} />
+);
+
+const GrandChild = ({ user }) => (
+  <div>{user.name}</div>
+);
+      `,
+      solvingCode: `
+import React, { createContext, useContext } from 'react';
+
+const UserContext = createContext<User | null>(null);
+
+const GrandParent = ({ user }) => (
+  <UserContext.Provider value={user}>
+    <Parent />
+  </UserContext.Provider>
+);
+
+const Parent = () => <Child />;
+
+const Child = () => <GrandChild />;
+
+const GrandChild = () => {
+  const user = useContext(UserContext);
+  return <div>{user?.name}</div>;
+};
+      `,
+      comment: "Anti-pattern: Prop drilling through multiple component levels",
+      suggestion: "Use React Context API to avoid prop drilling and simplify component hierarchy"
+    },
   ] as Issue[]
 };
 
@@ -137,34 +256,92 @@ const FILE_TREE: FileTreeItem = {
           name: 'controllers',
           type: 'folder',
           children: [
-            {
-              name: 'userController.js',
-              type: 'file',
-            }
+            { name: 'userController.js', type: 'file' },
+            { name: 'authController.js', type: 'file' },
+            { name: 'productController.js', type: 'file' }
           ]
         },
         {
           name: 'utils',
           type: 'folder',
           children: [
-            {
-              name: 'performance.js',
-              type: 'file',
-            }
+            { name: 'performance.js', type: 'file' },
+            { name: 'validation.ts', type: 'file' },
+            { name: 'formatters.ts', type: 'file' }
           ]
         },
+        {
+          name: 'components',
+          type: 'folder',
+          children: [
+            { name: 'UserList.tsx', type: 'file' },
+            { name: 'DeepNestedComponent.tsx', type: 'file' },
+            { name: 'Header.tsx', type: 'file' },
+            { name: 'Footer.tsx', type: 'file' },
+            { name: 'Sidebar.tsx', type: 'file' }
+          ]
+        },
+        {
+          name: 'config',
+          type: 'folder',
+          children: [
+            { name: 'api.js', type: 'file' },
+            { name: 'database.js', type: 'file' },
+            { name: 'routes.ts', type: 'file' }
+          ]
+        },
+        {
+          name: 'models',
+          type: 'folder',
+          children: [
+            { name: 'User.ts', type: 'file' },
+            { name: 'Product.ts', type: 'file' },
+            { name: 'Order.ts', type: 'file' }
+          ]
+        },
+        {
+          name: 'services',
+          type: 'folder',
+          children: [
+            { name: 'authService.ts', type: 'file' },
+            { name: 'userService.ts', type: 'file' },
+            { name: 'productService.ts', type: 'file' }
+          ]
+        },
+        { name: 'index.ts', type: 'file' },
+        { name: 'app.ts', type: 'file' }
       ]
     },
+    {
+      name: 'tests',
+      type: 'folder',
+      children: [
+        { name: 'unit', type: 'folder', children: [
+          { name: 'userController.test.js', type: 'file' },
+          { name: 'authService.test.ts', type: 'file' }
+        ]},
+        { name: 'integration', type: 'folder', children: [
+          { name: 'api.test.js', type: 'file' }
+        ]}
+      ]
+    },
+    { name: 'package.json', type: 'file' },
+    { name: 'tsconfig.json', type: 'file' },
+    { name: '.env', type: 'file' },
+    { name: 'README.md', type: 'file' }
   ]
 };
 
 // Function to populate file tree with issues
-function populateFileTreeWithIssues(tree: FileTreeItem, issues: Issue[]): FileTreeItem {
+function populateFileTreeWithIssues(tree: FileTreeItem, issues: Issue[], parentPath: string = ''): FileTreeItem {
+  const currentPath = parentPath ? `${parentPath}/${tree.name}` : tree.name;
+
   if (tree.type === 'file') {
-    const fileIssues = issues.filter(issue => issue.file.endsWith(`/${tree.name}`));
+    const fileIssues = issues.filter(issue => issue.file === currentPath || issue.file.endsWith(`/${tree.name}`));
     if (fileIssues.length > 0) {
       return {
         ...tree,
+        path: currentPath,
         hasError: true,
         errors: fileIssues.map(issue => ({
           category: issue.category,
@@ -176,19 +353,25 @@ function populateFileTreeWithIssues(tree: FileTreeItem, issues: Issue[]): FileTr
         }))
       };
     }
+    return { ...tree, path: currentPath };
   } else if (tree.type === 'folder' && tree.children) {
     return {
       ...tree,
-      children: tree.children.map(child => populateFileTreeWithIssues(child, issues))
+      path: currentPath,
+      children: tree.children.map((child: FileTreeItem) => populateFileTreeWithIssues(child, issues, currentPath))
     };
   }
-  return tree;
+  return { ...tree, path: currentPath };
 }
 
-export default function Steps() {
-  const [auditType] = useLocalStorage('auditType', '')
-  const [url] = useLocalStorage('url', '')
-  const { setFileTree, setIsLoading } = useFiles()
+interface StepsProps {
+  initialIssues?: Issue[];
+  initialFileTree?: FileTreeItem;
+}
+
+export default function Steps({ initialIssues, initialFileTree }: StepsProps) {
+  const { setIssues, setFileTree } = useAnalysis();
+  const { setIsLoading } = useFiles()
   const [steps, setSteps] = useState<StepType[]>([
     { stepName: "connecting", progress: 0, message: "Waiting for connection", status: 'pending', time: new Date() },
     { stepName: "cloning", progress: 0, message: "Waiting for repository cloning", status: 'pending', time: new Date() },
@@ -196,13 +379,25 @@ export default function Steps() {
     { stepName: "reviewing", progress: 0, message: "Waiting for code analysis", status: 'pending', time: new Date() },
   ])
 
-  const [analysisResults, setAnalysisResults] = useState<any>(null)
-  const [started, setStarted] = useState(false)
-  const [finished, setFinished] = useState(false)
+  const [analysisResults, setAnalysisResults] = useState<{
+    issues?: Issue[];
+    fileTree?: FileTreeItem;
+    sensitiveFiles?: { path: string; language: string }[];
+  } | null>(null)
   const [activeTab, setActiveTab] = useState('github')
 
+  useEffect(() => {
+    if (initialIssues && initialIssues.length > 0) {
+      setAnalysisResults((prev) => ({ ...prev, issues: initialIssues }));
+      setIssues(initialIssues);
+    }
+    if (initialFileTree) {
+      setAnalysisResults((prev) => ({ ...prev, fileTree: initialFileTree }));
+      setFileTree(initialFileTree);
+    }
+  }, [initialIssues, initialFileTree, setIssues, setFileTree]);
+
   const simulateGitHubAnalysis = useCallback(() => {
-    setStarted(true)
     setIsLoading(true)
     let currentStep = 0
     const updateStep = (index: number, stepData: Partial<StepType>) => {
@@ -213,7 +408,6 @@ export default function Steps() {
 
     const simulateStepProgress = () => {
       if (currentStep >= steps.length) {
-        setFinished(true)
         setIsLoading(false)
         return
       }
@@ -239,7 +433,6 @@ export default function Steps() {
   }, [steps.length, setIsLoading])
 
   const simulateRepositoryAnalysis = useCallback(() => {
-    setStarted(true)
     let currentStep = 2
     const updateStep = (index: number, stepData: Partial<StepType>) => {
       setSteps((prevSteps: StepType[]) => prevSteps.map((step, i) => 
@@ -249,7 +442,6 @@ export default function Steps() {
 
     const simulateStepProgress = () => {
       if (currentStep >= steps.length) {
-        setFinished(true)
         return
       }
 
@@ -323,10 +515,9 @@ export default function Steps() {
           }]
         } as InDepthAnalysisStep;
         setAnalysisResults((prev: any) => ({ ...prev, issues: MOCK_ANALYSIS_DATA.issues }));
+        setIssues(MOCK_ANALYSIS_DATA.issues);
 
-        // Populate file tree with issues and update it
         const populatedFileTree = populateFileTreeWithIssues(FILE_TREE, MOCK_ANALYSIS_DATA.issues);
-        console.log('Populated File Tree:', JSON.stringify(populatedFileTree, null, 2));
         setFileTree(populatedFileTree);
         return inDepthAnalysisData;
       default:
@@ -352,11 +543,29 @@ export default function Steps() {
   const performanceIssuesCount = analysisResults?.issues?.filter((issue: Issue) => issue.category === "Performance").length || 0;
   const bestPracticesCount = analysisResults?.issues?.filter((issue: Issue) => issue.category === "Best Practices").length || 0;
 
+  const resetAnalysis = useCallback(() => {
+    setAnalysisResults(null);
+    setIssues([]);
+    setFileTree(null);
+    setSteps([
+      { stepName: "connecting", progress: 0, message: "Waiting for connection", status: 'pending', time: new Date() },
+      { stepName: "cloning", progress: 0, message: "Waiting for repository cloning", status: 'pending', time: new Date() },
+      { stepName: "identifying", progress: 0, message: "Waiting for relevant files identification", status: 'pending', time: new Date() },
+      { stepName: "reviewing", progress: 0, message: "Waiting for code analysis", status: 'pending', time: new Date() },
+    ]);
+    setIsLoading(false);
+  }, [setIssues, setFileTree, setIsLoading]);
+
   return (
     <Card className="w-full mb-8">
       <CardHeader>
-        <CardTitle>Code Analysis</CardTitle>
-        <CardDescription>Analyzing your repository with care</CardDescription>
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle>Code Analysis</CardTitle>
+            <CardDescription>Analyzing your repository with care</CardDescription>
+          </div>
+          <Button onClick={resetAnalysis} variant="outline">Reset Analysis</Button>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -406,8 +615,24 @@ export default function Steps() {
       </CardContent>
       <CardFooter className="flex flex-col items-center gap-4 overflow-hidden">
         <Separator />
-        <SummaryCards data={{ totalIssues: analysisResults?.issues?.length || 0, categories: { security: securityIssuesCount, performance: performanceIssuesCount, bestPractices: bestPracticesCount }, issues: analysisResults?.issues || [] }} />
-        <IssuesList issues={analysisResults?.issues || []} />
+        {analysisResults ? (
+          <>
+            <SummaryCards data={{ 
+              totalIssues: analysisResults.issues?.length || 0, 
+              categories: { 
+                security: securityIssuesCount, 
+                performance: performanceIssuesCount, 
+                bestPractices: bestPracticesCount 
+              }, 
+              issues: analysisResults.issues || [] 
+            }} />
+            <IssuesList issues={analysisResults.issues || []} fileTree={analysisResults.fileTree || FILE_TREE} />
+          </>
+        ) : (
+          <div className="text-center py-8">
+            <p>No analysis results yet. Start an analysis to see results here.</p>
+          </div>
+        )}
       </CardFooter>
     </Card>
   )

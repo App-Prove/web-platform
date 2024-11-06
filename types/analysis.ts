@@ -26,7 +26,8 @@ export interface Issue {
     severity: "High" | "Medium" | "Low"; // Added severity property
     language: string;
     lineNumber: number; // Updated from 'line' to 'lineNumber'
-    file: string; // Updated from 'path' to 'file'
+    path: string;
+    file: string;
     initialCode: string;
     solvingCode: string;
     comment: string;
@@ -87,4 +88,30 @@ export interface DashboardData {
     bestPractices: number
   }
   issues: Issue[]
+}
+
+
+export interface FileTreeItem {
+  path?: string;
+  name: string;
+  type: 'file' | 'folder';
+  children?: FileTreeItem[];
+  hasError?: boolean;
+  errors?: {
+    category: string;
+    title: string;
+    lineNumber: number;
+    actualCode: string;
+    newCode: string;
+    hint: string;
+  }[];
+}
+
+export interface FilesContextType {
+  fileTree: FileTreeItem | null;
+  isLoading: boolean;
+  selectedFile: string | null;
+  setSelectedFile: (file: FileTreeItem | null) => void;
+  setFileTree: React.Dispatch<React.SetStateAction<FileTreeItem | null>>;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
