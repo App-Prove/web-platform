@@ -66,7 +66,7 @@ const FileTreeNode: React.FC<{ item: FileTreeItem; depth: number }> = ({ item, d
             </div>
           </TooltipTrigger>
           {item.hasError && (
-            <TooltipContent side="right" className="z-50 bg-gray-900 text-white p-2 rounded shadow-lg">
+            <TooltipContent side="top" className="z-50 bg-gray-900 text-white p-2 rounded shadow-lg">
               {item.errors?.map((error, index) => (
                 <div key={index} className="mb-1">
                   <span className="font-bold">{error.category}:</span> {error.title} (Line {error.lineNumber})
