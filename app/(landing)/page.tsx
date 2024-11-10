@@ -214,11 +214,6 @@ export default function Home() {
           </Accordion>
         </section>
 
-        <section className="flex flex-col gap-4 py-24" id="compliance">
-          <h2 className="text-center text-2xl font-medium">Respect des normes en vigueur</h2>
-          <Compliance />
-        </section>
-
         <section className="flex flex-col gap-4 py-24" id="book-call">
           <h2 className="text-center text-2xl font-medium">Prenez rendez-vous avec un expert</h2>
           <CalcomWidget />
