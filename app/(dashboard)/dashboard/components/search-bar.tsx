@@ -17,18 +17,6 @@ export default function SearchBar(){
   const [open, setOpen] = useState(false);
   const commandRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (commandRef.current && !commandRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
     return(
         <div className="relative" ref={commandRef}>
           <Command>
