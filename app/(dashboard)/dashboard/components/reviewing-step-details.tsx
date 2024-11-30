@@ -19,9 +19,14 @@ export default function ReviewingStepDetails({
     sensitiveFilesStep: SensitiveFilesStep,
     inDepthAnalysisState: InDepthAnalysisStep,
 }) {
+    if (!inDepthAnalysisState?.data?.[0]?.issues?.[0] || 
+        !repositoryScanState?.data || 
+        !relativeFilesState?.data || 
+        !sensitiveFilesStep?.data) {
+        return null;
+    }
 
-    const issueSample = inDepthAnalysisState?.data[0]?.issues[0]
-    if(!issueSample || !repositoryScanState || !relativeFilesState || !sensitiveFilesStep) return null
+    const issueSample = inDepthAnalysisState.data[0].issues[0];
     return (
         <div className=" gap-y-2 flex flex-col w-full items-center overflow-hidden">
             <p className="text-pretty w-full">
@@ -39,7 +44,7 @@ export default function ReviewingStepDetails({
                     <div>
                         <div className='flex gap-x-2 items-center w-full'>
                             <div>
-                                <ErrorAnimation></ErrorAnimation>
+                                <ErrorAnimation />
                             </div>
                             <p className='text-xs sm:text-sm text-left'>
                                 {issueSample.comment}
@@ -62,7 +67,7 @@ export default function ReviewingStepDetails({
 
                     <div className='flex gap-x-2 items-center w-full'>
                         <div>
-                            <SuccessAnimation></SuccessAnimation>
+                            <SuccessAnimation />
                         </div>
                         <p className='text-xs sm:text-sm text-pretty'>
                             {issueSample.suggestion}
