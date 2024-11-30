@@ -1,24 +1,5 @@
-"use client"
-
-import { useEffect, useMemo } from 'react'
-import SearchBar from './components/search-bar'
-import Steps from './components/steps'
-import { useAnalysis } from './context/analysis-context'
+import { DashboardContent } from './components/client-components'
 
 export default function Dashboard() {
-  const { issues, fileTree } = useAnalysis();
-
-  const memoizedSteps = useMemo(() => {
-    return <Steps initialIssues={issues} initialFileTree={fileTree || undefined} />
-  }, [issues, fileTree])
-
-  return (
-    <div className="flex flex-col gap-4 w-full p-8">
-      <div className="mb-8 flex items-center justify-between">
-        <h2 className="text-3xl font-bold">Dashboard</h2>
-        <SearchBar />
-      </div>
-      {memoizedSteps}
-    </div>
-  )
+  return <DashboardContent />
 }
