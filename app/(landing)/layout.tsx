@@ -11,9 +11,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = createClient()
-  const { data } = await supabase.auth.getUser()
-  const user = data?.user
   return (
         <div className="text-foreground  mx-auto min-h-screen flex flex-col overflow-hidden sm:overflow-visible relative w-full">
           {/* Add the flare SVG here */}
